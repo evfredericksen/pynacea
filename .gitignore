@@ -1,0 +1,9 @@
+*.swp
+pynhost/build
+pynhost/dist
+pynhost/pynhost.egg-info
+pynguest/build
+pynguest/dist
+pynguest/pynguest.egg-info
+docs/site
+pynhost/pynhost/__pycache__

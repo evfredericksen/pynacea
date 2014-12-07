@@ -1,0 +1,43 @@
+from tkinter import *
+import time
+
+BUFFER_PATH = r'\\VBOXSVR\portal\buffer.txt'
+
+def main():
+	g = PynServerGui()
+
+class PynServerGui:
+	def __init__(self):
+		'''
+		A simple GUI to catch input from NS and send it to the buffer file
+		'''
+		self.root = Tk()
+		self.root.title('Pynlistener')
+		self.text_box = Text(self.root)
+		self.box_content = ''
+		self.entry_time = 0
+		self.text_box.focus()
+		self.root.bind('<Key>', self.enter_key)
+		self.text_box.pack()
+		self.root.after(10, self.send_input)
+		self.root.mainloop()
+
+	def send_input(self):
+		self.root.after(10, self.send_input)
+		if self.box_content and time.clock() - self.entry_time > .05:
+			self.write_to_buffer(self.box_content.strip())
+			self.box_content = ''
+			self.text_box.delete('1.0', END)
+
+
+	def enter_key(self, *args):
+		self.entry_time = time.clock()
+		self.box_content = self.text_box.get('1.0', END)
+
+	def write_to_buffer(self, data):
+		with open(BUFFER_PATH, 'a') as f:
+			data = data
+			f.write('{}\n'.format(data))
+
+if __name__ == '__main__':
+	main()

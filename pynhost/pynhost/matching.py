@@ -132,7 +132,6 @@ def check_dict(piece, tracker):
 def check_homonym(tag, tracker):
     if tracker.remaining_words:
         tag = tag[4:].lower()
-        print(tag)
         if tag in _homonyms.HOMONYMS and tracker.remaining_words[0].lower() in _homonyms.HOMONYMS[tag]:
             tracker.remaining_words[0] = tag
         if tracker.remaining_words[0].lower() == tag:

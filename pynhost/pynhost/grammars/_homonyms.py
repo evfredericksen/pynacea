@@ -1,0 +1,3 @@
+HOMONYMS = {
+    'perl': ['pearl'],
+}

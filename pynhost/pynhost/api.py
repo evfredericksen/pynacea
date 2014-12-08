@@ -63,7 +63,7 @@ def mouse_move(x=None, y=None, relative=False):
     subprocess.call(['xdotool', 'mousemove_relative', str(x), str(y)])
 
 
-def mouse_click(down=True, up=True, button='left', number='1'):
+def mouse_click(button='left', direction='both', number='1'):
         button_map = {
             'left': '1',
             'middle': '2',
@@ -72,9 +72,9 @@ def mouse_click(down=True, up=True, button='left', number='1'):
             'wheel down': '5',
         }
         button = button_map[button]
-        if down and up: command = 'click'
-        elif down: command = 'mousedown'
-        elif up: command = 'mouseup'
+        if direction == 'both': command = 'click'
+        elif direction == 'down': command = 'mousedown'
+        elif direction == 'up': command = 'mouseup'
         else: return
         subprocess.call(['xdotool', command, '--repeat', number, button])
 

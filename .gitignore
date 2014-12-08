@@ -7,3 +7,6 @@ pynguest/dist
 pynguest/pynguest.egg-info
 docs/site
 pynhost/pynhost/__pycache__
+pynhost/pynhost/*
+!pynhost/pynhost/sample.py
+!pynhost/pynhost/_homonyms.py

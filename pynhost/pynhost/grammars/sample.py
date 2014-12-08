@@ -6,7 +6,7 @@ grammars in the directory 'mozilla firefox' will only run when a
 program containing 'mozilla firefox' somewhere in its title is open and
 has focus.
 '''
-from pynhost.grammars import baseutils
+
 from pynhost import grammarbase
 from pynhost import api
 
@@ -52,7 +52,7 @@ class SampleGrammar(grammarbase.GrammarBase):
         direction = 'both'
         if words[1] in ['right', 'middle']:
             button = words[1]
-        if words[-1] in ['up', 'down']
+        if words[-1] in ['up', 'down']:
             direction = words[-1]
         api.mouse_click(button=button, direction=direction)
 
@@ -73,12 +73,17 @@ class SampleGrammar(grammarbase.GrammarBase):
         # anything matching <hom_perl> was changed to perl
 
     def count(self, words):
-        for num in range(int(words[-1]) + 1):
-            api.send_string(str(num))
+        iter_count = int(words[-1]) + 1
+        send_str = ''
+        for i, num in enumerate(range(iter_count)):
+            send_str += str(num)
+            if i != iter_count - 1:
+                send_str += ', '
+        api.send_string(send_str)
 
     def _is_loaded(self):
         '''
-        Return true if we are going to check the rules for this grammars
+        Return true if we are going to check the rules for this grammar.
         Called as part of the main loop, so no need to restart for
         changes to take effect. This overrides the _is_loaded method
         from grammarbase.Grammarbase, which always returns True.

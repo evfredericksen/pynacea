@@ -1,3 +1,3 @@
 HOMONYMS = {
-    'perl': ['pearl'],
+    'perl': ['pearl', 'rural', 'moral'],
 }

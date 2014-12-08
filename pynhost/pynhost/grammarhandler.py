@@ -41,7 +41,7 @@ class GrammarHandler:
         result = {'rule': None, 'new words': None, 'remaining words': words}
         for module_obj in self.modules:
             split_name = module_obj.__name__.split('.')
-            if len(split_name) == 2 or re.search(split_name[-2], window_name):
+            if len(split_name) == 3 or re.search(split_name[-2], window_name):
                 for grammar in [g for g in self.modules[module_obj] if g._is_loaded()]:
                     for rule in grammar.rules:
                         new, remaining = matching.words_match_rule(rule, result['remaining words'])

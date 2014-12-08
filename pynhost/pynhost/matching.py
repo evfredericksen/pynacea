@@ -1,5 +1,6 @@
 import copy
 import re
+from pynhost.grammars import _homonyms
 try:
     import constants
 except ImportError:
@@ -131,7 +132,8 @@ def check_dict(piece, tracker):
 def check_homonym(tag, tracker):
     if tracker.remaining_words:
         tag = tag[4:].lower()
-        if tag in constants.HOMONYMS and tracker.remaining_words[0].lower() in constants.HOMONYMS[tag]:
+        print(tag)
+        if tag in _homonyms.HOMONYMS and tracker.remaining_words[0].lower() in _homonyms.HOMONYMS[tag]:
             tracker.remaining_words[0] = tag
         if tracker.remaining_words[0].lower() == tag:
             tracker.add(tag)

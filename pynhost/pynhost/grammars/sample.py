@@ -4,7 +4,7 @@ App-specific grammars must be in directories whose names
 at least partially match the name of an open program. For example,
 grammars in the directory 'mozilla firefox' will only run when a
 program containing 'mozilla firefox' somewhere in its title is open and
-focused on.
+has focus.
 '''
 from pynhost.grammars import baseutils
 from pynhost import grammarbase
@@ -23,10 +23,12 @@ class SampleGrammar(grammarbase.GrammarBase):
             # matches 'say hello'
 
             'click': 'click [(left | middle | right)] [(up | down | both)]',
-            # matches either 'click' or 'click mouse'
+            # matches 'click', followed optionally by 'left', 'right' or 'middle',
+            # followed (again optionally) by 'up', 'down', or 'both'.
+            # Sample matches: 'click', 'click left', 'click up', 'click left down'
 
-            'new_function': 'function <1+>',
-            # matches 'function' followed by one or more words
+            'new_function': 'new function <1+>',
+            # matches 'new function' followed by one or more words
             # <3+> matches at least 3 words, <3> matches exactly 3 words,
             # <3-> matches 0 to 3 words
 
@@ -34,7 +36,7 @@ class SampleGrammar(grammarbase.GrammarBase):
             # matches 'count to' followed by any number
 
             'change_language': 'language (none | python | <hom_perl>)',
-            # matches 'language' followed by either 'none, 'python', 'perl',
+            # matches 'language' followed by either 'none', 'python', 'perl',
             # or any homonym of perl as defined in the
             # pynhost.grammars._homonyms.HOMONYMS dictionary
         }
@@ -47,8 +49,8 @@ class SampleGrammar(grammarbase.GrammarBase):
     def click(self, words):
         #by default (no args), mouse left-clicks down, then releases
         button = 'left'
-        direction='both'
-        if words[1] in in= ['right', 'middle']:
+        direction = 'both'
+        if words[1] in ['right', 'middle']:
             button = words[1]
         if words[-1] in ['up', 'down']
             direction = words[-1]
@@ -78,7 +80,8 @@ class SampleGrammar(grammarbase.GrammarBase):
         '''
         Return true if we are going to check the rules for this grammars
         Called as part of the main loop, so no need to restart for
-        changes to take effect
+        changes to take effect. This overrides the _is_loaded method
+        from grammarbase.Grammarbase, which always returns True.
         '''
         if 'none' != self.language:
             return True

@@ -1,10 +1,14 @@
 import subprocess
 import configparser
 import os
+import sys
+from pkg_resources import Requirement, resource_filename
 try:
     import constants
 except:
     from pynhost import constants
+
+CONFIG_PATH = resource_filename(Requirement.parse("pynhost"), "pynhost_config.ini")
 
 def transcribe_line(key_inputs, space=True):
     for key in key_inputs:
@@ -23,8 +27,7 @@ def get_buffer_lines(buffer_path):
             lines.append(line.rstrip('\n'))
         # except UnicodeDecodeError:
         #     pass
-    with open(buffer_path, 'w') as f:
-        pass
+    open(buffer_path, 'w').close()
     return lines
     
 def get_mouse_location():
@@ -60,3 +63,25 @@ def save_directory(path, value):
     config['settings']['shared_dir'] = value
     with open(path, 'w') as configfile:
         config.write(configfile)
+
+def enter_shared_directory():
+    try:
+        shared_dir = get_shared_directory(CONFIG_PATH)
+    except:
+        with open(CONFIG_PATH, 'w') as f:
+            f.write('[settings]\n')
+            f.write('shared_dir = None')
+        shared_dir = 'None'
+    if (shared_dir == 'None' or 
+    len(sys.argv) == 2 and sys.argv[1] == 'config'):
+        if shared_dir == 'None':
+            print('Shared directory is currently not set')
+        else:
+            print('Shared directory is currently {}'.format(shared_dir))
+        shared_dir = input('Enter the shared directory between the host '
+        "operating system and the virtual machine (press 'q' to quit): ")
+        if shared_dir != 'q':
+            save_directory(CONFIG_PATH, shared_dir)
+            print('Directory {} successfully saved!'.format(shared_dir))
+            return ''
+    return shared_dir

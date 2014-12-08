@@ -16,7 +16,7 @@ recognition program.
 
 ###Pynguest (Virtual Machine)
 
-- Set up a voice recognition system on your virtual machine. 
+- Set up a voice recognition environment on your virtual machine. 
 I use Oracle VirtualBox, 32-bit Windows 7, Dragon Naturally Speaking, and
 a USB microphone, but feel free to mix and match as you like.
 - Install Python (2 or 3)

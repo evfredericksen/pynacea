@@ -39,14 +39,20 @@ def execute_rule(rule, matched_words):
     if not isinstance(rule.actions, list):
         handle_action(rule.actions, matched_words)
         return
-    for piece in rule.actions:
-        handle_action(piece, matched_words)
+    for i, piece in enumerate(rule.actions):
+        last_action = None
+        if i > 0:
+            last_action = rule.actions[i - 1]
+        handle_action(piece, matched_words, last_action)
 
-def handle_action(action, words):
+def handle_action(action, words, last_action=None):
     if isinstance(action, str):
         api.send_string(action)
     elif callable(action):
         action(words)
+    elif isinstance(action, int) and last_action is not None:
+        for i in range(action):
+            handle_action(last_action, words)
     else:
         raise TypeError('could not execute action {}'.format(action))
 

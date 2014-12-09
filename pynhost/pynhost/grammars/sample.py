@@ -24,7 +24,7 @@ class SampleGrammar(grammarbase.GrammarBase):
             'say hello': 'hello world', 
             # matches 'say hello', outputs 'hello world'
 
-            'say goodbye': ['goodbye world', 'hope to see you again soon'],
+            'say goodbye': ['Goodbye world. ', 'Hope to see you again soon!'],
 
             'click [(left | middle | right)] [(up | down | both)]': self.click,
             # matches 'click', followed optionally by 'left', 'right' or 'middle',

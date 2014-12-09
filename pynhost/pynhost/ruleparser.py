@@ -27,17 +27,17 @@ class RulePiece:
         return '<RulePiece {}>'.format(self.mode)
 
 class Rule:
-    def __init__(self, raw_text, dictionary=None, func=None):
-        self.func = func
+    def __init__(self, raw_text, dictionary=None, actions=None):
+        self.actions = actions
         self.raw_text = raw_text
         self.pieces = parse(raw_text)
         self.dictionary = dictionary
 
     def __str__(self):
-        return '<Rule: {}>'.format(self.func)
+        return '<Rule: {}>'.format(self.actions)
 
     def __repr__(self):
-        return '<Rule: {}>'.format(self.func)
+        return '<Rule: {}>'.format(self.actions)
 
 def parse(rule_string):
     pieces = []

@@ -15,36 +15,36 @@ from pynhost import api
 class SampleGrammar(grammarbase.GrammarBase):
     def __init__(self):
         super().__init__()
-        # all rules go in the self.mapping attribute. Keys
-        # must match the name of a corresponding method below
+        # all rules go in the self.mapping attribute. Keys contain rule patterns,
+        # and values contain actions that run when speech input matches the
+        # corresponding pattern
         self.mapping = {
 
-            'say_hello': 'say hello', 
-            # matches 'say hello'
+            # values can be a string, a callable, an int, or a list of these
+            'say hello': 'hello world', 
+            # matches 'say hello', outputs 'hello world'
 
-            'click': 'click [(left | middle | right)] [(up | down | both)]',
+            'say goodbye': ['goodbye world', 'hope to see you again soon'],
+
+            'click [(left | middle | right)] [(up | down | both)]': self.click,
             # matches 'click', followed optionally by 'left', 'right' or 'middle',
             # followed (again optionally) by 'up', 'down', or 'both'.
             # Sample matches: 'click', 'click left', 'click up', 'click left down'
 
-            'new_function': 'new function <1+>',
+            'new function <1+>': self.new_function,
             # matches 'new function' followed by one or more words
             # <3+> matches at least 3 words, <3> matches exactly 3 words,
             # <3-> matches 0 to 3 words
 
-            'count': 'count to <num>',
+            'count to <num>': self.count,
             # matches 'count to' followed by any number
 
-            'change_language': 'language (none | python | <hom_perl>)',
+            'language (none | python | <hom_perl>)': self.change_language,
             # matches 'language' followed by either 'none', 'python', 'perl',
             # or any homonym of perl as defined in the
             # pynhost.grammars._homonyms.HOMONYMS dictionary
         }
         self.language = 'python'
-
-    def say_hello(self, words):
-        #types out hello world
-        api.send_string('hello world!')
 
     def click(self, words):
         #by default (no args), mouse left-clicks down, then releases
@@ -58,7 +58,7 @@ class SampleGrammar(grammarbase.GrammarBase):
 
     def new_function(self, words):
         # create a camelcase function name from the words parameter
-        func_name = words[1].lower() + ''.join([w.title() for w in words[1:]])
+        func_name = words[2].lower() + ''.join([w.title() for w in words[3:]])
         if self.language == 'python':
             api.send_string('def ' + func_name + '():{left}{left}')
             # press left twice when we're done to put the cursor between the

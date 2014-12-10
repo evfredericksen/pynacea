@@ -72,7 +72,7 @@ class SampleGrammar(grammarbase.GrammarBase):
             # A second consecutive curly brace 'escapes' the preceding brace
 
     def change_language(self, words):
-        self.language = words[1]
+        self.language = words[8]
         # anything matching <hom_perl> was changed to perl
 
     def count(self, words):

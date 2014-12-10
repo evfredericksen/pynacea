@@ -2,6 +2,7 @@ import subprocess
 import configparser
 import os
 import sys
+import time
 from pkg_resources import Requirement, resource_filename
 try:
     import constants
@@ -11,13 +12,14 @@ except:
 CONFIG_PATH = resource_filename(Requirement.parse("pynhost"), "pynhost_config.ini")
 
 def transcribe_line(key_inputs, space=True):
+    print('transcribe: {}\n'.format(key_inputs))
     for key in key_inputs:
         if len(key) == 1:
-            subprocess.call(['xdotool', 'type', '--delay', '0ms', key])
+            subprocess.call(['xdotool', 'type', '--delay', '10ms', key])
         else:
-            subprocess.call(['xdotool', 'key', '--delay', '0ms', key])
+            subprocess.call(['xdotool', 'key', '--delay', '10ms', key])
     if space:
-        subprocess.call(['xdotool', 'key', '--delay', '0ms', constants.XDOTOOL_MAP[' ']])
+        subprocess.call(['xdotool', 'key', '--delay', '10ms', constants.XDOTOOL_MAP[' ']])
 
 def get_buffer_lines(buffer_path):
     lines = []
@@ -57,7 +59,6 @@ def get_shared_directory(path):
     return(config['settings']['shared_dir'])
 
 def save_directory(path, value):
-    print(path, value)
     config = configparser.ConfigParser()
     config.read(path)
     config['settings']['shared_dir'] = value

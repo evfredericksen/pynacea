@@ -6,7 +6,6 @@ import tempfile
 import zipfile
 import shutil
 import copy
-from pynhost import obj
 from pynhost import ruleparser
 from pynhost import matching
 

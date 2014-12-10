@@ -1,9 +1,6 @@
 import subprocess
 import sys
-try:
-    import utilities
-except ImportError:
-    from pynhost import utilities
+from pynhost import utilities
 
 REPLACE_DICT = {
     'tab': 'Tab',

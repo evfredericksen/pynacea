@@ -1,10 +1,9 @@
 import os
-from pynhost import grammarbase
 import re
 import inspect
 import sys
 import subprocess
-import os
+from pynhost import grammarbase
 from pynhost import utilities
 from pynhost import matching
 

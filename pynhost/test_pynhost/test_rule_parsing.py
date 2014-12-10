@@ -6,7 +6,7 @@ import tempfile
 import zipfile
 import shutil
 import copy
-from pynhost import obj
+from pynhost import grammarbase
 from pynhost import ruleparser
 
 class TestRuleParsing(unittest.TestCase):
@@ -89,9 +89,3 @@ class TestRuleParsing(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-# def setup_rule(text):
-#     parser = obj.RuleParser()
-#     rule = obj.Rule('placeholder', text)
-#     rule.pieces = parser.parse_string(rule.raw_text)
-#     return rule

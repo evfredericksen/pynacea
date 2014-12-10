@@ -1,7 +1,4 @@
-try:
-    import utilities
-except:
-    from pynhost import utilities
+from pynhost import utilities
 
 OPENING_TOKEN_DICT = {
     '(': 'list',

@@ -1,19 +1,9 @@
 import copy
 import re
 from pynhost.grammars import _homonyms
-try:
-    import constants
-except ImportError:
-    from pynhost import constants
-
-try:
-    import utilities
-except ImportError:
-    from pynhost import utilities
-try:
-    import ruleparser
-except ImportError:
-    from pynhost import ruleparser
+from pynhost import constants
+from pynhost import utilities
+from pynhost import ruleparser
 
 class Tracker:
     def __init__(self, words, rule):

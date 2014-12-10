@@ -1,8 +1,5 @@
 import inspect
-try:
-    import ruleparser
-except ImportError:
-    from pynhost import ruleparser
+from pynhost import ruleparser
 
 class GrammarBase:
     def __init__(self):

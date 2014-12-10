@@ -38,7 +38,7 @@ class SampleGrammar(grammarbase.GrammarBase):
             # matches 'count to' followed by any number
 
             'language (none | python | <hom_perl>)': self.change_language,
-            # matches 'language' fololwed by either 'none', 'python', 'perl',
+            # matches 'language' followed by either 'none', 'python', 'perl',
             # or any homonym of perl as defined in the
             # pynhost.grammars._homonyms.HOMONYMS dictionary
 

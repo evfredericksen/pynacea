@@ -8,6 +8,7 @@ pynguest/pynguest.egg-info
 docs/site
 */__pycache__
 pynhost/pynhost/__pycache__
+pynportal/*
 pynhost/pynhost/grammars/*
 !pynhost/pynhost/grammars/sample1.py
 !pynhost/pynhost/grammars/sample2.py

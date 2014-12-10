@@ -38,7 +38,7 @@ class SampleGrammar(grammarbase.GrammarBase):
             # matches 'count to' followed by any number
 
             'language (none | python | <hom_perl>)': self.change_language,
-            # matches 'language' followed by either 'none', 'python', 'perl',
+            # matches 'language' fololwed by either 'none', 'python', 'perl',
             # or any homonym of perl as defined in the
             # pynhost.grammars._homonyms.HOMONYMS dictionary
 
@@ -48,7 +48,6 @@ class SampleGrammar(grammarbase.GrammarBase):
         self.language = 'python'
 
     def click(self, words):
-        #by default (no args), mouse left-clicks down, then releases
         button = 'left'
         direction = 'both'
         if len(words) > 1:
@@ -56,6 +55,7 @@ class SampleGrammar(grammarbase.GrammarBase):
                 button = words[1]
             if words[-1] in ['up', 'down']:
                 direction = words[-1]
+        # by default (no args), mouse left-clicks down, then releases
         api.mouse_click(button=button, direction=direction)
 
     def new_function(self, words):

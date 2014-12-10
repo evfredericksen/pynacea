@@ -17,8 +17,9 @@ recognition program.
 ###Pynguest (Virtual Machine)
 
 - Set up a voice recognition environment on your virtual machine. 
-I use Oracle VirtualBox, 32-bit Windows 7, Dragon Naturally Speaking, and
-a USB microphone, but feel free to mix and match as you like.
+I use Oracle VirtualBox, 32-bit Windows 7, Dragon Naturally Speaking 13 Premium
+(although Home Edition should be fine), and a USB microphone, but feel free to
+mix and match as you like.
 - Install Python (2 or 3)
 - `pip install pynguest`
 - Set up a shared folder between your VM and your main operating

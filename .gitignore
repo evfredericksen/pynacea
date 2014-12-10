@@ -8,5 +8,6 @@ pynguest/pynguest.egg-info
 docs/site
 pynhost/pynhost/__pycache__
 pynhost/pynhost/grammars/*
-!pynhost/pynhost/grammars/sample.py
+!pynhost/pynhost/grammars/sample1.py
+!pynhost/pynhost/grammars/sample2.py
 !pynhost/pynhost/grammars/_homonyms.py

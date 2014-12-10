@@ -14,7 +14,12 @@ recognition program.
 
 ##Installation
 
-###Pynguest (Virtual Machine)
+###1. Pynhost (Linux Host)
+
+- install xdotool if you don't have it already
+- `pip install pynhost`
+
+###2. Pynguest (Virtual Machine)
 
 - Set up a voice recognition environment on your virtual machine. 
 I use Oracle VirtualBox, 32-bit Windows 7, Dragon Naturally Speaking 13 Premium
@@ -22,17 +27,10 @@ I use Oracle VirtualBox, 32-bit Windows 7, Dragon Naturally Speaking 13 Premium
 mix and match as you like.
 - Install Python (2 or 3)
 - `pip install pynguest`
-- Set up a shared folder between your VM and your main operating
-system. This can be a new folder or one that already exists on your
-primary OS.
-
-###Pynhost (Linux Host)
-
-- install xdotool if you don't have it already
-- `pip install pynhost`
-- Run `pynacea.py` in your terminal. When prompted,
-give the path (on your main machine) of the same directory that you
-specified while setting up `pynguest`.
+- Set up `<Python Installation>/pynhost/pynportal` from your main OS as a
+shared folder between your VM and your main operating system. If you're using
+VirtualBox, [here](https://www.youtube.com/watch?v=eB211nF-Big) is a quick
+illustration of the process.
 
 ##Use
 

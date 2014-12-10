@@ -24,8 +24,6 @@ a USB microphone, but feel free to mix and match as you like.
 - Set up a shared folder between your VM and your main operating
 system. This can be a new folder or one that already exists on your
 primary OS.
-- Run `pynacea.py` in the command prompt. When prompted,
-give the path (on your VM) of the folder that you specified above.
 
 ###Pynhost (Host)
 

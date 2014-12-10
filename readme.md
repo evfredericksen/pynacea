@@ -50,5 +50,6 @@ your main OS.
 Grammars allow you to write callback functions in your host operating system.
 They reside in the grammars directory of your pynhost installation.
 These functions will be called when your voice input matches a particular rule
-that you have created. Check out pynhost/grammars/sample.py for
-documentation and examples.
+that you have created. Check out pynhost/grammars/sample1.py and  
+pynhost/grammars/sample2.py in your Python installation for documentation and
+examples.

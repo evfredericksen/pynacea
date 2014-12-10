@@ -1,6 +1,6 @@
 '''
 Global grammars lie directly within the grammars directory.
-App-specific grammars must be in directories whose names
+App-specific grammars must be in subdirectories whose names
 at least partially match the name of an open program. For example,
 grammars in the directory 'mozilla firefox' will only run when a
 program containing 'mozilla firefox' somewhere in its title is open and
@@ -42,7 +42,7 @@ class SampleGrammar(grammarbase.GrammarBase):
             # or any homonym of perl as defined in the
             # pynhost.grammars._homonyms.HOMONYMS dictionary
 
-            'jack nicholson': ['All work and no play...\n', 15]
+            'red rum': ['All work and no play...\n', 15]
             # An integer will repeat the previous action n number of times
         }
         self.language = 'python'
@@ -51,10 +51,11 @@ class SampleGrammar(grammarbase.GrammarBase):
         #by default (no args), mouse left-clicks down, then releases
         button = 'left'
         direction = 'both'
-        if words[1] in ['right', 'middle']:
-            button = words[1]
-        if words[-1] in ['up', 'down']:
-            direction = words[-1]
+        if len(words) > 1:
+            if words[1] in ['right', 'middle']:
+                button = words[1]
+            if words[-1] in ['up', 'down']:
+                direction = words[-1]
         api.mouse_click(button=button, direction=direction)
 
     def new_function(self, words):
@@ -70,7 +71,7 @@ class SampleGrammar(grammarbase.GrammarBase):
             # A second consecutive curly brace 'escapes' the preceding brace
 
     def change_language(self, words):
-        self.language = words[8]
+        self.language = words[1]
         # anything matching <hom_perl> was changed to perl
 
     def count(self, words):

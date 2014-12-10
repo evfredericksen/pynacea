@@ -26,7 +26,7 @@ mix and match as you like.
 system. This can be a new folder or one that already exists on your
 primary OS.
 
-###Pynhost (Host)
+###Pynhost (Linux Host)
 
 - install xdotool if you don't have it already
 - `pip install pynhost`

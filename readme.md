@@ -36,7 +36,10 @@ specified while setting up `pynguest`.
 ##Use
 
 - Begin running your voice recognition software on your VM. Then start `pynacea.py`.
-Keep the focus on the program window, otherwise nothing will be passed to
+If it's your first use, the program will attempt to automatically locate the
+shared folder that you just created, but you may be prompted to provide its
+path.
+-Keep the focus on the program window, otherwise nothing will be passed to
 your main OS.
 - Start `pynacea.py` in your main OS.
 - Say something!

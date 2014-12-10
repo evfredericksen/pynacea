@@ -1,37 +1,32 @@
 import subprocess
 import configparser
 import os
+import re
 import sys
-import time
-from pkg_resources import Requirement, resource_filename
+import pynhost
 try:
     import constants
 except:
     from pynhost import constants
 
-CONFIG_PATH = resource_filename(Requirement.parse("pynhost"), "pynhost_config.ini")
-
 def transcribe_line(key_inputs, space=True):
-    print('transcribe: {}\n'.format(key_inputs))
     for key in key_inputs:
         if len(key) == 1:
-            subprocess.call(['xdotool', 'type', '--delay', '10ms', key])
+            subprocess.call(['xdotool', 'type', '--delay', '0ms', key])
         else:
-            subprocess.call(['xdotool', 'key', '--delay', '10ms', key])
+            subprocess.call(['xdotool', 'key', '--delay', '0ms', key])
     if space:
-        subprocess.call(['xdotool', 'key', '--delay', '10ms', constants.XDOTOOL_MAP[' ']])
+        subprocess.call(['xdotool', 'key', '--delay', '0ms', constants.XDOTOOL_MAP[' ']])
 
 def get_buffer_lines(buffer_path):
+    files = sorted([f for f in os.listdir(buffer_path) if not os.path.isdir(f) and re.match(r'o\d+$', f)])
     lines = []
-    with open(buffer_path) as f:
-        # try: 
-        for line in f:
-            lines.append(line.rstrip('\n'))
-        # except UnicodeDecodeError:
-        #     pass
-    open(buffer_path, 'w').close()
+    for fname in files:
+        with open(os.path.join(buffer_path, fname)) as fobj:
+            lines.append(fobj.read())
+    clear_directory(buffer_path)
     return lines
-    
+
 def get_mouse_location():
     results = xdotool.check_output('getmouselocation')
     return results
@@ -53,36 +48,19 @@ def split_send_string(string_to_send):
             split_string[-1] += char
     return split_string
 
-def get_shared_directory(path):
-    config = configparser.ConfigParser()
-    config.read(path)
-    return(config['settings']['shared_dir'])
-
-def save_directory(path, value):
-    config = configparser.ConfigParser()
-    config.read(path)
-    config['settings']['shared_dir'] = value
-    with open(path, 'w') as configfile:
-        config.write(configfile)
-
-def enter_shared_directory():
-    try:
-        shared_dir = get_shared_directory(CONFIG_PATH)
-    except:
-        with open(CONFIG_PATH, 'w') as f:
-            f.write('[settings]\n')
-            f.write('shared_dir = None')
-        shared_dir = 'None'
-    if (shared_dir == 'None' or 
-    len(sys.argv) == 2 and sys.argv[1] == 'config'):
-        if shared_dir == 'None':
-            print('Shared directory is currently not set')
+def clear_directory(dir_name):
+    for file_path in os.listdir(dir_name):
+        full_path = os.path.join(dir_name, file_path)
+        if os.path.isfile(full_path):
+            os.unlink(full_path)
         else:
-            print('Shared directory is currently {}'.format(shared_dir))
-        shared_dir = input('Enter the shared directory between the host '
-        "operating system and the virtual machine (press 'q' to quit): ")
-        if shared_dir != 'q':
-            save_directory(CONFIG_PATH, shared_dir)
-            print('Directory {} successfully saved!'.format(shared_dir))
-            return ''
-    return shared_dir
+            shutil.rmtree(full_path)
+
+def get_shared_directory():
+    package_dir = os.path.dirname((os.path.abspath(pynhost.__file__)))
+    buffer_dir = os.path.join(package_dir, 'pynportal')
+    if not os.path.isdir(buffer_dir):
+        os.mkdirs(buffer_dir)
+    clear_directory(buffer_dir)
+    return buffer_dir
+

@@ -5,7 +5,7 @@ here = path.abspath(path.dirname(__file__))
 
 setup(
 	name='pynguest',
-	version='0.1.0',
+	version='0.1.2',
 	description='Linux Voice Recognition System',
 	url='https://github.com/evfredericksen/pynacea',
 	author='Evan Fredericksen',
@@ -24,11 +24,12 @@ setup(
 	'Programming Language :: Python :: 3.4',
 	],
 	keywords='voice recognition grammar',
-	packages=['pynguest'],
+	packages=[],
 	package_dir = {
 		'pynguest': 'pynguest',
 	},
 	install_requires=[],
+	data_files=[('Lib\site-packages', ['pynguest_config.ini'])],
 	scripts = ['scripts/pynacea.py'],
 	include_package_data = True,
 	long_description = '''\

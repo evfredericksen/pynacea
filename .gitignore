@@ -6,6 +6,7 @@ pynguest/build
 pynguest/dist
 pynguest/pynguest.egg-info
 docs/site
+*/__pycache__
 pynhost/pynhost/__pycache__
 pynhost/pynhost/grammars/*
 !pynhost/pynhost/grammars/sample1.py

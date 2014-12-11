@@ -26,7 +26,6 @@ def main():
                 remaining_placeholder = result['remaining words']
                 result = g.get_matching_rule(result['remaining words'])
                 if result['rule'] is not None:
-                    print(result)
                     execute_rule(result['rule'], result['new words'])
                     last_action.append((result['rule'].actions, result['new words']))
                 else:

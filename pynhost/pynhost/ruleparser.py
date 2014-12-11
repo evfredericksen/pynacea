@@ -31,10 +31,10 @@ class Rule:
         self.dictionary = dictionary
 
     def __str__(self):
-        return '<Rule: {}>'.format(self.actions)
+        return '<Rule: {}>'.format(self.raw_text)
 
     def __repr__(self):
-        return '<Rule: {}>'.format(self.actions)
+        return '<Rule: {}>'.format(self.raw_text)
 
 def parse(rule_string):
     pieces = []

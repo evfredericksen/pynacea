@@ -23,6 +23,8 @@ def words_match_rule(rule, words):
     words = [word.lower() for word in words]
     tracker = Tracker(words, rule)
     results = []
+    if (rule.raw_text == 'hello'):
+        print(rule.pieces, tracker.remaining_words)
     for piece in rule.pieces:
         if isinstance(piece, str):
             if tracker.remaining_words and piece.lower() == tracker.remaining_words[0]:

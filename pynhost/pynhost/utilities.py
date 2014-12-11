@@ -23,7 +23,8 @@ def get_buffer_lines(buffer_path):
     lines = []
     for fname in files:
         with open(os.path.join(buffer_path, fname)) as fobj:
-            lines.append(fobj.read())
+            for line in fobj:
+                lines.append(line.rstrip('\n'))
     clear_directory(buffer_path)
     return lines
 
@@ -61,6 +62,5 @@ def get_shared_directory():
     buffer_dir = os.path.join(package_dir, 'pynportal')
     if not os.path.isdir(buffer_dir):
         os.mkdirs(buffer_dir)
-    clear_directory(buffer_dir)
     return buffer_dir
 

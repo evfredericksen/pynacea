@@ -2,21 +2,23 @@
 import time
 import sys
 import os
+import types
+import logging
 import pynhost
 from pynhost import utilities
 from pynhost import grammarhandler
 from pynhost import api
+from pynhost import actions
 
 def main():
     shared_dir = utilities.get_shared_directory()
     g = grammarhandler.GrammarHandler()
+    g.load_grammars()
     last_action = []
     add_space = False
     while True:
         lines = utilities.get_buffer_lines(shared_dir)
-        g.load_grammars()
         for line in lines:
-            print(line)
             result = {'remaining words': line.split(' ')}
             results = []
             last_action = []
@@ -32,6 +34,8 @@ def main():
                         len(remaining_placeholder) != 1)
                     last_action.append(remaining_placeholder[0])
                     result['remaining words'] = remaining_placeholder[1:]
+        time.sleep(1)
+
 
 def execute_rule(rule, matched_words):
     if not isinstance(rule.actions, list):
@@ -46,8 +50,14 @@ def execute_rule(rule, matched_words):
 def handle_action(action, words, last_action=None):
     if isinstance(action, str):
         api.send_string(action)
-    elif callable(action):
+    elif isinstance(action, types.FunctionType):
         action(words)
+    elif isinstance(action, actions.FuncWithArgs):
+        if action.include_words:
+            action.args.insert(0, words)
+        action.func(*action.args, **kwargs)
+    elif isinstance(action, actions.Words):
+        api.send_string(action.get_words(words))
     elif isinstance(action, int) and last_action is not None:
         for i in range(action):
             handle_action(last_action, words)

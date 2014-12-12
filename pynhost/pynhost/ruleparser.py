@@ -29,6 +29,7 @@ class Rule:
         self.raw_text = raw_text
         self.pieces = parse(raw_text)
         self.dictionary = dictionary
+        self.matching_words = None
 
     def __str__(self):
         return '<Rule: {}>'.format(self.raw_text)

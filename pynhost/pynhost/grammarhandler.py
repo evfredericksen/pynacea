@@ -33,21 +33,3 @@ class GrammarHandler:
                 grammars.append(member[1]())
                 grammarbase.set_rules(grammars[-1])
         return grammars
-
-    def get_matching_rule(self, words):
-        proc = subprocess.check_output(['xdotool', 'getactivewindow', 'getwindowname'])
-        window_name = proc.decode('utf8').rstrip('\n')
-        result = {'rule': None, 'new words': None, 'remaining words': words}
-        for module_obj in self.modules:
-            split_name = module_obj.__name__.split('.')
-            if len(split_name) == 3 or re.search(split_name[-2].lower(), window_name.lower()):
-                for grammar in [g for g in self.modules[module_obj] if g._is_loaded()]:
-                    for rule in grammar.rules:
-                        new, remaining = matching.words_match_rule(rule, result['remaining words'])
-                        if new:
-                            result['new words'] = new
-                            result['remaining words'] = remaining
-                            result['rule'] = rule
-                            return result
-        result['remaining words'] = []
-        return result

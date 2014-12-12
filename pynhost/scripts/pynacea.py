@@ -1,14 +1,8 @@
 #!/usr/bin/python3
 import time
-import sys
-import os
-import types
 import logging
-import pynhost
 from pynhost import utilities
 from pynhost import grammarhandler
-from pynhost import api
-from pynhost import actions
 from pynhost import command
 
 def main():

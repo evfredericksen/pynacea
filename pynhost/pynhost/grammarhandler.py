@@ -4,8 +4,6 @@ import inspect
 import sys
 import subprocess
 from pynhost import grammarbase
-from pynhost import utilities
-from pynhost import matching
 
 class GrammarHandler:
     def __init__(self):

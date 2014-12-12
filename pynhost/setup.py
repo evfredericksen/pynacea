@@ -5,7 +5,7 @@ here = path.abspath(path.dirname(__file__))
 
 setup(
 	name='pynhost',
-	version='0.1.4',
+	version='0.1.5',
 	description='Linux Voice Recognition System',
 	url='https://github.com/evfredericksen/pynacea',
 	author='Evan Fredericksen',

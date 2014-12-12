@@ -4,10 +4,8 @@ import os
 import re
 import sys
 import pynhost
-try:
-    import constants
-except:
-    from pynhost import constants
+from pynhost import constants
+
 
 def transcribe_line(key_inputs, space=True):
     for key in key_inputs:
@@ -64,3 +62,14 @@ def get_shared_directory():
         os.mkdirs(buffer_dir)
     return buffer_dir
 
+def get_config_setting(title, setting):
+    config = configparser.ConfigParser()
+    config.read(constants.CONFIG_PATH)
+    return(config[title][setting])
+    
+def save_config_setting(title, setting, value):
+    config = configparser.ConfigParser()
+    config.read(constants.CONFIG_PATH)
+    config[title][setting] = value
+    with open(constants.CONFIG_PATH, 'w') as configfile:
+        config.write(configfile) 

@@ -5,7 +5,7 @@ here = path.abspath(path.dirname(__file__))
 
 setup(
 	name='pynhost',
-	version='0.1.6',
+	version='0.1.7',
 	description='Linux Voice Recognition System',
 	url='https://github.com/evfredericksen/pynacea',
 	author='Evan Fredericksen',
@@ -27,7 +27,7 @@ setup(
 		'pynhost': 'pynhost',
 	},
 	install_requires=[],
-	data_files=[('/etc', ['pynhost.ini'])],
+	data_files=[('/usr/local/etc', ['pynhost.ini'])],
 	scripts = ['scripts/pynacea.py'],
 	include_package_data = True,
 	long_description = '''\

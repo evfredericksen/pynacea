@@ -5,8 +5,10 @@ import logging
 from pynhost import utilities
 from pynhost import grammarhandler
 from pynhost import command
+from pynhost import constants
 
 def main():
+    print(constants.CONFIG_PATH)
     shared_dir = utilities.get_shared_directory()
     gram_handler = grammarhandler.GrammarHandler()
     gram_handler.load_grammars()

@@ -1,6 +1,6 @@
-from pkg_resources import Requirement, resource_filename
+import os
 
-CONFIG_PATH = resource_filename(Requirement.parse("pynhost"), "pynhost.ini")
+CONFIG_PATH = os.path.join('usr', 'local', 'etc', 'config.ini')
 
 CONFIG_FILE = 'settings.ini'
 

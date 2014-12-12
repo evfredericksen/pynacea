@@ -33,7 +33,7 @@ def main():
                         len(remaining_placeholder) != 1)
                     last_action.append(remaining_placeholder[0])
                     result['remaining words'] = remaining_placeholder[1:]
-        time.sleep(1)
+        time.sleep(.1)
 
 
 def execute_rule(rule, matched_words):
@@ -49,7 +49,7 @@ def execute_rule(rule, matched_words):
 def handle_action(action, words, last_action=None):
     if isinstance(action, str):
         api.send_string(action)
-    elif isinstance(action, types.FunctionType):
+    elif isinstance(action, (types.FunctionType, types.MethodType)):
         action(words)
     elif isinstance(action, actions.FuncWithArgs):
         if action.include_words:

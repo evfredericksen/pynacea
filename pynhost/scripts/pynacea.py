@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+
 import time
 import logging
 from pynhost import utilities
@@ -24,7 +25,6 @@ def main():
                         len(c.remaining_words) != 1)
                     c.remaining_words = c.remaining_words[1:]
         time.sleep(.1)
-
 
 if __name__ == '__main__':
     main()

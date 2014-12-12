@@ -27,6 +27,7 @@ setup(
 		'pynhost': 'pynhost',
 	},
 	install_requires=[],
+	data_files=[('/etc', ['config.ini'])],
 	scripts = ['scripts/pynacea.py'],
 	include_package_data = True,
 	long_description = '''\

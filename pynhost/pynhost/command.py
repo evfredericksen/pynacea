@@ -72,26 +72,3 @@ class Command:
                 api.send_string(result)
             else:
                 self.execute_rule(result)
-
-
-
-
-
-
-
-
-
-
-# self.actions.pop()
-#             print(self.actions, self.previous_command.actions)
-#             if self.actions:
-#                 for result in self.actions:
-#                     self.handle_action(result, words)
-#             else:
-#                 if self.previous_command is not None:
-#                     self.actions = self.previous_command.actions
-#                     for result in self.actions:
-#                         self.handle_action(result, self.previous_command.words)
-#                 else:
-#                     logging.warning('No previous action found. '
-#                         'api.repeat_previous_action not called.')

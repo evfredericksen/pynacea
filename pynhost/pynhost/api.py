@@ -75,5 +75,5 @@ def mouse_click(button='left', direction='both', number='1'):
         else: return
         subprocess.call(['xdotool', command, '--repeat', number, button])
 
-def repeat_last_action():
-    raise NotImplementedError
+def repeat_previous_action():
+    pass

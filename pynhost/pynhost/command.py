@@ -2,15 +2,17 @@ import copy
 import subprocess
 import re
 import types
+import logging
 from pynhost import matching
 from pynhost import api
 from pynhost import actions
 
 class Command:
-    def __init__(self, words):
+    def __init__(self, words, previous_command):
         self.words = words
         self.remaining_words = words
-        self.results = []
+        self.previous_command = previous_command
+        self.results = [] # result can be a string or a Rule
 
     def get_matching_rule(self, gram_handler):
         proc = subprocess.check_output(['xdotool', 'getactivewindow', 'getwindowname'])
@@ -24,7 +26,6 @@ class Command:
                         if new:
                             rule = copy.deepcopy(rule)
                             rule.matching_words = new
-                            self.results.append(rule)
                             self.remaining_words = remaining
                             return rule
 
@@ -41,6 +42,8 @@ class Command:
     def handle_action(self, action, words, last_action=None):
         if isinstance(action, str):
             api.send_string(action)
+        elif action == api.repeat_previous_action:
+            self.handle_previous_results()
         elif isinstance(action, (types.FunctionType, types.MethodType)):
             action(words)
         elif isinstance(action, actions.FuncWithArgs):
@@ -54,3 +57,41 @@ class Command:
                 self.handle_action(last_action, words)
         else:
             raise TypeError('could not execute action {}'.format(action))
+
+    def handle_previous_results(self):
+        self.results.pop()
+        if not self.results:
+            if self.previous_command is not None:
+                self.results = self.previous_command.results
+            else:
+                logging.warning('No previous action found. '
+                    'api.repeat_previous_action not called.')
+                return
+        for result in self.results:
+            if isinstance(result, str):
+                api.send_string(result)
+            else:
+                self.execute_rule(result)
+
+
+
+
+
+
+
+
+
+
+# self.actions.pop()
+#             print(self.actions, self.previous_command.actions)
+#             if self.actions:
+#                 for result in self.actions:
+#                     self.handle_action(result, words)
+#             else:
+#                 if self.previous_command is not None:
+#                     self.actions = self.previous_command.actions
+#                     for result in self.actions:
+#                         self.handle_action(result, self.previous_command.words)
+#                 else:
+#                     logging.warning('No previous action found. '
+#                         'api.repeat_previous_action not called.')

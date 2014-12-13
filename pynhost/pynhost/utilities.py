@@ -7,7 +7,6 @@ import sys
 import pynhost
 from pynhost import constants
 
-
 def transcribe_line(key_inputs, space=True):
     for key in key_inputs:
         if len(key) == 1:

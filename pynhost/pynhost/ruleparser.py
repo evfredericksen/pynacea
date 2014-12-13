@@ -24,10 +24,11 @@ class RulePiece:
         return '<RulePiece {}>'.format(self.mode)
 
 class Rule:
-    def __init__(self, raw_text, dictionary=None, actions=None):
+    def __init__(self, raw_text, dictionary=None, actions=None, grammar=None):
         self.actions = actions
         self.raw_text = raw_text
         self.pieces = parse(raw_text)
+        self.grammar = grammar
         self.dictionary = dictionary
         self.matching_words = None
 

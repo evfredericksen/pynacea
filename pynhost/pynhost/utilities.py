@@ -1,5 +1,6 @@
 import subprocess
 import configparser
+import argparse
 import os
 import re
 import sys
@@ -14,7 +15,7 @@ def transcribe_line(key_inputs, space=True):
         else:
             subprocess.call(['xdotool', 'key', '--delay', '0ms', key])
     if space:
-        subprocess.call(['xdotool', 'key', '--delay', '0ms', constants.XDOTOOL_MAP[' ']])
+        subprocess.call(['xdotool', 'key', '--delay', '0ms', '0x0020'])
 
 def get_buffer_lines(buffer_path):
     files = sorted([f for f in os.listdir(buffer_path) if not os.path.isdir(f) and re.match(r'o\d+$', f)])
@@ -72,4 +73,33 @@ def save_config_setting(title, setting, value):
     config.read(constants.CONFIG_PATH)
     config[title][setting] = value
     with open(constants.CONFIG_PATH, 'w') as configfile:
-        config.write(configfile) 
+        config.write(configfile)
+
+def save_cl_args():
+    cl_arg_namespace = get_cl_args()
+    for arg in cl_arg_namespace._get_kwargs():
+        if arg[1] is not None:
+            value = arg[1]
+            if arg[0] == 'logging_level':
+                save_config_setting('logging', 'logging_level', value)
+            elif arg[0] == 'logging_file':
+                save_config_setting('logging', 'logging_file', value)
+
+def get_cl_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--logging_file", help="Log file path for Pynacea",
+        default=None)
+    parser.add_argument("--logging_level", help="Logging level for Pynacea")
+    return parser.parse_args()
+
+def get_logging_config():
+    try:
+        log_file = get_config_setting('logging', 'logging_file')
+        log_level = get_config_setting('logging', 'logging_level')
+        if log_file.lower() == 'default':
+            log_file = constants.DEFAULT_LOGGING_FILE
+        if log_level.lower() in constants.LOGGING_LEVELS:
+            log_level = constants.LOGGING_LEVELS[log_level.lower()]
+        return log_file, int(log_level)
+    except:
+        return None, None

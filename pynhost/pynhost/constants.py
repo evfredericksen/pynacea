@@ -1,6 +1,10 @@
 import os
+import logging
+import pynhost
 
-CONFIG_PATH = os.path.join('usr', 'local', 'etc', 'config.ini')
+DEFAULT_LOGGING_FILE = os.path.join(os.path.dirname(pynhost.__file__), 'logs', 'pynacea.log')
+
+CONFIG_PATH = os.path.join(os.path.sep, 'usr', 'local', 'etc', 'pynhost.ini')
 
 CONFIG_FILE = 'settings.ini'
 
@@ -37,4 +41,15 @@ HOMONYMS = {
     'shell': ['shall'],
     'sell': ['sale', 'cell'],
     'lend': ['land'],
+}
+
+LOGGING_LEVELS = {
+    'off': logging.NOTSET,
+    'notset': logging.NOTSET,
+    'debug': logging.DEBUG,
+    'on': logging.INFO,
+    'info': logging.INFO,
+    'warning': logging.WARNING,
+    'error': logging.ERROR,
+    'critical': logging.CRITICAL,
 }

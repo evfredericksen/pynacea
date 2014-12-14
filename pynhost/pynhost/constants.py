@@ -8,6 +8,22 @@ CONFIG_PATH = os.path.join(os.path.sep, 'usr', 'local', 'etc', 'pynhost.ini')
 
 CONFIG_FILE = 'settings.ini'
 
+KEY_REPLACE_MAP = {
+    'tab': 'Tab',
+    'escape': 'Escape',
+    'enter': 'Return',
+    'up': 'Up',
+    'right': 'Right',
+    'down': 'Down',
+    'left': 'Left',
+    'end': 'End',
+    'del': 'Delete',
+    'delete': 'Delete',
+    'backspace': 'BackSpace',
+    'pageup': 'PageUp',
+    'pagedown': 'PageDown',
+}
+
 NUMBERS_MAP = {
 	'zero': '0',
 	'one': '1',

@@ -42,7 +42,7 @@ class Command:
     def handle_action(self, action, words, last_action=None):
         if isinstance(action, str):
             api.send_string(action)
-        elif action == api.repeat_previous_action:
+        elif action == actions.RepeatPreviousAction:
             self.handle_previous_results()
         elif isinstance(action, (types.FunctionType, types.MethodType)):
             action(words)
@@ -67,8 +67,10 @@ class Command:
                 logging.warning('No previous action found. '
                     'api.repeat_previous_action not called.')
                 return
-        for result in self.results:
+        for i, result in enumerate(self.results, start=1):
             if isinstance(result, str):
                 api.send_string(result)
+                if i != len(self.results):
+                    api.send_string(' ')
             else:
                 self.execute_rule(result)

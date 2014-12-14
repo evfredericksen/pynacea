@@ -18,3 +18,7 @@ class Words:
             return words[start:stop]
         else:
             return words[start]
+
+class RepeatPreviousAction:
+    def __init__(self):
+        pass

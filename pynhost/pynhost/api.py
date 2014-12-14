@@ -2,21 +2,6 @@ import subprocess
 import sys
 from pynhost import utilities
 
-REPLACE_DICT = {
-    'tab': 'Tab',
-    'escape': 'Escape',
-    'enter': 'Return',
-    'up': 'Up',
-    'right': 'Right',
-    'down': 'Down',
-    'left': 'Left',
-    'end': 'End',
-    'delete': 'Delete',
-    'backspace': 'BackSpace',
-    'pageup': 'PageUp',
-    'pagedown': 'PageDown',
-}
-
 def send_string(string_to_send):
     split_string = utilities.split_send_string(string_to_send)
     chars = []
@@ -32,7 +17,7 @@ def send_string(string_to_send):
                 special_mode = True
         elif group[0] not in '{}':
             if special_mode:
-                for k, v in REPLACE_DICT.items():
+                for k, v in constants.KEY_REPLACE_MAP.items():
                     group = group.replace(k, v)
 
                 chars.append(group)

@@ -58,10 +58,7 @@ def words_match_rule(rule, words):
 def words_match_piece(piece, rule_matcher):
     if piece.mode == 'special':
         assert len(piece.children) == 1
-        return check_special(piece, rule_matcher)
-    elif piece.mode == 'dict':
-        assert not piece.children
-        return check_dict(piece, rule_matcher)            
+        return check_special(piece, rule_matcher)           
     buff = set()
     rule_matcher.take_snapshot()
     for child in piece.children:
@@ -117,21 +114,6 @@ def check_special(piece, rule_matcher):
     elif len(tag) > 4 and tag[:4] == 'hom_':
        return check_homonym(tag, rule_matcher)
     assert False 
-    
-def check_dict(piece, rule_matcher):
-    for k, v in rule_matcher.rule.dictionary.items():
-        key_split = k.split(' ')
-        for i, key_w in enumerate(key_split):
-            try:
-                if key_w != rule_matcher.remaining_words[i]:
-                    break
-            except IndexError:
-                break
-        else:
-            rule_matcher.new_words.append(v)
-            rule_matcher.remaining_words = rule_matcher.remaining_words[len(key_split):]
-            return True
-    return False 
 
 def check_homonym(tag, rule_matcher):
     if rule_matcher.remaining_words:

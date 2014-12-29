@@ -220,30 +220,6 @@ class TestRuleMatching(unittest.TestCase):
         words = 'cat'.split(' ')
         self.assertEqual(matching.words_match_rule(rule, words), ([], []))
 
-    def test_words_match_rule_mix2(self):
-        d = {'double': 'check'}
-        rule = ruleparser.Rule('[(<hom_sell> | kill | cut | copy)] {} [<num>]', d)
-        words = 'cut'.split(' ')
-        self.assertEqual(matching.words_match_rule(rule, words), ([], []))
-
-    def test_words_match_rule_dict1(self):
-        d = {'double': 'check'}
-        rule = ruleparser.Rule('{}', d)
-        words = 'double'.split(' ')
-        self.assertEqual(matching.words_match_rule(rule, words), (['check'], []))
-         
-    def test_words_match_rule_dict2(self):
-        d = {'double': 'check'}
-        rule = ruleparser.Rule('hello {}', d)
-        words = 'double'.split(' ')
-        self.assertEqual(matching.words_match_rule(rule, words), ([], []))
-
-    def test_words_match_rule_dict3(self):
-        d = {'double': 'check', 'book': 'spark'}
-        rule = ruleparser.Rule('{} hello {}', d)
-        words = 'book hello double'.split(' ')
-        self.assertEqual(matching.words_match_rule(rule, words), (['spark', 'hello', 'check'], []))
-
 
 if __name__ == '__main__':
     unittest.main()

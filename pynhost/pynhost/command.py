@@ -6,6 +6,7 @@ import logging
 from pynhost import matching
 from pynhost import api
 from pynhost import actions
+from pynhost import dynamic
 
 class Command:
     def __init__(self, words, previous_command):
@@ -31,30 +32,26 @@ class Command:
 
     def execute_rule(self, rule):
         if not isinstance(rule.actions, list):
-            self.handle_action(rule.actions, rule.matching_words)
+            self.handle_action(rule.actions, rule)
             return
         for i, piece in enumerate(rule.actions):
             last_action = None
             if i > 0:
                 last_action = rule.actions[i - 1]
-            self.handle_action(piece, rule.matching_words, last_action)
+            self.handle_action(piece, rule, last_action)
 
-    def handle_action(self, action, words, last_action=None):
+    def handle_action(self, action, rule, last_action=None):
+        if isinstance(action, dynamic.DynamicObject):
+            action = action.evaluate(rule)
         if isinstance(action, str):
             api.send_string(action)
-        elif action == actions.RepeatPreviousAction:
+        elif action == api.repeat_previous_action:
             self.handle_previous_results()
         elif isinstance(action, (types.FunctionType, types.MethodType)):
-            action(words)
-        elif isinstance(action, actions.FuncWithArgs):
-            if action.include_words:
-                action.args.insert(0, words)
-            action.func(*action.args, **kwargs)
-        elif isinstance(action, actions.Words):
-            api.send_string(action.get_words(words))
+            action(rule.matching_words)
         elif isinstance(action, int) and last_action is not None:
             for i in range(action):
-                self.handle_action(last_action, words)
+                self.handle_action(last_action, rule)
         else:
             raise TypeError('could not execute action {}'.format(action))
 
@@ -67,10 +64,8 @@ class Command:
                 logging.warning('No previous action found. '
                     'api.repeat_previous_action not called.')
                 return
-        for i, result in enumerate(self.results, start=1):
+        for result in self.results:
             if isinstance(result, str):
                 api.send_string(result)
-                if i != len(self.results):
-                    api.send_string(' ')
             else:
                 self.execute_rule(result)

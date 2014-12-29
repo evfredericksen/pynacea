@@ -1,3 +1,7 @@
+class Action:
+    def __init__(self):
+        pass
+
 class FuncWithArgs:
     def __init__(self, func, args, include_words=True, kwargs=None):
         self.func = func
@@ -18,6 +22,13 @@ class Words:
             return words[start:stop]
         else:
             return words[start]
+
+class Num(Action):
+    def __init__(self, index=0):
+        self.index = index
+
+    def execute(self, words):
+        pass
 
 class RepeatPreviousAction:
     def __init__(self):

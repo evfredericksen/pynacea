@@ -102,3 +102,15 @@ def get_logging_config():
         return log_file, int(log_level)
     except:
         return None, None
+
+def get_tags(pieces, tag_name, matches=None):
+    if matches is None:
+        matches = []
+    for piece in pieces:
+        if isinstance(piece, str):
+            continue
+        if piece.mode == 'num':
+            matches.append(piece.current_text)
+        else:
+            get_tags(piece.children, tag_name, matches)
+    return matches

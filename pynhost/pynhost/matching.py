@@ -90,7 +90,7 @@ def check_special(piece, rule_matcher):
             words[0] = constants.NUMBERS_MAP[words[0]]
         try:
             conv = float(words[0])
-            rule_matcher.add(words[0])
+            rule_matcher.add(words[0], piece)
             return True
         except (ValueError, TypeError, IndexError):
             return False
@@ -98,26 +98,26 @@ def check_special(piece, rule_matcher):
         if tag[-1] == '+':
             num = int(tag[:-1])
             if len(words) >= num:
-                rule_matcher.add(words)
+                rule_matcher.add(words, piece)
                 return True
             return False
         elif tag[-1] == '-':
             num = int(tag[:-1])
-            rule_matcher.add(words[:num])
+            rule_matcher.add(words[:num], piece)
             return True
         elif tag.isdigit():
             num = int(tag)
             if len(words) < num:
                 return False
-            rule_matcher.add(words[:num])
+            rule_matcher.add(words[:num], piece)
             return True
     elif len(tag) > 4 and tag[:4] == 'hom_':
-       return check_homonym(tag, rule_matcher)
+       return check_homonym(piece, rule_matcher)
     assert False 
 
-def check_homonym(tag, rule_matcher):
+def check_homonym(piece, rule_matcher):
     if rule_matcher.remaining_words:
-        tag = tag[4:].lower()
+        tag = piece.children[0][4:].lower()
         if tag in _homonyms.HOMONYMS and rule_matcher.remaining_words[0].lower() in _homonyms.HOMONYMS[tag]:
             rule_matcher.remaining_words[0] = tag
         if rule_matcher.remaining_words[0].lower() == tag:

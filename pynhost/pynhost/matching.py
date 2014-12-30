@@ -6,19 +6,21 @@ from pynhost import constants
 from pynhost import utilities
 from pynhost import ruleparser
 
-class RuleMatcher:
+class RuleMatch:
     def __init__(self, words, rule):
         self.remaining_words = words
         self.new_words = []
-        self.rule = rule
+        self.rule = copy.deepcopy(rule)
         self.matches = collections.OrderedDict()
         self.snapshot = {'new words': None, 'remaining words': None, 'matches': None}
 
-    def add(self, words, piece=None):
+    def add(self, words, piece):
         if isinstance(words, str):
             self.new_words.append(words)
             self.remaining_words = self.remaining_words[1:]
+            self.matches[piece] = words
             return
+        self.matches[piece] = ' '.join(words)
         self.new_words.extend(words)
         self.remaining_words = self.remaining_words[len(words):]
 
@@ -33,95 +35,102 @@ class RuleMatcher:
         self.matches = self.snapshot['matches']
         self.snapshot = {'new words': None, 'remaining words': None, 'matches': None}
 
-
-def words_match_rule(rule, words):
+def get_rule_match(rule, words):
     words = [word.lower() for word in words]
-    rule_matcher = RuleMatcher(words, rule)
+    rule_match = RuleMatch(words, rule)
     results = []
     for piece in rule.pieces:
         if isinstance(piece, str):
-            if rule_matcher.remaining_words and piece.lower() == rule_matcher.remaining_words[0]:
-                rule_matcher.add(rule_matcher.remaining_words[0])
+            if rule_match.remaining_words and piece.lower() == rule_match.remaining_words[0]:
+                rule_match.add(rule_match.remaining_words[0], piece)
             else:
-                return [], []
+                return
         else:
-            result = words_match_piece(piece, rule_matcher)
+            result = words_match_piece(piece, rule_match)
             results.append(result)
             if result is False:
-                return [], []
+                return
     # optional pieces return None if they do not match
     if results.count(None) == len(rule.pieces):
-        return [], []
-    print(rule_matcher.matches)
-    return [piece for piece in rule_matcher.new_words if piece is not None], rule_matcher.remaining_words
+        return
+    rule_match.rule.matching_words = [piece for piece in rule_match.new_words if piece is not None]
+    return rule_match
 
-def words_match_piece(piece, rule_matcher):
+def words_match_piece(piece, rule_match):
     if piece.mode == 'special':
         assert len(piece.children) == 1
-        return check_special(piece, rule_matcher)           
+        return check_special(piece, rule_match)           
     buff = set()
-    rule_matcher.take_snapshot()
+    rule_match.take_snapshot()
     for child in piece.children:
         if isinstance(child, str):
-            if not rule_matcher.remaining_words or rule_matcher.remaining_words[0] != child:
+            if not rule_match.remaining_words or rule_match.remaining_words[0] != child:
                 buff.add(False)
             else:
                 buff.add(True)
-                rule_matcher.add(child)
+                rule_match.add(child, child)
         elif isinstance(child, ruleparser.RulePiece):
-            buff.add(words_match_piece(child, rule_matcher))
+            buff.add(words_match_piece(child, rule_match))
         elif isinstance(child, ruleparser.OrToken):
             if buff and not False in buff and not (None in buff and len(buff) == 1):
                 return True
             else:
-                rule_matcher.revert_to_snapshot()
+                rule_match.revert_to_snapshot()
                 buff.clear()
     if buff and not False in buff and not (None in buff and len(buff) == 1):
         return True
-    rule_matcher.revert_to_snapshot()
+    rule_match.revert_to_snapshot()
     if piece.mode != 'optional':
         return False
 
-def check_special(piece, rule_matcher):
+def check_special(piece, rule_match):
     tag = piece.children[0]
-    words = rule_matcher.remaining_words
     if tag == 'num':
-        if words and words[0] in constants.NUMBERS_MAP:
-            words[0] = constants.NUMBERS_MAP[words[0]]
-        try:
-            conv = float(words[0])
-            rule_matcher.add(words[0], piece)
-            return True
-        except (ValueError, TypeError, IndexError):
-            return False
+        return check_num(piece, rule_match)
     elif tag[:-1].isdigit() or (len(tag) == 1 and tag.isdigit()):
-        if tag[-1] == '+':
-            num = int(tag[:-1])
-            if len(words) >= num:
-                rule_matcher.add(words, piece)
-                return True
-            return False
-        elif tag[-1] == '-':
-            num = int(tag[:-1])
-            rule_matcher.add(words[:num], piece)
-            return True
-        elif tag.isdigit():
-            num = int(tag)
-            if len(words) < num:
-                return False
-            rule_matcher.add(words[:num], piece)
-            return True
+        return check_num_range(piece, rule_match)
     elif len(tag) > 4 and tag[:4] == 'hom_':
-       return check_homonym(piece, rule_matcher)
+       return check_homonym(piece, rule_match)
     assert False 
 
-def check_homonym(piece, rule_matcher):
-    if rule_matcher.remaining_words:
+def check_num(piece, rule_match):
+    words = rule_match.remaining_words
+    if words and words[0] in constants.NUMBERS_MAP:
+        words[0] = constants.NUMBERS_MAP[words[0]]
+    try:
+        conv = float(words[0])
+        rule_match.add(words[0], piece)
+        return True
+    except (ValueError, TypeError, IndexError):
+        return False
+
+def check_num_range(piece, rule_match):
+    tag = piece.children[0]
+    words = rule_match.remaining_words
+    if tag[-1] == '+':
+        num = int(tag[:-1])
+        if len(words) >= num:
+            rule_match.add(words, piece)
+            return True
+        return False
+    elif tag[-1] == '-':
+        num = int(tag[:-1])
+        rule_match.add(words[:num], piece)
+        return True
+    elif tag.isdigit():
+        num = int(tag)
+        if len(words) < num:
+            return False
+        rule_match.add(words[:num], piece)
+        return True       
+
+def check_homonym(piece, rule_match):
+    if rule_match.remaining_words:
         tag = piece.children[0][4:].lower()
-        if tag in _homonyms.HOMONYMS and rule_matcher.remaining_words[0].lower() in _homonyms.HOMONYMS[tag]:
-            rule_matcher.remaining_words[0] = tag
-        if rule_matcher.remaining_words[0].lower() == tag:
-            rule_matcher.add(tag)
+        if tag in _homonyms.HOMONYMS and rule_match.remaining_words[0].lower() in _homonyms.HOMONYMS[tag]:
+            rule_match.remaining_words[0] = tag
+        if rule_match.remaining_words[0].lower() == tag:
+            rule_match.add(tag, piece)
             return True
     return False
     

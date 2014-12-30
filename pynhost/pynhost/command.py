@@ -13,7 +13,7 @@ class Command:
         self.words = words
         self.remaining_words = words
         self.previous_command = previous_command
-        self.results = [] # result can be a string or a Rule
+        self.results = [] # result can be a string or a RuleMatch
 
     def get_matching_rule(self, gram_handler):
         proc = subprocess.check_output(['xdotool', 'getactivewindow', 'getwindowname'])
@@ -23,35 +23,33 @@ class Command:
             if len(split_name) == 3 or re.search(split_name[2].lower(), window_name.lower()):
                 for grammar in [g for g in gram_handler.modules[module_obj] if g._is_loaded()]:
                     for rule in grammar.rules:
-                        new, remaining = matching.words_match_rule(rule, self.remaining_words)
-                        if new:
-                            rule = copy.deepcopy(rule)
-                            rule.matching_words = new
-                            self.remaining_words = remaining
-                            return rule
+                        rule_match = matching.get_rule_match(rule, self.remaining_words)
+                        if rule_match is not None:
+                            self.remaining_words = rule_match.remaining_words
+                            return rule_match
 
-    def execute_rule(self, rule):
-        if not isinstance(rule.actions, list):
-            self.handle_action(rule.actions, rule)
+    def execute_rule_match(self, rule_match):
+        if not isinstance(rule_match.rule.actions, list):
+            self.handle_action(rule_match.rule.actions, rule_match)
             return
-        for i, piece in enumerate(rule.actions):
+        for i, piece in enumerate(rule_match.rule.actions):
             last_action = None
             if i > 0:
-                last_action = rule.actions[i - 1]
-            self.handle_action(piece, rule, last_action)
+                last_action = rule_match.rule.actions[i - 1]
+            self.handle_action(piece, rule_match, last_action)
 
-    def handle_action(self, action, rule, last_action=None):
+    def handle_action(self, action, rule_match, last_action=None):
         if isinstance(action, dynamic.DynamicObject):
-            action = action.evaluate(rule)
+            action = action.evaluate(rule_match)
         if isinstance(action, str):
             api.send_string(action)
         elif action == api.repeat_previous_action:
             self.handle_previous_results()
         elif isinstance(action, (types.FunctionType, types.MethodType)):
-            action(rule.matching_words)
+            action(rule_match.rule.matching_words)
         elif isinstance(action, int) and last_action is not None:
             for i in range(action):
-                self.handle_action(last_action, rule)
+                self.handle_action(last_action, rule_match)
         else:
             raise TypeError('could not execute action {}'.format(action))
 

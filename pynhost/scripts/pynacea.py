@@ -26,12 +26,13 @@ def main():
                 c = command.Command(line.split(' '), previous_command)
                 previous_command = c
                 while c.remaining_words:
-                    rule = c.get_matching_rule(gram_handler)
-                    if rule is not None:
+                    rule_match = c.get_matching_rule(gram_handler)
+                    if rule_match is not None:
                         logging.info('Input "{}" matched rule "{}" in {}'.format(
-                            ' '.join(rule.matching_words), rule.raw_text, rule.grammar))
-                        c.results.append(rule)
-                        c.execute_rule(rule)
+                            ' '.join(rule_match.rule.matching_words),
+                            rule_match.rule.raw_text, rule_match.rule.grammar))
+                        c.results.append(rule_match)
+                        c.execute_rule_match(rule_match)
                     else:
                         utilities.transcribe_line(list(c.remaining_words[0]),
                             len(c.remaining_words) != 1)

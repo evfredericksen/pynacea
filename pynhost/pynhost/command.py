@@ -40,11 +40,11 @@ class Command:
 
     def handle_action(self, action, rule_match, last_action=None):
         if isinstance(action, dynamic.DynamicObject):
+            if isinstance(action, dynamic.RepeatPreviousAction):
+                return action.evaluate(self)
             action = action.evaluate(rule_match)
         if isinstance(action, str):
             api.send_string(action)
-        elif action == api.repeat_previous_action:
-            self.handle_previous_results()
         elif isinstance(action, (types.FunctionType, types.MethodType)):
             action(rule_match.rule.matching_words)
         elif isinstance(action, int) and last_action is not None:
@@ -52,18 +52,3 @@ class Command:
                 self.handle_action(last_action, rule_match)
         else:
             raise TypeError('could not execute action {}'.format(action))
-
-    def handle_previous_results(self):
-        self.results.pop()
-        if not self.results:
-            if self.previous_command is not None:
-                self.results = self.previous_command.results
-            else:
-                logging.warning('No previous action found. '
-                    'api.repeat_previous_action not called.')
-                return
-        for result in self.results:
-            if isinstance(result, str):
-                api.send_string(result)
-            else:
-                self.execute_rule(result)

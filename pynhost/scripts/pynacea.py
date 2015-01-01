@@ -6,7 +6,6 @@ import logging
 from pynhost import utilities
 from pynhost import grammarhandler
 from pynhost import command
-from pynhost import dynamic
 
 def main():
     try:

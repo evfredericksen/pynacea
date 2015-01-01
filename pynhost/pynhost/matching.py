@@ -5,7 +5,6 @@ from pynhost.grammars import _homonyms
 from pynhost import constants
 from pynhost import utilities
 from pynhost import ruleparser
-from pynhost import dynamic
 
 class RuleMatch:
     def __init__(self, words, rule):

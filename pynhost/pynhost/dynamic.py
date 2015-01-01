@@ -3,28 +3,34 @@ from pynhost import utilities
 from pynhost import api
 
 
-class DynamicObject:
+class DynamicAction:
     def __init__(self):
         pass
 
     def evaluate(self, rule_match):
         pass
 
-class Num(DynamicObject):
+class Num(DynamicAction):
     def __init__(self, index=0, integer=True):
         self.index = index
         self.integer = integer
+        self.change = 0
 
     def evaluate(self, rule_match):
         nums = []
         for piece, num in rule_match.matched_words.items():
             if not isinstance(piece, str) and piece.children[0] == 'num':
                 nums.append(num)
+        num = int(nums[self.index]) + self.change
         if self.integer:
-            return int(nums[self.index])
-        return nums[self.index]
+            return num
+        return str(num)
 
-class RepeatPreviousAction(DynamicObject):
+    def add(self, n):
+        self.change += n
+        return self
+
+class RepeatPreviousAction(DynamicAction):
     def __init__(self):
         pass
 

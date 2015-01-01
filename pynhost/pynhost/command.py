@@ -62,7 +62,7 @@ class Command:
             self.handle_action(piece, rule_match, last_action)
 
     def handle_action(self, action, rule_match, last_action=None):
-        if isinstance(action, dynamic.DynamicObject):
+        if isinstance(action, dynamic.DynamicAction):
             if isinstance(action, dynamic.RepeatPreviousAction):
                 return action.evaluate(self)
             action = action.evaluate(rule_match)

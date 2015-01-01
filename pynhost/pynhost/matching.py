@@ -5,35 +5,31 @@ from pynhost.grammars import _homonyms
 from pynhost import constants
 from pynhost import utilities
 from pynhost import ruleparser
+from pynhost import dynamic
 
 class RuleMatch:
     def __init__(self, words, rule):
         self.remaining_words = words
-        self.new_words = []
         self.rule = copy.deepcopy(rule)
-        self.matches = collections.OrderedDict()
-        self.snapshot = {'new words': None, 'remaining words': None, 'matches': None}
+        self.matched_words = collections.OrderedDict()
+        self.snapshot = {'remaining words': None, 'matched words': None}
 
     def add(self, words, piece):
         if isinstance(words, str):
-            self.new_words.append(words)
             self.remaining_words = self.remaining_words[1:]
-            self.matches[piece] = words
+            self.matched_words[piece] = words
             return
-        self.matches[piece] = ' '.join(words)
-        self.new_words.extend(words)
+        self.matched_words[piece] = ' '.join(words)
         self.remaining_words = self.remaining_words[len(words):]
 
     def take_snapshot(self):
-        self.snapshot['new words'] = copy.deepcopy(self.new_words)
         self.snapshot['remaining words'] = copy.deepcopy(self.remaining_words)
-        self.snapshot['matches'] = copy.deepcopy(self.matches)
+        self.snapshot['matched words'] = copy.deepcopy(self.matched_words)
 
     def revert_to_snapshot(self):
-        self.new_words = self.snapshot['new words']
         self.remaining_words = self.snapshot['remaining words']
-        self.matches = self.snapshot['matches']
-        self.snapshot = {'new words': None, 'remaining words': None, 'matches': None}
+        self.matched_words = self.snapshot['matched words']
+        self.snapshot = {'remaining words': None, 'matched words': None}
 
 def get_rule_match(rule, words):
     words = [word.lower() for word in words]
@@ -53,7 +49,6 @@ def get_rule_match(rule, words):
     # optional pieces return None if they do not match
     if results.count(None) == len(rule.pieces):
         return
-    rule_match.rule.matching_words = [piece for piece in rule_match.new_words if piece is not None]
     return rule_match
 
 def words_match_piece(piece, rule_match):

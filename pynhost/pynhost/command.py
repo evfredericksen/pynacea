@@ -1,11 +1,12 @@
 import copy
 import subprocess
 import re
+import sys
 import types
 import logging
 from pynhost import matching
 from pynhost import api
-from pynhost import actions
+from pynhost import utilities
 from pynhost import dynamic
 
 class Command:
@@ -15,7 +16,29 @@ class Command:
         self.previous_command = previous_command
         self.results = [] # result can be a string or a RuleMatch
 
-    def get_matching_rule(self, gram_handler):
+    def set_results(self, gram_handler):
+        while self.remaining_words:
+            rule_match = self.get_rule_match(gram_handler)
+            if rule_match is not None:
+
+                self.results.append(rule_match)
+                self.remaining_words = rule_match.remaining_words
+            else:
+                self.results.append(self.remaining_words[0])
+                self.remaining_words = self.remaining_words[1:]
+
+    def do_results(self):
+        for result in self.results:
+            if isinstance(result, matching.RuleMatch):
+                logging.info('Input "{}" matched rule "{}" in {}'.format(
+                    ' '.join(list(result.matched_words.values())),
+                    result.rule.raw_text, result.rule.grammar))
+                self.execute_rule_match(result)
+            else:
+                utilities.transcribe_line(result, len(self.remaining_words) != 1)
+                logging.debug('Transcribed word "{}"'.format(result))
+
+    def get_rule_match(self, gram_handler):
         proc = subprocess.check_output(['xdotool', 'getactivewindow', 'getwindowname'])
         window_name = proc.decode('utf8').rstrip('\n')
         for module_obj in gram_handler.modules:
@@ -23,9 +46,9 @@ class Command:
             if len(split_name) == 3 or re.search(split_name[2].lower(), window_name.lower()):
                 for grammar in [g for g in gram_handler.modules[module_obj] if g._is_loaded()]:
                     for rule in grammar.rules:
+                        rule = copy.deepcopy(rule)
                         rule_match = matching.get_rule_match(rule, self.remaining_words)
                         if rule_match is not None:
-                            self.remaining_words = rule_match.remaining_words
                             return rule_match
 
     def execute_rule_match(self, rule_match):
@@ -46,9 +69,19 @@ class Command:
         if isinstance(action, str):
             api.send_string(action)
         elif isinstance(action, (types.FunctionType, types.MethodType)):
-            action(rule_match.rule.matching_words)
+            action(list(rule_match.matched_words.values()))
         elif isinstance(action, int) and last_action is not None:
             for i in range(action):
                 self.handle_action(last_action, rule_match)
         else:
             raise TypeError('could not execute action {}'.format(action))
+
+    def has_repeat_action(self):
+        for result in self.results:
+            try:
+                for action in result.rule.actions:
+                    if isinstance(action, dynamic.RepeatPreviousAction):
+                        return True
+            except AttributeError:
+                pass
+        return False

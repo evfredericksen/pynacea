@@ -1,4 +1,5 @@
 from pynhost import utilities
+from pynhost import dynamic
 
 OPENING_TOKEN_DICT = {
     '(': 'list',
@@ -30,7 +31,12 @@ class Rule:
         self.pieces = parse(raw_text)
         self.grammar = grammar
         self.dictionary = dictionary
-        self.matching_words = None
+
+    def contains_repeat_action(self):
+        for action in self.actions:
+            if isinstance(action, dynamic.RepeatPreviousAction):
+                return True
+        return False
 
     def __str__(self):
         return '<Rule: {}>'.format(self.raw_text)

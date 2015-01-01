@@ -1,5 +1,7 @@
+import logging
 from pynhost import utilities
 from pynhost import api
+
 
 class DynamicObject:
     def __init__(self):
@@ -15,7 +17,7 @@ class Num(DynamicObject):
 
     def evaluate(self, rule_match):
         nums = []
-        for piece, num in rule_match.matches.items():
+        for piece, num in rule_match.matched_words.items():
             if not isinstance(piece, str) and piece.children[0] == 'num':
                 nums.append(num)
         if self.integer:
@@ -26,17 +28,13 @@ class RepeatPreviousAction(DynamicObject):
     def __init__(self):
         pass
 
-    def evaluate(self, command):
-        command.results.pop()
-        if not command.results:
-            if command.previous_command is not None:
-                command.results = command.previous_command.results
-            else:
-                logging.warning('No previous action found. '
-                    'api.repeat_previous_action not called.')
-                return
-        for result in command.results:
-            if isinstance(result, str):
-                api.send_string(result)
-            else:
-                command.execute_rule_match(result)
+    def evaluate(self, command):    
+        if command.previous_command is not None:
+            for result in command.previous_command.results:
+                if isinstance(result, str):
+                    api.send_string(result)
+                else:
+                    command.execute_rule_match(result)
+        else:
+            logging.warning('No previous action found. '
+            'api.repeat_previous_action not called.')

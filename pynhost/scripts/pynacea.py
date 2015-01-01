@@ -6,6 +6,7 @@ import logging
 from pynhost import utilities
 from pynhost import grammarhandler
 from pynhost import command
+from pynhost import dynamic
 
 def main():
     try:
@@ -23,22 +24,11 @@ def main():
             for line in lines:
                 logging.info('Received input "{}" at {}'.format(line,
                     time.strftime("%Y-%m-%d %H:%M:%S")))
-                c = command.Command(line.split(' '), previous_command)
-                previous_command = c
-                while c.remaining_words:
-                    rule_match = c.get_matching_rule(gram_handler)
-                    if rule_match is not None:
-                        logging.info('Input "{}" matched rule "{}" in {}'.format(
-                            ' '.join(rule_match.rule.matching_words),
-                            rule_match.rule.raw_text, rule_match.rule.grammar))
-                        c.results.append(rule_match)
-                        c.execute_rule_match(rule_match)
-                    else:
-                        utilities.transcribe_line(list(c.remaining_words[0]),
-                            len(c.remaining_words) != 1)
-                        logging.debug('Transcribed word "{}"'.format(c.remaining_words[0]))
-                        c.results.append(c.remaining_words[0])
-                        c.remaining_words = c.remaining_words[1:]
+                current_command = command.Command(line.split(' '), previous_command)
+                current_command.set_results(gram_handler)
+                if not current_command.has_repeat_action():
+                    previous_command = current_command
+                current_command.do_results()
             time.sleep(.1)
     except Exception as e:
         logging.exception(e)

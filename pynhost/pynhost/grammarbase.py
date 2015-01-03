@@ -1,4 +1,3 @@
-import inspect
 from pynhost import ruleparser
 
 class GrammarBase:

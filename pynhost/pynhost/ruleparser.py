@@ -26,17 +26,13 @@ class RulePiece:
 
 class Rule:
     def __init__(self, raw_text, dictionary=None, actions=None, grammar=None):
+        if not isinstance(actions, list):
+            actions = [actions]
         self.actions = actions
         self.raw_text = raw_text
         self.pieces = parse(raw_text)
         self.grammar = grammar
         self.dictionary = dictionary
-
-    def contains_repeat_action(self):
-        for action in self.actions:
-            if isinstance(action, dynamic.RepeatPreviousAction):
-                return True
-        return False
 
     def __str__(self):
         return '<Rule: {}>'.format(self.raw_text)

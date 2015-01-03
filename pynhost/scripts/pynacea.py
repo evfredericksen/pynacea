@@ -3,6 +3,7 @@
 import time
 import argparse
 import logging
+import collections
 from pynhost import utilities
 from pynhost import grammarhandler
 from pynhost import command
@@ -17,16 +18,16 @@ def main():
         gram_handler = grammarhandler.GrammarHandler()
         gram_handler.load_grammars()
         logging.info('Started listening at {}'.format(time.strftime("%Y-%m-%d %H:%M:%S")))
-        previous_command = None
+        command_history = collections.deque(maxlen=100)
         while True:
             lines = utilities.get_buffer_lines(shared_dir)
             for line in lines:
                 logging.info('Received input "{}" at {}'.format(line,
                     time.strftime("%Y-%m-%d %H:%M:%S")))
-                current_command = command.Command(line.split(' '), previous_command)
+                current_command = command.Command(line.split(' '), command_history)
                 current_command.set_results(gram_handler)
                 if not current_command.has_repeat_action():
-                    previous_command = current_command
+                    command_history.append(current_command)
                 current_command.do_results()
             time.sleep(.1)
     except Exception as e:

@@ -10,17 +10,16 @@ from pynhost import utilities
 from pynhost import dynamic
 
 class Command:
-    def __init__(self, words, previous_command):
+    def __init__(self, words, command_history):
         self.words = words
         self.remaining_words = words
-        self.previous_command = previous_command
+        self.command_history = command_history
         self.results = [] # result can be a string or a RuleMatch
 
     def set_results(self, gram_handler):
         while self.remaining_words:
             rule_match = self.get_rule_match(gram_handler)
             if rule_match is not None:
-
                 self.results.append(rule_match)
                 self.remaining_words = rule_match.remaining_words
             else:
@@ -52,9 +51,6 @@ class Command:
                             return rule_match
 
     def execute_rule_match(self, rule_match):
-        if not isinstance(rule_match.rule.actions, list):
-            self.handle_action(rule_match.rule.actions, rule_match)
-            return
         for i, piece in enumerate(rule_match.rule.actions):
             last_action = None
             if i > 0:
@@ -63,7 +59,7 @@ class Command:
 
     def handle_action(self, action, rule_match, last_action=None):
         if isinstance(action, dynamic.DynamicAction):
-            if isinstance(action, dynamic.RepeatPreviousAction):
+            if isinstance(action, dynamic.RepeatCommand):
                 return action.evaluate(self)
             action = action.evaluate(rule_match)
         if isinstance(action, str):
@@ -80,7 +76,7 @@ class Command:
         for result in self.results:
             try:
                 for action in result.rule.actions:
-                    if isinstance(action, dynamic.RepeatPreviousAction):
+                    if isinstance(action, dynamic.RepeatCommand):
                         return True
             except AttributeError:
                 pass

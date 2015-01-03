@@ -74,6 +74,3 @@ def mouse_click(button='left', direction='both', number='1'):
         elif direction == 'up': command = 'mouseup'
         else: return
         subprocess.call(['xdotool', command, '--repeat', number, button])
-
-def repeat_previous_action():
-    pass

@@ -1,6 +1,3 @@
-import logging
-import itertools
-from pynhost import utilities
 from pynhost import api
 
 

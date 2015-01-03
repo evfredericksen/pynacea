@@ -2,6 +2,7 @@ import subprocess
 import configparser
 import argparse
 import os
+import shutil
 import re
 import sys
 import pynhost
@@ -114,3 +115,11 @@ def get_tags(pieces, tag_name, matches=None):
         else:
             get_tags(piece.children, tag_name, matches)
     return matches
+
+    def clear_directory(dir_path):
+        for filename in os.listdir(dir_path):
+            file_path = os.path.join(dir_path, filename)
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)

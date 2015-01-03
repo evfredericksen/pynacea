@@ -15,6 +15,7 @@ def main():
         if None not in (log_file, log_level):
             logging.basicConfig(filename=log_file, level=log_level)
         shared_dir = utilities.get_shared_directory()
+        utilities.clear_directory(shared_dir)
         gram_handler = grammarhandler.GrammarHandler()
         gram_handler.load_grammars()
         logging.info('Started listening at {}'.format(time.strftime("%Y-%m-%d %H:%M:%S")))

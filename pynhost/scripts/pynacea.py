@@ -16,10 +16,10 @@ def main():
             logging.basicConfig(filename=log_file, level=log_level)
         shared_dir = utilities.get_shared_directory()
         utilities.clear_directory(shared_dir)
-        gram_handler = grammarhandler.GrammarHandler()
-        gram_handler.load_grammars()
-        logging.info('Started listening at {}'.format(time.strftime("%Y-%m-%d %H:%M:%S")))
         command_history = collections.deque(maxlen=100)
+        gram_handler = grammarhandler.GrammarHandler()
+        gram_handler.load_grammars(command_history)
+        logging.info('Started listening at {}'.format(time.strftime("%Y-%m-%d %H:%M:%S")))
         while True:
             lines = utilities.get_buffer_lines(shared_dir)
             for line in lines:

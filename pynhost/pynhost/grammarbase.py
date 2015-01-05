@@ -9,6 +9,9 @@ class GrammarBase:
     def _is_loaded(self):
         return True
 
+    def _load_rule(self, rule, actions):
+        pass
+
 def set_rules(grammar):
     for rule_text, actions in grammar.mapping.items():
         rule = ruleparser.Rule(rule_text, grammar.dictionary, actions, grammar)

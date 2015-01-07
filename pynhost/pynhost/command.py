@@ -22,11 +22,19 @@ class Command:
             if rule_match is not None:
                 self.results.append(rule_match)
                 self.remaining_words = rule_match.remaining_words
+                utilities.add_command_to_recording_macros(self, rule_match.rule.grammar.recording_macros)
+                # for name in rule_match.rule.grammar.recording_macros:
+                #     rule_match.rule.grammar.recording_macros[name].append(self)                                 
             else:
                 self.results.append(self.remaining_words[0])
+                for grammars in gram_handler.modules.values():
+                    for grammar in grammars:
+                        utilities.add_command_to_recording_macros(self, grammar.recording_macros)
+                        # for name in grammar.recording_macros:
+                        #     grammar.recording_macros[name].append(self)
                 self.remaining_words = self.remaining_words[1:]
 
-    def do_results(self):
+    def run(self):
         for result in self.results:
             if isinstance(result, matching.RuleMatch):
                 logging.info('Input "{}" matched rule "{}" in {}'.format(
@@ -45,7 +53,7 @@ class Command:
             if len(split_name) == 3 or re.search(split_name[2].lower(), window_name.lower()):
                 for grammar in [g for g in gram_handler.modules[module_obj] if g._is_loaded()]:
                     for rule in grammar.rules:
-                        rule = copy.deepcopy(rule)
+                        rule = copy.copy(rule)
                         rule_match = matching.get_rule_match(rule, self.remaining_words)
                         if rule_match is not None:
                             return rule_match
@@ -64,6 +72,8 @@ class Command:
             action = action.evaluate(rule_match)
         if isinstance(action, str):
             api.send_string(action)
+        elif isinstance(action, Command):
+            action.run()
         elif isinstance(action, (types.FunctionType, types.MethodType)):
             action(list(rule_match.matched_words.values()))
         elif isinstance(action, int) and last_action is not None:

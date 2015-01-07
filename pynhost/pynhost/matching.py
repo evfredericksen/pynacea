@@ -9,7 +9,7 @@ from pynhost import ruleparser
 class RuleMatch:
     def __init__(self, words, rule):
         self.remaining_words = words
-        self.rule = copy.deepcopy(rule)
+        self.rule = rule
         self.matched_words = collections.OrderedDict()
         self.snapshot = {'remaining words': None, 'matched words': None}
 

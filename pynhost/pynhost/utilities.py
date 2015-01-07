@@ -116,10 +116,15 @@ def get_tags(pieces, tag_name, matches=None):
             get_tags(piece.children, tag_name, matches)
     return matches
 
-    def clear_directory(dir_path):
-        for filename in os.listdir(dir_path):
-            file_path = os.path.join(dir_path, filename)
-            if os.path.isfile(file_path):
-                os.unlink(file_path)
-            elif os.path.isdir(file_path):
-                shutil.rmtree(file_path)
+def clear_directory(dir_path):
+    for filename in os.listdir(dir_path):
+        file_path = os.path.join(dir_path, filename)
+        if os.path.isfile(file_path):
+            os.unlink(file_path)
+        elif os.path.isdir(file_path):
+            shutil.rmtree(file_path)
+
+def add_command_to_recording_macros(command, recording_macros):
+    for name in recording_macros:
+        if not recording_macros[name] or recording_macros[name][-1] is not command:
+            recording_macros[name].append(command)

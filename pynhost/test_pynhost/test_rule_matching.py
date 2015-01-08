@@ -190,41 +190,48 @@ class TestRuleMatching(unittest.TestCase):
     #     words = 'hello dear leader how are you today'.split(' ')
     #     self.assertEqual(matching.words_match_rule(rule, words), (['hello', 'dear', 'leader', 'how', 'are', 'you', 'today'], []))
 
-    # def test_words_match_rule_any8(self):
-    #     rule = ruleparser.Rule('hello <3->')
-    #     words = 'hello dear leader'.split(' ')
-    #     self.assertEqual(matching.words_match_rule(rule, words), (['hello', 'dear', 'leader'], []))
+    def test_words_match_rule_any8(self):
+        rule = ruleparser.Rule('hello <3->')
+        words = 'hello dear leader'.split(' ')
+        self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), (['hello', 'dear', 'leader']))
 
-    # def test_words_match_rule_any9(self):
-    #     rule = ruleparser.Rule('word <1+>')
-    #     words = 'word'.split(' ')
-    #     self.assertEqual(matching.words_match_rule(rule, words), ([], []))
+    def test_words_match_rule_any9(self):
+        rule = ruleparser.Rule('word <1+>')
+        words = 'word'.split(' ')
+        self.assertIsNone(matching.get_rule_match(rule, words))
 
-    # def test_words_match_rule_any10(self):
-    #     rule = ruleparser.Rule('word <1->')
-    #     words = 'word'.split(' ')
-    #     self.assertEqual(matching.words_match_rule(rule, words), (['word'], []))
+    def test_words_match_rule_any10(self):
+        rule = ruleparser.Rule('word <1->')
+        words = 'word'.split(' ')
+        self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['word'])
 
-    # def test_words_match_rule_homonym1(self):
-    #     rule = ruleparser.Rule('hello <hom_line>')
-    #     words = 'hello line'.split(' ')
-    #     self.assertEqual(matching.words_match_rule(rule, words), (['hello', 'line'], []))
+    def test_words_match_rule_homonym1(self):
+        rule = ruleparser.Rule('hello <hom_line>')
+        words = 'hello line'.split(' ')
+        self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['hello', 'line'])
 
-    # def test_words_match_rule_mix1(self):
-    #     rule = ruleparser.Rule('(bend cat | cat)')
-    #     words = 'cat'.split(' ')
-    #     self.assertEqual(matching.words_match_rule(rule, words), (['cat'], []))
+    def test_words_match_rule_mix1(self):
+        rule = ruleparser.Rule('(bend cat | cat)')
+        words = 'cat'.split(' ')
+        self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['cat'])
         
-    # def test_words_match_rule_mix2(self):
-    #     rule = ruleparser.Rule('[<1>] test')
-    #     words = 'cat'.split(' ')
-    #     self.assertEqual(matching.words_match_rule(rule, words), ([], []))
+    def test_words_match_rule_mix2(self):
+        rule = ruleparser.Rule('[<1>] test')
+        words = 'cat'.split(' ')
+        self.assertIsNone(matching.get_rule_match(rule, words))
 
     def test_words_match_rule_mix3(self):
         rule = ruleparser.Rule('(camel | score | title | upper) <1+>')
         words = 'upper hello world'.split(' ')
-        # print(dir(
-        self.assertEqual(list(matching.get_rule_match(rule, words).matched_words.values()), ['upper', 'hello world'])
+        self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['upper', 'hello', 'world'])
+
+    def test_words_match_rule_dict1(self):
+        rule = ruleparser.Rule('{}')
+        rule.dictionary = {
+            'W.': '{left}',
+            }
+        words = 'W.'.split(' ')
+        self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['{left}'])
 
 
 if __name__ == '__main__':

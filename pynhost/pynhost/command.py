@@ -12,6 +12,7 @@ from pynhost import dynamic
 class Command:
     def __init__(self, words, command_history):
         self.words = words
+        print(words)
         self.remaining_words = words
         self.command_history = command_history
         self.results = [] # result can be a string or a RuleMatch

@@ -132,5 +132,6 @@ def add_command_to_recording_macros(command, recording_macros):
 def split_into_words(list_of_strings):
     words = []
     for string in list_of_strings:
-        words.extend(string.split(' '))
+        if string:
+            words.extend(string.split(' '))
     return words

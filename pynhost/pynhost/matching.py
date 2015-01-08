@@ -29,6 +29,9 @@ class RuleMatch:
         self.remaining_words = self.snapshot['remaining words']
         self.matched_words = self.snapshot['matched words']
 
+    def get_words(self):
+        return utilities.split_into_words(self.matched_words.values())
+
 def get_rule_match(rule, words):
     words = [word.lower() for word in words]
     rule_match = RuleMatch(words, rule)
@@ -84,7 +87,7 @@ def check_dict(piece, rule_match):
         key_split = k.split(' ')
         for i, key_w in enumerate(key_split):
             try:
-                if key_w != rule_match.remaining_words[i]:
+                if key_w.lower() != rule_match.remaining_words[i]:
                     break
             except IndexError:
                 break

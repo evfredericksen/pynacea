@@ -71,7 +71,8 @@ class Command:
         elif isinstance(action, Command):
             action.run()
         elif isinstance(action, (types.FunctionType, types.MethodType)):
-            action(list(rule_match.matched_words.values()))
+            words = utilities.split_into_words(list(rule_match.matched_words.values()))
+            action(words)
         elif isinstance(action, int) and last_action is not None:
             for i in range(action):
                 self.handle_action(last_action, rule_match)

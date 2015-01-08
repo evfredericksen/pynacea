@@ -128,3 +128,9 @@ def add_command_to_recording_macros(command, recording_macros):
     for name in recording_macros:
         if not recording_macros[name] or recording_macros[name][-1] is not command:
             recording_macros[name].append(command)
+
+def split_into_words(list_of_strings):
+    words = []
+    for string in list_of_strings:
+        words.extend(string.split(' '))
+    return words

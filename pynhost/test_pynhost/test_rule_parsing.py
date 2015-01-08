@@ -60,9 +60,6 @@ class TestRuleParsing(unittest.TestCase):
     def test_rule_parsing_nested2(self):
         teststr = 'range <num> [through <num> [step <num>]]'
         pieces = ruleparser.parse(teststr)
-        # print(pieces)
-        # print(pieces[2].children)
-        # print(pieces[2].children[2].children)
         self.assertEqual('range', pieces[0])   
         self.assertEqual('special', pieces[1].mode)
         self.assertEqual(['num'], pieces[1].children)
@@ -72,6 +69,21 @@ class TestRuleParsing(unittest.TestCase):
         # self.assertEqual(['num'], pieces[2].children[1].children)
         # self.assertEqual('optional', pieces[2].children[2].mode)
         # self.assertEqual('optional', pieces[2].children[2].mode)
+
+    def test_words_match_rule_mix3(self):
+        teststr = '(camel | score | title | upper) <1+>'
+        pieces = ruleparser.parse(teststr)
+        self.assertEqual(len(pieces), 2)
+        self.assertEqual('list', pieces[0].mode)   
+        self.assertEqual('special', pieces[1].mode)
+        indices = {
+            0: 'camel',
+            2: 'score',
+            4: 'title',
+            6: 'upper',
+        }
+        for k, v in indices.items():
+            self.assertEqual(pieces[0].children[k], v)
 
     def test_rule_parsing_nested3(self):
         teststr = 'range <num> [through <num> [step <num>]]'

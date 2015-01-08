@@ -28,7 +28,6 @@ class RuleMatch:
     def revert_to_snapshot(self):
         self.remaining_words = self.snapshot['remaining words']
         self.matched_words = self.snapshot['matched words']
-        self.snapshot = {'remaining words': None, 'matched words': None}
 
 def get_rule_match(rule, words):
     words = [word.lower() for word in words]
@@ -65,7 +64,7 @@ def words_match_piece(piece, rule_match):
                 buff.add(False)
             else:
                 buff.add(True)
-                rule_match.add(child, child)
+                rule_match.add(child, piece)
         elif isinstance(child, ruleparser.RulePiece):
             buff.add(words_match_piece(child, rule_match))
         elif isinstance(child, ruleparser.OrToken):

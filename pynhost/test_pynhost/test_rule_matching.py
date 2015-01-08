@@ -223,7 +223,8 @@ class TestRuleMatching(unittest.TestCase):
     def test_words_match_rule_mix3(self):
         rule = ruleparser.Rule('(camel | score | title | upper) <1+>')
         words = 'upper hello world'.split(' ')
-        self.assertIsNotNone(matching.get_rule_match(rule, words))
+        print(dir(
+        self.assertEqual(list(matching.get_rule_match(rule, words).matching_words).keys(), ['upper', 'hello', 'world'])
 
 
 if __name__ == '__main__':

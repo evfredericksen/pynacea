@@ -22,16 +22,12 @@ class Command:
             if rule_match is not None:
                 self.results.append(rule_match)
                 self.remaining_words = rule_match.remaining_words
-                utilities.add_command_to_recording_macros(self, rule_match.rule.grammar.recording_macros)
-                # for name in rule_match.rule.grammar.recording_macros:
-                #     rule_match.rule.grammar.recording_macros[name].append(self)                                 
+                utilities.add_command_to_recording_macros(self, rule_match.rule.grammar.recording_macros)                              
             else:
                 self.results.append(self.remaining_words[0])
                 for grammars in gram_handler.modules.values():
                     for grammar in grammars:
                         utilities.add_command_to_recording_macros(self, grammar.recording_macros)
-                        # for name in grammar.recording_macros:
-                        #     grammar.recording_macros[name].append(self)
                 self.remaining_words = self.remaining_words[1:]
 
     def run(self):

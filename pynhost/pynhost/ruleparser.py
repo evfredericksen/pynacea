@@ -5,12 +5,14 @@ OPENING_TOKEN_DICT = {
     '(': 'list',
     '[': 'optional',
     '<': 'special',
+    '{': 'dict',
 }
 
 CLOSING_TOKEN_DICT = {
     ')': 'list',
     ']': 'optional',
     '>': 'special',
+    '}': 'dict',
 }
 
 class RulePiece:
@@ -23,13 +25,14 @@ class RulePiece:
         return '<RulePiece {}>'.format(self.mode)
 
 class Rule:
-    def __init__(self, raw_text, actions=None, grammar=None):
+    def __init__(self, raw_text, actions=None, grammar=None, dictionary=None):
         if not isinstance(actions, list):
             actions = [actions]
         self.actions = actions
         self.raw_text = raw_text
         self.pieces = parse(raw_text)
         self.grammar = grammar
+        self.dictionary = dictionary
 
     def __str__(self):
         return '<Rule: {}>'.format(self.raw_text)

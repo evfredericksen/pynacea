@@ -6,6 +6,7 @@ class GrammarBase:
         self.rules = []
         self.recording_macros = {}
         self.mapping = {}
+        self.dictionary = {}
 
     def _is_loaded(self):
         return True
@@ -28,5 +29,5 @@ class GrammarBase:
 
 def set_rules(grammar):
     for rule_text, actions in grammar.mapping.items():
-        rule = ruleparser.Rule(rule_text, actions, grammar)
+        rule = ruleparser.Rule(rule_text, actions, grammar, dictionary=grammar.dictionary)
         grammar.rules.append(rule)

@@ -47,7 +47,7 @@ def parse(rule_string):
     for i, char in enumerate(rule_string.strip()):
         if char == ' ':
             continue
-        if char in '([<':
+        if char in '([<{':
             if piece_stack and piece_stack[-1].mode == 'special':
                 raise ValueError('parsing error at char {}'.format(i))
             mode = OPENING_TOKEN_DICT[char]
@@ -56,7 +56,7 @@ def parse(rule_string):
                 pieces.append(piece_stack[0])
             else:
                 piece_stack[-2].children.append(piece_stack[-1])
-        elif char in ')]>':
+        elif char in ')]>}':
             if not piece_stack or CLOSING_TOKEN_DICT[char] != piece_stack[-1].mode:
                 raise ValueError('error balancing tokens at {}'.format(i))
             piece_stack.pop()

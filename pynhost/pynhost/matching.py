@@ -56,7 +56,7 @@ def words_match_piece(piece, rule_match):
         return check_special(piece, rule_match)
     elif piece.mode == 'dict':
         assert not piece.children
-        return check_dict(piece, rule_matcher)  
+        return check_dict(piece, rule_match)  
     buff = set()
     rule_match.take_snapshot()
     for child in piece.children:
@@ -80,18 +80,18 @@ def words_match_piece(piece, rule_match):
     if piece.mode != 'optional':
         return False
 
-def check_dict(piece, rule_matcher):
-    for k, v in rule_matcher.rule.dictionary.items():
+def check_dict(piece, rule_match):
+    for k, v in rule_match.rule.dictionary.items():
         key_split = k.split(' ')
         for i, key_w in enumerate(key_split):
             try:
-                if key_w != rule_matcher.remaining_words[i]:
+                if key_w != rule_match.remaining_words[i]:
                     break
             except IndexError:
                 break
         else:
-            rule_matcher.new_words.append(v)
-            rule_matcher.remaining_words = rule_matcher.remaining_words[len(key_split):]
+            rule_match.matched_words[piece] = v
+            rule_match.remaining_words = rule_match.remaining_words[len(key_split):]
             return True
     return False 
 

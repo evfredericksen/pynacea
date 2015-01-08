@@ -220,6 +220,11 @@ class TestRuleMatching(unittest.TestCase):
     #     words = 'cat'.split(' ')
     #     self.assertEqual(matching.words_match_rule(rule, words), ([], []))
 
+    def test_words_match_rule_mix3(self):
+        rule = ruleparser.Rule('(camel | score | title | upper) <1+>')
+        words = 'upper hello world'.split(' ')
+        self.assertEqual(matching.words_match_rule(rule, words), ([], []))
+
 
 if __name__ == '__main__':
     unittest.main()

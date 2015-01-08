@@ -65,8 +65,12 @@ class TestRuleMatching(unittest.TestCase):
     def test_words_match_rule_basic8(self):
         rule = ruleparser.Rule('hello [there world]')
         words = 'hello there world'.split(' ')
-        print(matching.get_rule_match(rule, words).matched_words.items())
-        self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), (['hello', 'there', 'world']))
+        self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['hello', 'there', 'world'])
+
+    def test_words_match_rule_basic9(self):
+        rule = ruleparser.Rule('[there world]')
+        words = 'there world'.split(' ')
+        self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['there', 'world'])
 
     def test_words_match_rule_list1(self):
         rule = ruleparser.Rule('(hello | goodbye)')
@@ -81,7 +85,8 @@ class TestRuleMatching(unittest.TestCase):
     def test_words_match_rule_list3(self):
         rule = ruleparser.Rule('(hello | goodbye)')
         words = 'hello goodbye'.split(' ')
-        self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), (['hello'], ['goodbye']))
+        self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['hello'])
+        self.assertEqual(list(matching.get_rule_match(rule, words).remaining_words), ['goodbye'])
 
     def test_words_match_rule_list4(self):
         rule = ruleparser.Rule('hello (world | [enormous] universe )')
@@ -103,6 +108,11 @@ class TestRuleMatching(unittest.TestCase):
         words = 'hello world enormous universe'.split(' ')
         self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['hello', 'world'])
         self.assertEqual(list(matching.get_rule_match(rule, words).remaining_words), ['enormous', 'universe'])
+
+    def test_words_match_rule_list8(self):
+        rule = ruleparser.Rule('(hello world)')
+        words = 'hello world'.split(' ')
+        self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), (['hello', 'world']))
 
     def test_words_match_rule_num1(self):
         rule = ruleparser.Rule('<num>')
@@ -139,7 +149,6 @@ class TestRuleMatching(unittest.TestCase):
         words = 'range 83 through'.split(' ')
         self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['range', '83'])
         self.assertEqual(list(matching.get_rule_match(rule, words).remaining_words), ['through'])
-
 
     def test_words_match_rule_num10(self):
         rule = ruleparser.Rule('range banana [through waffle]')

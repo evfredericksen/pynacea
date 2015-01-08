@@ -14,12 +14,14 @@ class RuleMatch:
         self.snapshot = {'remaining words': None, 'matched words': None}
 
     def add(self, words, piece):
-        if isinstance(words, str):
-            self.remaining_words = self.remaining_words[1:]
-            self.matched_words[piece] = words
-            return
-        self.matched_words[piece] = ' '.join(words)
-        self.remaining_words = self.remaining_words[len(words):]
+        word_count = 1
+        if not isinstance(words, str):
+            word_count = len(words)
+            words = ' '.join(words)
+        if piece in self.matched_words:
+            words =  '{} {}'.format(self.matched_words[piece], words)
+        self.matched_words[piece] = words
+        self.remaining_words = self.remaining_words[word_count:]
 
     def take_snapshot(self):
         self.snapshot['remaining words'] = copy.deepcopy(self.remaining_words)

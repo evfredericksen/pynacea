@@ -12,7 +12,6 @@ from pynhost import dynamic
 class Command:
     def __init__(self, words, command_history):
         self.words = words
-        print(words)
         self.remaining_words = words
         self.command_history = command_history
         self.results = [] # result can be a string or a RuleMatch
@@ -31,17 +30,6 @@ class Command:
                         utilities.add_command_to_recording_macros(self, grammar.recording_macros)
                 self.remaining_words = self.remaining_words[1:]
 
-    def run(self):
-        for result in self.results:
-            if isinstance(result, matching.RuleMatch):
-                logging.info('Input "{}" matched rule "{}" in {}'.format(
-                    ' '.join(list(result.matched_words.values())),
-                    result.rule.raw_text, result.rule.grammar))
-                self.execute_rule_match(result)
-            else:
-                utilities.transcribe_line(result, len(self.remaining_words) != 1)
-                logging.debug('Transcribed word "{}"'.format(result))
-
     def get_rule_match(self, gram_handler):
         proc = subprocess.check_output(['xdotool', 'getactivewindow', 'getwindowname'])
         window_name = proc.decode('utf8').rstrip('\n')
@@ -55,6 +43,17 @@ class Command:
                         if rule_match is not None:
                             return rule_match
 
+    def run(self):
+        for result in self.results:
+            if isinstance(result, matching.RuleMatch):
+                logging.info('Input "{}" matched rule "{}" in {}'.format(
+                    ' '.join(list(result.matched_words.values())),
+                    result.rule.raw_text, result.rule.grammar))
+                self.execute_rule_match(result)
+            else:
+                utilities.transcribe_line(result, len(self.remaining_words) != 1)
+                logging.debug('Transcribed word "{}"'.format(result))
+
     def execute_rule_match(self, rule_match):
         for i, piece in enumerate(rule_match.rule.actions):
             last_action = None
@@ -64,9 +63,13 @@ class Command:
 
     def handle_action(self, action, rule_match, last_action=None):
         if isinstance(action, dynamic.DynamicAction):
-            if isinstance(action, dynamic.RepeatCommand):
-                return action.evaluate(self)
-            action = action.evaluate(rule_match)
+            try:
+                if isinstance(action, dynamic.RepeatCommand):
+                    return action.evaluate(self)
+                action = action.evaluate(rule_match)
+            except IndexError:
+                logging.warning('Could not run dynamic action {}'.format(action))
+                return
         if isinstance(action, str):
             api.send_string(action)
         elif isinstance(action, Command):

@@ -9,6 +9,7 @@ import pynhost
 from pynhost import constants
 
 def transcribe_line(key_inputs, space=True):
+    print(key_inputs)
     for key in key_inputs:
         if len(key) == 1:
             subprocess.call(['xdotool', 'type', '--delay', '0ms', key])
@@ -135,3 +136,7 @@ def split_into_words(list_of_strings):
         if string:
             words.extend(string.split(' '))
     return words
+
+def get_open_window():
+    proc = subprocess.check_output(['xdotool', 'getactivewindow', 'getwindowname'])
+    return proc.decode('utf8').rstrip('\n')

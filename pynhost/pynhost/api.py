@@ -3,6 +3,7 @@ import sys
 from pynhost import utilities
 
 REPLACE_DICT = {
+    'home': 'Home',
     'tab': 'Tab',
     'escape': 'Escape',
     'enter': 'Return',

@@ -222,6 +222,12 @@ class TestRuleMatching(unittest.TestCase):
         words = 'word'.split(' ')
         self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['word'])
 
+    def test_words_match_rule_any11(self):
+        rule = ruleparser.Rule('select [(blue | fish) whale]')
+        words = 'select fish'.split(' ')
+        self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['select'])
+        self.assertEqual(list(matching.get_rule_match(rule, words).remaining_words), ['fish'])
+
     def test_words_match_rule_homonym1(self):
         rule = ruleparser.Rule('hello <hom_line>')
         words = 'hello line'.split(' ')

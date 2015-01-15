@@ -66,9 +66,15 @@ class TestRuleParsing(unittest.TestCase):
         self.assertEqual('optional', pieces[2].mode)
         self.assertEqual('through', pieces[2].children[0])
         self.assertEqual('special', pieces[2].children[1].mode)
-        # self.assertEqual(['num'], pieces[2].children[1].children)
-        # self.assertEqual('optional', pieces[2].children[2].mode)
-        # self.assertEqual('optional', pieces[2].children[2].mode)
+
+    def test_rule_parsing_nested4(self):
+        teststr = 'select [(blue | fish) whale]'
+        pieces = ruleparser.parse(teststr)
+        self.assertEqual('select', pieces[0])   
+        self.assertEqual('optional', pieces[1].mode)
+        self.assertEqual('list', pieces[1].children[0].mode)
+        self.assertEqual('blue', pieces[1].children[0].children[0])
+        self.assertEqual('whale', pieces[1].children[1])
 
     def test_words_match_rule_mix3(self):
         teststr = '(camel | score | title | upper) <1+>'

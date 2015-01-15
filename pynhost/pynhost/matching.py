@@ -24,12 +24,14 @@ class RuleMatch:
         self.remaining_words = self.remaining_words[word_count:]
 
     def take_snapshot(self):
-        self.snapshot['remaining words'] = copy.deepcopy(self.remaining_words)
-        self.snapshot['matched words'] = copy.deepcopy(self.matched_words)
+        return {
+            'remaining words': copy.deepcopy(self.remaining_words),
+            'matched words': copy.deepcopy(self.matched_words),
+        }
 
-    def revert_to_snapshot(self):
-        self.remaining_words = self.snapshot['remaining words']
-        self.matched_words = self.snapshot['matched words']
+    def revert_to_snapshot(self, snapshot):
+        self.remaining_words = snapshot['remaining words']
+        self.matched_words = snapshot['matched words']
 
     def get_words(self):
         return utilities.split_into_words(self.matched_words.values())
@@ -42,6 +44,7 @@ def get_rule_match(rule, words):
         if isinstance(piece, str):
             if rule_match.remaining_words and piece.lower() == rule_match.remaining_words[0]:
                 rule_match.add(rule_match.remaining_words[0], piece)
+                results.append(piece)
             else:
                 return
         else:
@@ -62,7 +65,7 @@ def words_match_piece(piece, rule_match):
         assert not piece.children
         return check_dict(piece, rule_match)  
     buff = set()
-    rule_match.take_snapshot()
+    snapshot = rule_match.take_snapshot()
     for child in piece.children:
         if isinstance(child, str):
             if not rule_match.remaining_words or rule_match.remaining_words[0] != child:
@@ -76,11 +79,11 @@ def words_match_piece(piece, rule_match):
             if buff and not False in buff and not (None in buff and len(buff) == 1):
                 return True
             else:
-                rule_match.revert_to_snapshot()
+                rule_match.revert_to_snapshot(snapshot)
                 buff.clear()
     if buff and not False in buff and not (None in buff and len(buff) == 1):
         return True
-    rule_match.revert_to_snapshot()
+    rule_match.revert_to_snapshot(snapshot)
     if piece.mode != 'optional':
         return False
 

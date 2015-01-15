@@ -5,7 +5,7 @@ HOMONYMS = {
     'copy': ['coffee'],
     'cut': ['collect'],
     'fish': ['dish', 'dished', 'pitch', 'finished'],
-    'grab': ['lab'],
+    'grab': ['lab', 'crab'],
     'high': ['hi', 'i'],
     'lend': ['land', 'lender'],
     'lit': ["let's", 'wet'],

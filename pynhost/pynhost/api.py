@@ -60,7 +60,6 @@ def mouse_move(x=None, y=None, relative=False):
     if y is None: y = 0
     subprocess.call(['xdotool', 'mousemove_relative', str(x), str(y)])
 
-
 def mouse_click(button='left', direction='both', number='1'):
         button_map = {
             'left': '1',

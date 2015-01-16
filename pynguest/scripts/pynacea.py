@@ -4,6 +4,7 @@ import os
 import re
 import sys
 import string
+import shutil
 import configparser
 from pkg_resources import Requirement, resource_filename
 import pynguest
@@ -124,9 +125,13 @@ class PynGuestGui:
 		if self.content and time.clock() - self.entry_time > .1:
 			buffer_name = self.get_next_filename()
 			try:
-				with open(buffer_name, 'w') as f:
+				# write spoken input to a temp file first then rename to
+				# avoid pynhost and pynguest trying to access the same
+				# file at the same time
+				with open(os.path.join(self.buffer_dir, 'temp'), 'w') as temp:
 					print('Sending {}'.format(self.content))
-					f.write('{}\n'.format(self.content))
+					temp.write('{}\n'.format(self.content))
+				shutil.move(os.path.join(self.buffer_dir, 'temp'), buffer_name)
 			except PermissionError:
 				self.error(PermissionError, 'Could not write to {}. Please '
 				'check your permissions and shared folder settings and try '

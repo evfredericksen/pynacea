@@ -41,6 +41,8 @@ class RepeatCommand(DynamicAction):
     def evaluate(self, command):
         if self.stop is None:
             self.run_command(command.command_history[self.start])
+            if isinstance(command.command_history[self.start].results[-1], str):
+                api.send_string(' ')
         elif self.step is None:
             for previous in list(command.command_history)[self.start: self.stop]:
                 self.run_command(previous)

@@ -1,9 +1,7 @@
 #!/usr/bin/python3
 
 import time
-import argparse
 import logging
-import collections
 import copy
 from pynhost import utilities
 from pynhost import grammarhandler

@@ -146,10 +146,16 @@ def check_num_range(piece, rule_match):
 def check_homonym(piece, rule_match):
     if rule_match.remaining_words:
         tag = piece.children[0][4:].lower()
-        if tag in _homonyms.HOMONYMS and rule_match.remaining_words[0].lower() in _homonyms.HOMONYMS[tag]:
-            rule_match.remaining_words[0] = tag
-        if rule_match.remaining_words[0].lower() == tag:
+        if tag == rule_match.remaining_words[0]:
             rule_match.add(tag, piece)
-            return True
+            return True   
+        if tag not in _homonyms.HOMONYMS:              
+            return False
+        test_words = []
+        for word in rule_match.remaining_words:
+            test_words.append(word)
+            for hom in _homonyms.HOMONYMS[tag]:
+                if ' '.join(test_words) == hom:
+                    rule_match.add(tag, piece)
+                    return True
     return False
-    

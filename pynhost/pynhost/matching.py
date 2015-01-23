@@ -155,7 +155,7 @@ def check_homonym(piece, rule_match):
         for word in rule_match.remaining_words:
             test_words.append(word)
             for hom in _homonyms.HOMONYMS[tag]:
-                if ' '.join(test_words) == hom:
+                if ' '.join(test_words).lower() == hom.lower():
                     rule_match.add(tag, piece)
                     return True
     return False

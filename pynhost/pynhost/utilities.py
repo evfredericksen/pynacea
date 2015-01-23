@@ -9,6 +9,7 @@ import pynhost
 from pynhost import constants
 
 def transcribe_line(key_inputs, space=True):
+    print(key_inputs)
     for key in key_inputs:
         if len(key) == 1:
             subprocess.call(['xdotool', 'type', '--delay', '0ms', key])

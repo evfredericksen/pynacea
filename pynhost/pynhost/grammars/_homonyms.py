@@ -1,3 +1,4 @@
 HOMONYMS = {
-	'line': ['wine'],
+	'line': ['wine', 'dine'],
+	'perl': ['pearl', 'whirl'],
 }

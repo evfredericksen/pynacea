@@ -1,7 +1,7 @@
 import copy
 import re
 import collections
-from pynhost.grammars import _local
+from pynhost.grammars import _locals
 from pynhost import constants
 from pynhost import utilities
 from pynhost import ruleparser
@@ -149,12 +149,12 @@ def check_homonym(piece, rule_match):
         if tag == rule_match.remaining_words[0]:
             rule_match.add(tag, piece)
             return True   
-        if tag not in _local.HOMONYMS:              
+        if tag not in _locals.HOMONYMS:              
             return False
         test_words = []
         for word in rule_match.remaining_words:
             test_words.append(word)
-            for hom in _local.HOMONYMS[tag]:
+            for hom in _locals.HOMONYMS[tag]:
                 if ' '.join(test_words).lower() == hom.lower():
                     rule_match.add(tag, piece)
                     return True

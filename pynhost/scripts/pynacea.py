@@ -18,10 +18,16 @@ def main():
         command_history = []
         gram_handler = grammarhandler.GrammarHandler()
         gram_handler.load_grammars(command_history)
+        listening_status = True
         logging.info('Started listening at {}'.format(time.strftime("%Y-%m-%d %H:%M:%S")))
         while True:
             lines = utilities.get_buffer_lines(shared_dir)
             for line in lines:
+                updated_status = utilities.get_listening_status(listening_status, line)
+                # go to next line if not currently listening or change in listening status
+                if not listening_status or not updated_status:
+                    listening_status = updated_status
+                    continue
                 logging.info('Received input "{}" at {}'.format(line,
                     time.strftime("%Y-%m-%d %H:%M:%S")))
                 current_command = command.Command(line.split(' '), copy.copy(command_history))

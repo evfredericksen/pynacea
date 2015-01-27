@@ -7,6 +7,7 @@ import re
 import sys
 import pynhost
 from pynhost import constants
+from pynhost.grammars import _locals
 
 def transcribe_line(key_inputs, space=True):
     print(key_inputs)
@@ -29,8 +30,7 @@ def get_buffer_lines(buffer_path):
     return lines
 
 def get_mouse_location():
-    results = xdotool.check_output('getmouselocation')
-    return results
+    return xdotool.check_output('getmouselocation')
 
 def split_send_string(string_to_send):
     split_string = []
@@ -117,14 +117,6 @@ def get_tags(pieces, tag_name, matches=None):
             get_tags(piece.children, tag_name, matches)
     return matches
 
-def clear_directory(dir_path):
-    for filename in os.listdir(dir_path):
-        file_path = os.path.join(dir_path, filename)
-        if os.path.isfile(file_path):
-            os.unlink(file_path)
-        elif os.path.isdir(file_path):
-            shutil.rmtree(file_path)
-
 def add_command_to_recording_macros(command, recording_macros):
     for name in recording_macros:
         if not recording_macros[name] or recording_macros[name][-1] is not command:
@@ -140,3 +132,24 @@ def split_into_words(list_of_strings):
 def get_open_window():
     proc = subprocess.check_output(['xdotool', 'getactivewindow', 'getwindowname'])
     return proc.decode('utf8').rstrip('\n')
+
+def get_listening_status(current_status, words):
+    try:
+        wakeup_match = string_in_list_of_patterns(words, _locals.WAKE_UP_PATTERNS)
+    except AttributeError:
+        wakeup_match = False
+    try:
+        sleep_match = string_in_list_of_patterns(words, _locals.SLEEP_PATTERNS)
+    except AttributeError:
+        sleep_match = False
+    if wakeup_match and not sleep_match:
+        return True
+    elif sleep_match and not wakeup_match:
+        return False
+    return current_status
+
+def string_in_list_of_patterns(test_string, list_of_patterns):
+    for pattern in list_of_patterns:
+        if re.match(pattern, test_string):
+            return True
+    return False

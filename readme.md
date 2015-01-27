@@ -51,3 +51,13 @@ These functions will be called when your voice input matches a particular rule
 that you have created. Check out pynhost/grammars/sample1.py and  
 pynhost/grammars/sample2.py in your Python installation for documentation and
 examples.
+
+##To Do
+
+- Documentation needs to be updated for new features/code changes
+- Speech recognition engines try to guess what you're saying and
+sometimes insert filler words ("grab right" becomes "grab the right"
+etc.), need to add option to filter words within grammars
+- Support for Windows and Mac OS X host systems
+- Customize <num> tag to allow for ranges of numbers
+- Better logging

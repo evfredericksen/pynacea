@@ -61,4 +61,4 @@ etc.), need to add option to filter words within grammars
 - Support for Windows and Mac OS X host systems
 - Customize num tag to allow for ranges of numbers
 - Better logging
-- Support for pressing individual down and up keypresses
+- Support for individual down and up keypresses

@@ -12,6 +12,6 @@ pynhost/pynhost/logs/*
 pynhost/pynhost/grammars/*
 !pynhost/pynhost/grammars/sample1.py
 !pynhost/pynhost/grammars/sample2.py
-!pynhost/pynhost/grammars/_homonyms.py
+!pynhost/pynhost/grammars/_locals.py
 !pynhost/pynhost/grammars/sublime text
 !pynhost/pynhost/grammars/sublime text/subl.py

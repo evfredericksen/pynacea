@@ -39,7 +39,8 @@ class Command:
                 for grammar in [g for g in gram_handler.modules[module_obj] if g._is_loaded()]:
                     for rule in grammar.rules:
                         rule = copy.copy(rule)
-                        rule_match = matching.get_rule_match(rule, self.remaining_words)
+                        rule_match = matching.get_rule_match(rule,
+                                     self.remaining_words, grammar._filtered_words)
                         if rule_match is not None:
                             return rule_match
 

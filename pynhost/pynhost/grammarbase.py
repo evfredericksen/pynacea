@@ -7,6 +7,7 @@ class GrammarBase:
         self.recording_macros = {}
         self.mapping = {}
         self.dictionary = {}
+        self._filtered_words = []
 
     def _is_loaded(self):
         return True

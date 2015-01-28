@@ -36,8 +36,11 @@ class RuleMatch:
     def get_words(self):
         return utilities.split_into_words(self.matched_words.values())
 
-def get_rule_match(rule, words):
-    words = [word.lower() for word in words]
+def get_rule_match(rule, words, filter_list=None):
+    if filter_list is None:
+        filter_list = []
+    filtered_positions = utilities.get_filtered_positions(words, filter_list)
+    words = [word.lower() for word in words if word not in filter_list]
     rule_match = RuleMatch(words, rule)
     results = []
     for piece in rule.pieces:
@@ -55,6 +58,8 @@ def get_rule_match(rule, words):
     # optional pieces return None if they do not match
     if results.count(None) == len(rule.pieces):
         return
+    rule_match.remaining_words = utilities.reinsert_filtered_words(
+        rule_match.remaining_words, filtered_positions)
     return rule_match
 
 def words_match_piece(piece, rule_match):

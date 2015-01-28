@@ -153,3 +153,23 @@ def string_in_list_of_patterns(test_string, list_of_patterns):
         if re.match(pattern, test_string):
             return True
     return False
+
+def get_filtered_positions(words, filter_list):
+    positions = {}
+    i = -1
+    for word in reversed(words):
+        if word in filter_list:
+            positions[i] = word
+        i -= 1
+    return positions
+
+def reinsert_filtered_words(words, filtered_positions):
+    for i in reversed(sorted(filtered_positions)):
+        index = i + 1
+        if index < len(words):
+            break
+        if index == 0:
+            words.append(filtered_positions[i])
+        else:
+            words.insert(index, filtered_positions[i])
+    return words

@@ -3,10 +3,10 @@ HOMONYMS = {
 	'perl': ['pearl', 'whirl'],
 }
 
-                  SLEEP_PATTERNS = [
+SLEEP_PATTERNS = [
 	
 ]
 
-                  WAKE_UP_PATTERNS = [
+WAKE_UP_PATTERNS = [
 	
 ]

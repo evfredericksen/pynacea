@@ -26,15 +26,16 @@ class TestUtilities(unittest.TestCase):
         self.assertEqual(['{{', 'hello', '}}'], utilities.split_send_string(mystr))
 
     def test_reinsert_filtered_words1(self):
-        words = ['hello', 'world']
+        remaining_words = ['hello', 'world']
         filtered_positions = {
             -1: 'goodbye',
             -2: 'and',
             -4: 'there',
             -6: 'good',
+            -8: 'why',
         }
         self.assertEqual(['good', 'hello', 'there', 'world', 'and', 'goodbye'],
-            utilities.reinsert_filtered_words(words, filtered_positions))
+            utilities.reinsert_filtered_words(remaining_words, filtered_positions))
 
 if __name__ == '__main__':
     unittest.main()

@@ -166,7 +166,8 @@ def get_filtered_positions(words, filter_list):
 def reinsert_filtered_words(words, filtered_positions):
     for i in reversed(sorted(filtered_positions)):
         index = i + 1
-        if index < len(words):
+        print('index: ', index, -index > len(words))
+        if -index > len(words):
             break
         if index == 0:
             words.append(filtered_positions[i])

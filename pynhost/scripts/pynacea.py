@@ -45,8 +45,7 @@ def main():
                 current_command.set_results(gram_handler)
                 command_history.append(current_command)
                 current_command.run()
-            else:
-                time.sleep(.1)
+            time.sleep(.1)
     except Exception as e:
         logging.exception(e)
         raise e

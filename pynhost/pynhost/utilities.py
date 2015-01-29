@@ -76,8 +76,7 @@ def save_config_setting(title, setting, value):
     with open(constants.CONFIG_PATH, 'w') as configfile:
         config.write(configfile)
 
-def save_cl_args():
-    cl_arg_namespace = get_cl_args()
+def save_cl_args(cl_arg_namespace):
     for arg in cl_arg_namespace._get_kwargs():
         if arg[1] is not None:
             value = arg[1]
@@ -88,6 +87,10 @@ def save_cl_args():
 
 def get_cl_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-d', "--debug", help="Enable text input for grammar debugging",
+        action='store_true')
+    parser.add_argument("--debug_delay", help="Enable text input for grammar debugging",
+        type=float, default=4)
     parser.add_argument("--logging_file", help="Log file path for Pynacea",
         default=None)
     parser.add_argument("--logging_level", help="Logging level for Pynacea")

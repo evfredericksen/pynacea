@@ -3,6 +3,8 @@
 import time
 import logging
 import copy
+import sys
+from termios import tcflush, TCIFLUSH
 from pynhost import utilities
 from pynhost import grammarhandler
 from pynhost import command
@@ -26,7 +28,8 @@ def main():
         # main loop
         while True:
             if cl_arg_namespace.debug:
-                lines = [input('> ')]
+                tcflush(sys.stdin, TCIFLUSH)
+                lines = [input('\n> ')]
                 time.sleep(cl_arg_namespace.debug_delay)
             else:
                 lines = utilities.get_buffer_lines(shared_dir)
@@ -42,9 +45,6 @@ def main():
                 current_command.set_results(gram_handler)
                 command_history.append(current_command)
                 current_command.run()
-            # Need to reset buffer
-            if cl_arg_namespace.debug:
-                input('\nPress Enter to Continue ')
             else:
                 time.sleep(.1)
     except Exception as e:

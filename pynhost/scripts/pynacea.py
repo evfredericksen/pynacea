@@ -21,8 +21,9 @@ def main():
         command_history = []
         gram_handler = grammarhandler.GrammarHandler()
         gram_handler.load_grammars(command_history)
-        # bool that determines whether to run the main loop, checks
-        # grammars._locals for patterns in SLEEP_PATTERNS and WAKE_UP_PATTERNS
+        # bool that determines whether to run the main loop, tries to match text
+        # input to patterns in grammars._locals.SLEEP_PATTERNS and
+        # grammars._locals.WAKE_UP_PATTERNS
         listening_status = True
         logging.info('Started listening at {}'.format(time.strftime("%Y-%m-%d %H:%M:%S")))
         # main loop

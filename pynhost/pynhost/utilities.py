@@ -153,7 +153,7 @@ def get_listening_status(current_status, words):
 
 def string_in_list_of_patterns(test_string, list_of_patterns):
     for pattern in list_of_patterns:
-        if re.match(pattern, test_string):
+        if re.match(pattern, test_string, re.IGNORECASE):
             return True
     return False
 

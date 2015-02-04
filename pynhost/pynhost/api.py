@@ -14,8 +14,10 @@ REPLACE_DICT = {
     'end': 'End',
     'delete': 'Delete',
     'backspace': 'BackSpace',
-    'pageup': 'PageUp',
-    'pagedown': 'PageDown',
+    'pageup': 'Page_Up',
+    'page_up': 'Page_Up',
+    'pagedown': 'Page_Down',
+    'page_down': 'Page_Down',
 }
 
 def send_string(string_to_send):

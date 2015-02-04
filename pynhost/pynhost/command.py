@@ -8,6 +8,7 @@ from pynhost import matching
 from pynhost import api
 from pynhost import utilities
 from pynhost import dynamic
+from pynhost import grammarbase
 
 class Command:
     def __init__(self, words, command_history):
@@ -36,13 +37,14 @@ class Command:
         for module_obj in gram_handler.modules:
             split_name = module_obj.__name__.split('.')
             if len(split_name) == 3 or re.search(split_name[2].lower(), window_name.lower()):
-                for grammar in [g for g in gram_handler.modules[module_obj] if g._is_loaded()]:
-                    for rule in grammar.rules:
-                        rule = copy.copy(rule)
-                        rule_match = matching.get_rule_match(rule,
-                                     self.remaining_words, grammar._filtered_words)
-                        if rule_match is not None:
-                            return rule_match
+                for grammar in gram_handler.modules[module_obj]:
+                    if grammar._id_string not in grammarbase.GrammarBase._ids_to_ignore:
+                        for rule in grammar.rules:
+                            rule = copy.copy(rule)
+                            rule_match = matching.get_rule_match(rule,
+                                         self.remaining_words, grammar._filtered_words)
+                            if rule_match is not None:
+                                return rule_match
 
     def run(self):
         for result in self.results:

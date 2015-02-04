@@ -2,15 +2,14 @@ import logging
 from pynhost import ruleparser
 
 class GrammarBase:
+    _ids_to_ignore = set()
     def __init__(self):
         self.rules = []
         self.recording_macros = {}
         self.mapping = {}
         self.dictionary = {}
         self._filtered_words = []
-
-    def _is_loaded(self):
-        return True
+        self._id_string = ''
 
     def _begin_recording_macro(self, rule_name):
         logging.info("Started recording macro '{}' for grammar {}".format(rule_name, self))

@@ -89,8 +89,8 @@ def get_cl_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', "--debug", help="Enable text input for grammar debugging",
         action='store_true')
-    parser.add_argument("--debug_delay", help="Enable text input for grammar debugging",
-        type=float, default=4)
+    parser.add_argument("--debug_delay", help="Delay (seconds) in debug mode between text being entered and run",
+        type=check_negative, default=4)
     parser.add_argument("--logging_file", help="Log file path for Pynacea",
         default=None)
     parser.add_argument("--logging_level", help="Logging level for Pynacea")
@@ -175,4 +175,14 @@ def reinsert_filtered_words(words, filtered_positions):
             words.append(filtered_positions[i])
         else:
             words.insert(index, filtered_positions[i])
-    return words
+    return 
+
+def check_negative(value):
+    e = argparse.ArgumentTypeError('{} is an invalid non-negative float value'.format(value))
+    try:
+        fvalue = float(value)
+    except ValueError:
+        raise e
+    if fvalue < 0:
+        raise e
+    return fvalue

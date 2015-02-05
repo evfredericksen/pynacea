@@ -2,53 +2,9 @@ import subprocess
 import sys
 from pynhost import utilities
 
-REPLACE_DICT = {
-    'home': 'Home',
-    'tab': 'Tab',
-    'escape': 'Escape',
-    'enter': 'Return',
-    'up': 'Up',
-    'right': 'Right',
-    'down': 'Down',
-    'left': 'Left',
-    'end': 'End',
-    'delete': 'Delete',
-    'backspace': 'BackSpace',
-    'pageup': 'Page_Up',
-    'page_up': 'Page_Up',
-    'pagedown': 'Page_Down',
-    'page_down': 'Page_Down',
-}
-
 def send_string(string_to_send):
     split_string = utilities.split_send_string(string_to_send)
-    chars = []
-    special_mode = False
-    buff = ''
-    for i, group in enumerate(split_string):
-        if group[0] == '{':
-            assert not special_mode
-            for j, char in enumerate(group):
-                if j % 2 == 1:
-                    chars.append(char)
-            if len(group) % 2 == 1:
-                special_mode = True
-        elif group[0] not in '{}':
-            if special_mode:
-                for k, v in REPLACE_DICT.items():
-                    group = group.replace(k, v)
-
-                chars.append(group)
-            else:
-                for char in group:
-                    chars.append(char)
-        else:
-            for j, char in enumerate(group):
-                if j % 2 == 1:
-                    chars.append(char)
-            if len(group) % 2 == 1:
-                assert special_mode
-                special_mode = False
+    chars = utilities.convert_for_xdotool(split_string)
     utilities.transcribe_line(chars, False)
 
 def mouse_move(x=None, y=None, relative=False):

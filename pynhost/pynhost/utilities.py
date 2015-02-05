@@ -10,7 +10,7 @@ from pynhost import constants
 from pynhost.grammars import _locals
 
 def transcribe_line(key_inputs, space=True):
-    print(key_inputs)
+    # print(key_inputs)
     for key in key_inputs:
         if len(key) == 1:
             subprocess.call(['xdotool', 'type', '--delay', '0ms', key])
@@ -175,7 +175,7 @@ def reinsert_filtered_words(words, filtered_positions):
             words.append(filtered_positions[i])
         else:
             words.insert(index, filtered_positions[i])
-    return 
+    return words 
 
 def check_negative(value):
     e = argparse.ArgumentTypeError('{} is an invalid non-negative float value'.format(value))
@@ -186,3 +186,37 @@ def check_negative(value):
     if fvalue < 0:
         raise e
     return fvalue
+
+def convert_for_xdotool(split_string):
+    chars = []
+    special_mode = False
+    for i, group in enumerate(split_string):
+        if group[0] == '{':
+            assert not special_mode
+            for j, char in enumerate(group):
+                if j % 2 == 1:
+                    chars.append(char)
+            if len(group) % 2 == 1:
+                special_mode = True
+        elif group[0] not in '{}':
+            if special_mode:
+                chars.append(replace_xdotool_keys(group))
+            else:
+                for char in group:
+                    chars.append(char)
+        else:
+            for j, char in enumerate(group):
+                if j % 2 == 1:
+                    chars.append(char)
+            if len(group) % 2 == 1:
+                assert special_mode
+                special_mode = False
+    return chars
+
+def replace_xdotool_keys(keys):
+    new_list = []
+    for key in keys.split('+'):
+        if key.lower() in constants.XDOTOOL_KEYMAP:
+            key = constants.XDOTOOL_KEYMAP[key.lower()]
+        new_list.append(key)
+    return '+'.join(new_list)

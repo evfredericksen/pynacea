@@ -55,3 +55,21 @@ LOGGING_LEVELS = {
     'error': logging.ERROR,
     'critical': logging.CRITICAL,
 }
+
+XDOTOOL_KEYMAP = {
+    'home': 'Home',
+    'tab': 'Tab',
+    'escape': 'Escape',
+    'enter': 'Return',
+    'up': 'Up',
+    'right': 'Right',
+    'down': 'Down',
+    'left': 'Left',
+    'end': 'End',
+    'delete': 'Delete',
+    'backspace': 'BackSpace',
+    'pageup': 'Page_Up',
+    'page_up': 'Page_Up',
+    'pagedown': 'Page_Down',
+    'page_down': 'Page_Down',
+}

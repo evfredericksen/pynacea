@@ -6,8 +6,6 @@ DEFAULT_LOGGING_FILE = os.path.join(os.path.dirname(pynhost.__file__), 'logs', '
 
 CONFIG_PATH = os.path.join(os.path.sep, 'usr', 'local', 'etc', 'pynhost.ini')
 
-CONFIG_FILE = 'settings.ini'
-
 NUMBERS_MAP = {
 	'zero': '0',
 	'one': '1',
@@ -73,8 +71,3 @@ XDOTOOL_KEYMAP = {
     'pagedown': 'Page_Down',
     'page_down': 'Page_Down',
 }
-
-# CONFIG_MENU_OPTIONS = {
-#     'engine settings': { 
-#         'Change Hidden Markov Models directory: ': ['sphinx', 'hmm_filename'],
-#         'Change Lan

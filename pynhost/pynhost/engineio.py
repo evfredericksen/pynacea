@@ -11,18 +11,19 @@ class SphinxHandler:
         print('Loading PocketSphinx Speech Engine...')
 
     def get_lines(self):
-        hmm = utilities.get_config_setting('sphinx', 'hmm_directory')
-        lm = utilities.get_config_setting('sphinx', 'lm_filename')
-        language_dict = utilities.get_config_setting('sphinx', 'dictionary')
-        command = ['pocketsphinx_continuous']
-        if hmm is not '_':
-            command.extend(['-hmm', hmm])
-        if lm is not '_':
-            command.extend(['-lm', lm])
-        if language_dict is not '_':
-            command.extend(['-dict', language_dict])
+        full_command = ['pocketsphinx_continuous']
+        commands = {
+            '-hmm': 'hmm_directory',
+            '-lm': 'lm_filename',
+            '-dict': 'dictionary',
+        }
+        for cmd, config_name in commands.items():
+            setting = utilities.get_config_setting('sphinx', config_name)
+            if setting is not '_':
+                full_command.extend([cmd, setting])
         null = open(os.devnull)
-        with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=null, bufsize=1, universal_newlines=True) as p:
+        with subprocess.Popen(full_command, stdout=subprocess.PIPE, stderr=null,
+                              bufsize=1, universal_newlines=True) as p:
             for line in p.stdout:
                 split_line = line.rstrip('\n').split(' ')
                 if split_line[0] == 'READY....' and not self.loaded:

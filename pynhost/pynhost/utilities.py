@@ -76,15 +76,6 @@ def save_config_setting(title, setting, value):
     with open(constants.CONFIG_PATH, 'w') as configfile:
         config.write(configfile)
 
-def save_cl_args(cl_arg_namespace):
-    for arg in cl_arg_namespace._get_kwargs():
-        if arg[1] is not None:
-            value = arg[1]
-            if arg[0] == 'logging_level':
-                save_config_setting('logging', 'logging_level', value)
-            elif arg[0] == 'logging_file':
-                save_config_setting('logging', 'logging_file', value)
-
 def get_cl_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', "--config", help="Configuration Menu", action='store_true')

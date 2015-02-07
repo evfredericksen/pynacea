@@ -17,10 +17,9 @@ def main():
             configmenu.launch_config_menu()
             return
         engine_handler = engineio.get_engine_handler(cl_arg_namespace)
-        # utilities.save_cl_args(cl_arg_namespace)
-        # log_file, log_level = utilities.get_logging_config()
-        # if None not in (log_file, log_level):
-        #     logging.basicConfig(filename=log_file, level=log_level)
+        log_file, log_level = utilities.get_logging_config()
+        if None not in (log_file, log_level):
+            logging.basicConfig(filename=log_file, level=log_level)
         command_history = []
         gram_handler = grammarhandler.GrammarHandler()
         gram_handler.load_grammars(command_history)
@@ -43,7 +42,7 @@ def main():
                 current_command.set_results(gram_handler)
                 command_history.append(current_command)
                 current_command.run()
-            time.sleep(.1)
+            # time.sleep(.1)
     except Exception as e:
         logging.exception(e)
         raise e

@@ -73,3 +73,8 @@ XDOTOOL_KEYMAP = {
     'pagedown': 'Page_Down',
     'page_down': 'Page_Down',
 }
+
+# CONFIG_MENU_OPTIONS = {
+#     'engine settings': { 
+#         'Change Hidden Markov Models directory: ': ['sphinx', 'hmm_filename'],
+#         'Change Lan

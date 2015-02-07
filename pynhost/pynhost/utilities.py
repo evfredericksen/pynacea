@@ -87,6 +87,7 @@ def save_cl_args(cl_arg_namespace):
 
 def get_cl_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-c', "--config", help="Configuration Menu", action='store_true')
     parser.add_argument('-d', "--debug", help="Enable text input for grammar debugging",
         action='store_true')
     parser.add_argument("--debug_delay", help="Delay (seconds) in debug mode between text being entered and run",

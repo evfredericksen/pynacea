@@ -38,7 +38,7 @@ class Command:
             split_name = module_obj.__name__.split('.')
             if len(split_name) == 3 or re.search(split_name[2].lower(), window_name.lower()):
                 for grammar in gram_handler.modules[module_obj]:
-                    if grammar._id_string not in grammarbase.GrammarBase._ids_to_ignore:
+                    if grammar._check_grammar():
                         for rule in grammar.rules:
                             rule = copy.copy(rule)
                             rule_match = matching.get_rule_match(rule,

@@ -27,6 +27,9 @@ class GrammarBase:
     def _load_rule(self, rule, actions):
         pass
 
+    def _check_grammar(self):
+        return True
+
 def set_rules(grammar):
     for rule_text, actions in grammar.mapping.items():
         rule = ruleparser.Rule(rule_text, actions, grammar, dictionary=grammar.dictionary)

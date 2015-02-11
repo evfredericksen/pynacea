@@ -23,26 +23,32 @@ def main():
         command_history = []
         gram_handler = grammarhandler.GrammarHandler()
         gram_handler.load_grammars(command_history)
-        # bool that determines whether to run the main loop, tries to match text
-        # input to patterns in grammars._locals.SLEEP_PATTERNS and
-        # grammars._locals.WAKE_UP_PATTERNS
-        listening_status = True
+        # Dict for simulation of special modes
+        mode_status = {'asleep': False, 'dictation mode': False, 'number mode': False}
+        updated_status = mode_status
         logging.info('Started listening at {}'.format(time.strftime("%Y-%m-%d %H:%M:%S")))
         # main loop
         while True:
             for line in engine_handler.get_lines():
-                updated_status = utilities.get_listening_status(listening_status, line)
-                # go to next line if not currently listening or change in listening status
-                if not listening_status or not updated_status:
-                    listening_status = updated_status
+                mode_status = updated_status
+                updated_status, matched_pattern = utilities.get_new_status(mode_status, line)
+                # go to next line if line matched mode status pattern or not currently awake
+                if matched_pattern or updated_status['asleep']:
+                    continue
+                if mode_status['dictation mode']:
+                    utilities.transcribe_line(line.split(), transcribe_mode=True)
+                    continue
+                if mode_status['number mode']:
+                    utilities.transcribe_numbers(line)
                     continue
                 logging.info('Received input "{}" at {}'.format(line,
                     time.strftime("%Y-%m-%d %H:%M:%S")))
-                current_command = command.Command(line.split(' '), copy.copy(command_history))
+                current_command = command.Command(line.split(' '),
+                    copy.copy(command_history))
                 current_command.set_results(gram_handler)
                 command_history.append(current_command)
                 current_command.run()
-            # time.sleep(.1)
+            time.sleep(.1)
     except Exception as e:
         logging.exception(e)
         raise e

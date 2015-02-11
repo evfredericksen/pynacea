@@ -1,6 +1,7 @@
 import subprocess
 import sys
 from pynhost import utilities
+from pynhost.grammars import _locals
 
 def send_string(string_to_send):
     split_string = utilities.split_send_string(string_to_send)
@@ -32,3 +33,12 @@ def mouse_click(button='left', direction='both', number='1'):
         elif direction == 'up': command = 'mouseup'
         else: return
         subprocess.call(['xdotool', command, '--repeat', number, button])
+
+def get_homonym(word):
+    '''
+    Replicate <hom> functionality in functions
+    '''
+    for hom in _locals.HOMONYMS:
+        if word in _locals.HOMONYMS[hom]:
+            return hom
+    return word

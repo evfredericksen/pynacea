@@ -5,12 +5,15 @@ import os
 import shutil
 import re
 import sys
+import copy
 import pynhost
 from pynhost import constants
 from pynhost.grammars import _locals
 
-def transcribe_line(key_inputs, space=True):
-    # print(key_inputs)
+def transcribe_line(key_inputs, space=True, transcribe_mode=False):
+    if transcribe_mode:
+        subprocess.call(['xdotool', 'type', '--delay', '0ms', ' '.join(key_inputs)])
+        return
     for key in key_inputs:
         if len(key) == 1:
             subprocess.call(['xdotool', 'type', '--delay', '0ms', key])
@@ -50,12 +53,16 @@ def split_send_string(string_to_send):
     return split_string
 
 def clear_directory(dir_name):
-    for file_path in os.listdir(dir_name):
-        full_path = os.path.join(dir_name, file_path)
-        if os.path.isfile(full_path):
-            os.unlink(full_path)
-        else:
-            shutil.rmtree(full_path)
+    while os.listdir(dir_name):
+        for file_path in os.listdir(dir_name):
+            full_path = os.path.join(dir_name, file_path)
+            try:
+                if os.path.isfile(full_path):
+                    os.unlink(full_path)
+                else:
+                    shutil.rmtree(full_path)
+            except FileNotFoundError:
+                pass
 
 def get_shared_directory():
     package_dir = os.path.dirname((os.path.abspath(pynhost.__file__)))
@@ -128,20 +135,27 @@ def get_open_window():
     proc = subprocess.check_output(['xdotool', 'getactivewindow', 'getwindowname'])
     return proc.decode('utf8').rstrip('\n')
 
-def get_listening_status(current_status, words):
-    try:
-        wakeup_match = string_in_list_of_patterns(words, _locals.WAKE_UP_PATTERNS)
-    except AttributeError:
-        wakeup_match = False
-    try:
-        sleep_match = string_in_list_of_patterns(words, _locals.SLEEP_PATTERNS)
-    except AttributeError:
-        sleep_match = False
-    if wakeup_match and not sleep_match:
-        return True
-    elif sleep_match and not wakeup_match:
-        return False
-    return current_status
+def get_new_status(current_status, words):
+    new_status = copy.copy(current_status)
+    matched_pattern = False
+    patterns = {
+        'SLEEP_PATTERNS': {'opposite': 'WAKE_UP_PATTERNS', 'name': 'asleep'},
+        'BEGIN_DICTATION_PATTERNS': {'opposite': 'END_DICTATION_PATTERNS', 'name': 'dictation mode'},
+        'BEGIN_NUMBER_MODE_PATTERNS': {'opposite': 'END_NUMBER_MODE_PATTERNS', 'name': 'number mode'},
+    }
+    for p in patterns:
+        result1, result2 = False, False
+        if hasattr(_locals, p):
+            result1 = string_in_list_of_patterns(words, getattr(_locals, p))
+        if hasattr(_locals, patterns[p]['opposite']):
+            result2 = string_in_list_of_patterns(words, getattr(_locals, patterns[p]['opposite']))
+        if True in (result1, result2):
+            matched_pattern = True
+        if result1 and not result2:
+            new_status[patterns[p]['name']] = True
+        elif not result1 and result2:
+            new_status[patterns[p]['name']] = False
+    return new_status, matched_pattern
 
 def string_in_list_of_patterns(test_string, list_of_patterns):
     for pattern in list_of_patterns:
@@ -212,3 +226,18 @@ def replace_xdotool_keys(keys):
             key = constants.XDOTOOL_KEYMAP[key.lower()]
         new_list.append(key)
     return '+'.join(new_list)
+
+def transcribe_numbers(line):
+    num_words = []
+    for word in line.split():
+        if word in constants.NUMBERS_MAP:
+            num_words.append(constants.NUMBERS_MAP[word])
+        else:
+            try:
+                num = float(word)
+                if int(num) - num == 0:
+                    num = int(num)
+                num_words.append(str(num))
+            except (ValueError, TypeError, IndexError):
+                num_words.append(word)
+    transcribe_line(num_words, transcribe_mode=True)

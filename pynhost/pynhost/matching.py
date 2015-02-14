@@ -30,8 +30,8 @@ class RuleMatch:
         }
 
     def revert_to_snapshot(self, snapshot):
-        self.remaining_words = snapshot['remaining words']
-        self.matched_words = snapshot['matched words']
+        self.remaining_words = copy.deepcopy(snapshot['remaining words'])
+        self.matched_words = copy.deepcopy(snapshot['matched words'])
 
     def get_words(self):
         return utilities.split_into_words(self.matched_words.values())

@@ -263,6 +263,11 @@ class TestRuleMatching(unittest.TestCase):
         words = 'upper hello world'.split(' ')
         self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['upper', 'hello', 'world'])
 
+    def test_mix4(self):
+        rule = ruleparser.Rule('(test | outer hello | outer)')
+        words = 'outer'.split(' ')
+        self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['outer'])
+
     def test_dict1(self):
         rule = ruleparser.Rule('{}')
         rule.dictionary = {

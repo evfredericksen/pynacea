@@ -59,4 +59,3 @@ examples.
 - Customize num tag to allow for ranges of numbers
 - Better logging
 - Support for individual down and up keypresses
-- Optional regex property for grammars

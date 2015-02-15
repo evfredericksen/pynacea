@@ -36,30 +36,34 @@ class RuleMatch:
     def get_words(self):
         return utilities.split_into_words(self.matched_words.values())
 
-def get_rule_match(rule, words, filter_list=None):
+def get_rule_match(rule, words, regex_mode=False, filter_list=None):
     if filter_list is None:
         filter_list = []
     filtered_positions = utilities.get_filtered_positions(words, filter_list)
     words = [word.lower() for word in words if word not in filter_list]
-    rule_match = RuleMatch(words, rule)
-    results = []
-    for piece in rule.pieces:
-        if isinstance(piece, str):
-            if rule_match.remaining_words and piece.lower() == rule_match.remaining_words[0]:
-                rule_match.add(rule_match.remaining_words[0], piece)
-                results.append(piece)
+    if regex_mode:
+        rule_match = get_regex_match(rule, words)
+    else:
+        rule_match = RuleMatch(words, rule)
+        results = []
+        for piece in rule.pieces:
+            if isinstance(piece, str):
+                if rule_match.remaining_words and piece.lower() == rule_match.remaining_words[0]:
+                    rule_match.add(rule_match.remaining_words[0], piece)
+                    results.append(piece)
+                else:
+                    return
             else:
-                return
-        else:
-            result = words_match_piece(piece, rule_match)
-            results.append(result)
-            if result is False:
-                return
-    # optional pieces return None if they do not match
-    if results.count(None) == len(rule.pieces):
-        return
-    rule_match.remaining_words = utilities.reinsert_filtered_words(
-        rule_match.remaining_words, filtered_positions)
+                result = words_match_piece(piece, rule_match)
+                results.append(result)
+                if result is False:
+                    return
+        # optional pieces return None if they do not match
+        if results.count(None) == len(rule.pieces):
+            return
+    if rule_match is not None:
+        rule_match.remaining_words = utilities.reinsert_filtered_words(
+            rule_match.remaining_words, filtered_positions)
     return rule_match
 
 def words_match_piece(piece, rule_match):
@@ -164,3 +168,11 @@ def check_homonym(piece, rule_match):
                     rule_match.add(tag, piece)
                     return True
     return False
+
+def get_regex_match(rule, words):
+    rule_match = RuleMatch(words, rule)
+    regex_match = re.match(rule.raw_text, ' '.join(words))
+    if regex_match is not None:
+        rule_match.matched_words[rule.raw_text] = regex_match.group()
+        rule_match.remaining_words = rule.raw_text[len(regex_match.group()):].split()
+        return rule_match

@@ -42,7 +42,9 @@ class Command:
                         for rule in grammar._rules:
                             rule = copy.copy(rule)
                             rule_match = matching.get_rule_match(rule,
-                                         self.remaining_words, grammar.settings['filtered words'])
+                                         self.remaining_words,
+                                         grammar.settings['regex mode'],
+                                         grammar.settings['filtered words'])
                             if rule_match is not None:
                                 return rule_match
 

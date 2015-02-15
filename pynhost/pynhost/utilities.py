@@ -10,17 +10,19 @@ import pynhost
 from pynhost import constants
 from pynhost.grammars import _locals
 
-def transcribe_line(key_inputs, space=True, transcribe_mode=False):
+def transcribe_line(key_inputs, delay=0, space=True, transcribe_mode=False):
+    print(key_inputs)
+    delay = delay/1000 # seconds to milliseconds
     if transcribe_mode:
-        subprocess.call(['xdotool', 'type', '--delay', '0ms', ' '.join(key_inputs)])
+        subprocess.call(['xdotool', 'type', '--delay', '{}ms'.format(delay), ' '.join(key_inputs)])
         return
     for key in key_inputs:
         if len(key) == 1:
-            subprocess.call(['xdotool', 'type', '--delay', '0ms', key])
+            subprocess.call(['xdotool', 'type', '--delay', '{}ms'.format(delay), key])
         else:
-            subprocess.call(['xdotool', 'key', '--delay', '0ms', key])
+            subprocess.call(['xdotool', 'key', '--delay', '{}ms'.format(delay), key])
     if space:
-        subprocess.call(['xdotool', 'key', '--delay', '0ms', '0x0020'])
+        subprocess.call(['xdotool', 'key', '--delay', '{}ms'.format(delay), '0x0020'])
 
 def get_buffer_lines(buffer_path):
     files = sorted([f for f in os.listdir(buffer_path) if not os.path.isdir(f) and re.match(r'o\d+$', f)])
@@ -241,3 +243,14 @@ def transcribe_numbers(line):
             except (ValueError, TypeError, IndexError):
                 num_words.append(word)
     transcribe_line(num_words, transcribe_mode=True)
+
+def convert_to_num(word):
+    if word in constants.NUMBERS_MAP:
+            return constants.NUMBERS_MAP[word]
+    try:
+        num = float(word)
+        if int(num) - num == 0:
+            num = int(num)
+        return str(num)
+    except (ValueError, TypeError, IndexError):
+        return None

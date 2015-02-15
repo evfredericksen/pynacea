@@ -23,6 +23,7 @@ NUMBERS_MAP = {
 	'for': '4',
 	"i've": '5',
     'sex': '6',
+    'sets': '6',
 }
 
 HOMONYMS = {

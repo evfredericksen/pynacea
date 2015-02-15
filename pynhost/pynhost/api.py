@@ -3,10 +3,10 @@ import sys
 from pynhost import utilities
 from pynhost.grammars import _locals
 
-def send_string(string_to_send):
+def send_string(string_to_send, delay=0):
     split_string = utilities.split_send_string(string_to_send)
     chars = utilities.convert_for_xdotool(split_string)
-    utilities.transcribe_line(chars, False)
+    utilities.transcribe_line(chars, space=False, delay=delay)
 
 def mouse_move(x=None, y=None, relative=False):
     if not relative:

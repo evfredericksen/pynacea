@@ -23,12 +23,12 @@ class Command:
             if rule_match is not None:
                 self.results.append(rule_match)
                 self.remaining_words = rule_match.remaining_words
-                utilities.add_command_to_recording_macros(self, rule_match.rule.grammar.recording_macros)                              
+                utilities.add_command_to_recording_macros(self, rule_match.rule.grammar._recording_macros)                              
             else:
                 self.results.append(self.remaining_words[0])
                 for grammars in gram_handler.modules.values():
                     for grammar in grammars:
-                        utilities.add_command_to_recording_macros(self, grammar.recording_macros)
+                        utilities.add_command_to_recording_macros(self, grammar._recording_macros)
                 self.remaining_words = self.remaining_words[1:]
 
     def get_rule_match(self, gram_handler):
@@ -39,10 +39,10 @@ class Command:
             if len(split_name) == 3 or re.search(split_name[2].lower(), window_name.lower()):
                 for grammar in gram_handler.modules[module_obj]:
                     if grammar._check_grammar():
-                        for rule in grammar.rules:
+                        for rule in grammar._rules:
                             rule = copy.copy(rule)
                             rule_match = matching.get_rule_match(rule,
-                                         self.remaining_words, grammar._filtered_words)
+                                         self.remaining_words, grammar.settings['filtered words'])
                             if rule_match is not None:
                                 return rule_match
 

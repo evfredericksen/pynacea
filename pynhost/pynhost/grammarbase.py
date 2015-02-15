@@ -2,24 +2,26 @@ import logging
 from pynhost import ruleparser
 
 class GrammarBase:
-    _ids_to_ignore = set()
     def __init__(self):
-        self.rules = []
-        self.recording_macros = {}
         self.mapping = {}
         self.dictionary = {}
-        self._filtered_words = []
-        self._id_string = ''
+        self.settings = {
+            'regex mode': False,
+            'filtered words': [],
+        }
+        # no touchy
+        self._rules = []
+        self._recording_macros = {}
 
     def _begin_recording_macro(self, rule_name):
         logging.info("Started recording macro '{}' for grammar {}".format(rule_name, self))
-        self.recording_macros[rule_name] = []
+        self._recording_macros[rule_name] = []
 
     def _finish_recording_macro(self, rule_name):
         logging.info("Finished recording macro '{}' for grammar {}".format(rule_name, self))
         rule = ruleparser.Rule(rule_name, self.recording_macros[rule_name][:-1], self)
         self.rules.append(rule)
-        del self.recording_macros[rule_name]
+        del self._recording_macros[rule_name]
 
     def _run_command(self, command):
         pass
@@ -33,4 +35,4 @@ class GrammarBase:
 def set_rules(grammar):
     for rule_text, actions in grammar.mapping.items():
         rule = ruleparser.Rule(rule_text, actions, grammar, dictionary=grammar.dictionary)
-        grammar.rules.append(rule)
+        grammar._rules.append(rule)

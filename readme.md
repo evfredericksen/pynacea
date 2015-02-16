@@ -11,6 +11,9 @@ stability and flexibility in that it does not require access to APIs from any
 proprietary voice recognition software, and can in fact run alongside any voice
 recognition program.
 
+Pynacea has built-in support for PocketSphinx, and relies on a virtual machine
+for other speech to text engines.
+
 Read the documentation [here](https://www.youtube.com/watch?v=eB211nF-Big).
 
 ##To Do

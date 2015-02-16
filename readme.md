@@ -1,7 +1,7 @@
 #Pynacea
 
-Pynacea is a voice recognition framework and grammar specification that allows
-users to control their desktop environment through voice input. Possible
+Pynacea is a voice recognition framework and grammar specification that gives
+users control over their desktop environment through voice input. Possible
 uses include editing text, shell commands, online browsing, and more.
 
 This project is similar to the Natlink/Dragonfly/Aenea stack. However, Pynacea

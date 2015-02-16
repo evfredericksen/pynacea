@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Grammars &mdash; Pynacea 0.3.2 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.3.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Pynacea 0.3.2 documentation" href="../index.html" />
+    <link rel="prev" title="Using Pynacea" href="../usage.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../usage.html" title="Using Pynacea"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Pynacea 0.3.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="grammars">
+<h1>Grammars<a class="headerlink" href="#grammars" title="Permalink to this headline">¶</a></h1>
+<p>Grammars allow you to run callback functions in your host operating system.
+They reside in the grammars directory of your pynhost installation.
+These functions will be called when your voice input matches a particular rule
+pattern that you have created.</p>
+<div class="section" id="basic-usage">
+<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h2>
+<p>The following is an example of a basic Grammar class, taken from
+pynhost/pynhost/grammars/sample1.py:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pynhost</span> <span class="kn">import</span> <span class="n">grammarbase</span><span class="p">,</span> <span class="n">api</span>
+
+<span class="k">class</span> <span class="nc">BasicSampleGrammar</span><span class="p">(</span><span class="n">grammarbase</span><span class="o">.</span><span class="n">GrammarBase</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Barebones grammar class that can be used as a template for new</span>
+<span class="sd">    grammars. See grammars/sample2.py for a more indepth example</span>
+<span class="sd">    of grammars.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;sample hello&#39;</span><span class="p">:</span> <span class="s">&#39;Hello World!&#39;</span><span class="p">,</span>
+            <span class="s">&#39;sample goodbye &lt;num&gt;&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">goodbye</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">goodbye</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">words</span><span class="p">):</span>
+        <span class="n">iter_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">words</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iter_count</span><span class="p">):</span>
+            <span class="n">api</span><span class="o">.</span><span class="n">send_string</span><span class="p">(</span><span class="s">&#39;Goodbye World!&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The most important property of Grammar classes is the <tt class="docutils literal"><span class="pre">self.mapping</span></tt> property. The keys of <tt class="docutils literal"><span class="pre">self.mapping</span></tt> are rules, similar to regular expression patterns. If your speech input matches one of these patterns, then Pynacea will execute the corresponding value, which can be a string for the operating system to type, a method, or something else. For example, with this class in your grammars directory, if you say (or at least if your speech to text engine thinks that you said) <tt class="docutils literal"><span class="pre">sample</span> <span class="pre">hello</span></tt>, then Pynacea will tell the operating system to type <tt class="docutils literal"><span class="pre">Hello</span> <span class="pre">World!</span></tt>. If you say <tt class="docutils literal"><span class="pre">sample</span> <span class="pre">goodbye</span></tt> followed by a number, then Pynacea will call the <tt class="docutils literal"><span class="pre">self.goodbye</span></tt> method.</p>
+<p>Note that these methods expect one additional parameter, which contain the list of spoken words that triggered the method. This allows for flexibility in running the method based on the possible variations that could potentially match its corresponding rule.</p>
+</div>
+<div class="section" id="keypresses">
+<h2>Keypresses<a class="headerlink" href="#keypresses" title="Permalink to this headline">¶</a></h2>
+<p>Keypresses are sent to the operating system in one of three ways:</p>
+<ol class="arabic simple">
+<li>By default if spoken input does not match any patterns</li>
+<li>If a matched rule maps to a string or a list containing one or more strings</li>
+<li>By passing a string argument to <tt class="docutils literal"><span class="pre">api.send_string()</span></tt></li>
+</ol>
+<p>Special keypresses are surrounded by curly braces and combined through addition signs, such as <tt class="docutils literal"><span class="pre">{ctrl+alt+del}</span></tt> or <tt class="docutils literal"><span class="pre">{ctrl+f}apples{enter}</span></tt>. Use a second consecutive curly brace as an escape character to type a literal curly brace.</p>
+</div>
+<div class="section" id="rules-tags">
+<h2>Rules Tags<a class="headerlink" href="#rules-tags" title="Permalink to this headline">¶</a></h2>
+<p>Within each key for <tt class="docutils literal"><span class="pre">self.mapping</span></tt>, certain tags have certain meanings:</p>
+<div class="section" id="list-tags">
+<h3>List Tags<a class="headerlink" href="#list-tags" title="Permalink to this headline">¶</a></h3>
+<p><tt class="docutils literal"><span class="pre">()</span></tt> indicates a list of potential matches, separated by a <tt class="docutils literal"><span class="pre">|</span></tt> character. For instance, <tt class="docutils literal"><span class="pre">(hello</span> <span class="pre">|</span> <span class="pre">goodbye)</span> <span class="pre">world</span></tt> will match either <tt class="docutils literal"><span class="pre">hello</span> <span class="pre">world</span></tt> or <tt class="docutils literal"><span class="pre">goodbye</span> <span class="pre">world</span></tt>.</p>
+</div>
+<div class="section" id="optional-tags">
+<h3>Optional Tags<a class="headerlink" href="#optional-tags" title="Permalink to this headline">¶</a></h3>
+<p><tt class="docutils literal"><span class="pre">[]</span></tt> indicates that the contents of the tag are optional. For instance, <tt class="docutils literal"><span class="pre">goodbye</span> <span class="pre">[cruel]</span> <span class="pre">world</span></tt> will match either <tt class="docutils literal"><span class="pre">goodbye</span> <span class="pre">cruel</span> <span class="pre">world</span></tt> or simply <tt class="docutils literal"><span class="pre">goodbye</span> <span class="pre">world</span></tt>.</p>
+</div>
+<div class="section" id="special-tags">
+<h3>Special Tags<a class="headerlink" href="#special-tags" title="Permalink to this headline">¶</a></h3>
+<p><tt class="docutils literal"><span class="pre">&lt;&gt;</span></tt> can contain one of the following &#8220;special&#8221; tags:</p>
+<ul>
+<li><p class="first"><tt class="docutils literal"><span class="pre">&lt;num&gt;</span></tt> will match any number. It will also match homonyms for certain numbers, like <tt class="docutils literal"><span class="pre">for</span></tt> and <tt class="docutils literal"><span class="pre">to</span></tt>, so be careful about where you use this tag.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">&lt;3&gt;</span></tt> will match exactly three words. <tt class="docutils literal"><span class="pre">&lt;3+&gt;</span></tt> will greedily match at least three words. <tt class="docutils literal"><span class="pre">&lt;3-&gt;</span></tt> will match two through zero words. These numbers can be any integer greater than or equal to zero.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">&lt;hom_sampleword&gt;</span></tt> will match either <tt class="docutils literal"><span class="pre">sampleword</span></tt> or any homonym that you have defined for <tt class="docutils literal"><span class="pre">sampleword</span></tt> in the <tt class="docutils literal"><span class="pre">HOMONYMS</span></tt> dictionary residing in pynhost/grammars/_locals.py. Each key in this dictionary maps to a list of strings. For instance, if your _locals.HOMONYMS dictionary looks like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">HOMONYMS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;delete&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;fleet&#39;</span><span class="p">,</span> <span class="s">&#39;elite&#39;</span><span class="p">,</span> <span class="s">&#39;neat&#39;</span><span class="p">],</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>then if Pynacea gets the input <tt class="docutils literal"><span class="pre">elite</span> <span class="pre">word</span></tt>, it will recognize <tt class="docutils literal"><span class="pre">elite</span></tt> as a homonym of <tt class="docutils literal"><span class="pre">delete</span></tt>, and will match that input to the rule <tt class="docutils literal"><span class="pre">&lt;hom_delete&gt;</span> <span class="pre">word</span></tt>.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Tags can be nested. <tt class="docutils literal"><span class="pre">range</span> <span class="pre">&lt;num&gt;[through</span> <span class="pre">&lt;num&gt;[step</span> <span class="pre">&lt;num&gt;]]</span></tt> is an example that matches inputs like <tt class="docutils literal"><span class="pre">range</span> <span class="pre">4</span></tt>, <tt class="docutils literal"><span class="pre">range</span> <span class="pre">4</span> <span class="pre">through</span> <span class="pre">16</span></tt>, <tt class="docutils literal"><span class="pre">range</span> <span class="pre">4</span> <span class="pre">through</span> <span class="pre">16</span> <span class="pre">step</span> <span class="pre">2</span></tt>.</li>
+<li>Grammar classes residing in the top level of the <tt class="docutils literal"><span class="pre">pynhost/grammars</span></tt> directory are treated as global grammars, and their rules can be matched anywhere. Grammar classes residing in a subdirectory are application-specific, and their name must match a regular expression search with the currently open process.</li>
+<li>A command (a single utterance without a pause) can match multiple rules in a &#8220;chained&#8221; fashion. For example, the speech input <tt class="docutils literal"><span class="pre">goodbye</span> <span class="pre">world</span> <span class="pre">for</span> <span class="pre">hello</span> <span class="pre">world</span></tt> will result in <tt class="docutils literal"><span class="pre">self.goodbye</span></tt> being called, followed by <tt class="docutils literal"><span class="pre">Hello</span> <span class="pre">World!</span></tt> being sent as keypresses to the operating system. These rules do not need to all originate from the same Grammar class.</li>
+<li>If you prefer regular expressions, making the <tt class="docutils literal"><span class="pre">self.settings['regex</span> <span class="pre">mode']</span></tt> attribute of a Grammar class truthy will treat all of the keys in <tt class="docutils literal"><span class="pre">self.mappings</span></tt> as regular expression patterns instead of rules.</li>
+<li>Grammar classes can be inherited multiple times, although their root class must be <tt class="docutils literal"><span class="pre">grammarbase.GrammarBase</span></tt>. This can be useful for having extension classes that encapsulate application-specific behavior and act as a superclass for all of the other Grammars for that application.</li>
+<li><tt class="docutils literal"><span class="pre">self.settings['filtered</span> <span class="pre">words']</span></tt> is a list of words for a specific grammar to ignore for any spoken input.</li>
+<li><tt class="docutils literal"><span class="pre">api.mouse_move(x,</span> <span class="pre">y)</span></tt> moves the mouse to a certain location on the screen. <tt class="docutils literal"><span class="pre">api.mouse_click()</span></tt> clicks the mouse.</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Grammars</a><ul>
+<li><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
+<li><a class="reference internal" href="#keypresses">Keypresses</a></li>
+<li><a class="reference internal" href="#rules-tags">Rules Tags</a><ul>
+<li><a class="reference internal" href="#list-tags">List Tags</a></li>
+<li><a class="reference internal" href="#optional-tags">Optional Tags</a></li>
+<li><a class="reference internal" href="#special-tags">Special Tags</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#miscellaneous">Miscellaneous</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../usage.html"
+                        title="previous chapter">Using Pynacea</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/grammars/introduction.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../usage.html" title="Using Pynacea"
+             >previous</a> |</li>
+        <li><a href="../index.html">Pynacea 0.3.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, Evan Fredericksen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

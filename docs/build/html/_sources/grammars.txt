@@ -1,6 +1,14 @@
 Grammars
 ==============
 
+Grammars allow you to write callback functions in your host operating system.
+They reside in the grammars directory of your pynhost installation.
+These functions will be called when your voice input matches a particular rule
+that you have created.
+
+Basic Usage
+------------
+
 If you are using a Virtual Machine:
 
 * Begin running your voice recognition software on your virtual machine.

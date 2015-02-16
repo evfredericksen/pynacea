@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Pynacea documentation
+Pynacea Documentation
 ===================================
 
 Pynacea is a program that allows the user to run voice recognition
@@ -29,5 +29,11 @@ Getting Started
 
    installation
    usage
-   grammars
+
+Grammars
+---------
+.. toctree::
+   :maxdepth: 2
+   
+   grammars/introduction
 

@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Installation &mdash; Pynacea 0.3.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.3.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Pynacea 0.3.2 documentation" href="index.html" />
+    <link rel="prev" title="Welcome to Pynacea’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Pynacea’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Pynacea 0.3.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>If you are using pip:</p>
+<p><tt class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">pynhost</span></tt></p>
+<p>Alternatively, the source can be downloaded from PyPi, unzipped and installed
+by running <tt class="docutils literal"><span class="pre">setup.py</span></tt>. The most recent (and potentially unstable) build
+can be used by cloning the
+<a class="reference external" href="https://github.com/evfredericksen/pynacea">GitHub repository</a>,
+opening the <tt class="docutils literal"><span class="pre">pynhost</span></tt> directory, and running <tt class="docutils literal"><span class="pre">setup.py</span></tt>.</p>
+<p>The installation process now diverges based on whether you are using
+PocketSphinx or another speech recognition engine running through a virtual
+machine.</p>
+<div class="section" id="pocketsphinx">
+<h2>PocketSphinx<a class="headerlink" href="#pocketsphinx" title="Permalink to this headline">¶</a></h2>
+<p>Make sure that you have PocketSphinx up and running on your system.
+<a class="reference external" href="http://cmusphinx.sourceforge.net/wiki/tutorialpocketsphinx#installation">Here</a>
+is a how-to if you haven&#8217;t already done so.</p>
+<p>Run <tt class="docutils literal"><span class="pre">pynacea.py</span> <span class="pre">-c</span></tt> and navigate to <tt class="docutils literal"><span class="pre">Change</span> <span class="pre">Engine</span> <span class="pre">Settings</span></tt>. Here you can
+provide paths if you plan on using Hidden Markov Models, a Language Model,
+and/or a Dictionary (strongly recommended).</p>
+</div>
+<div class="section" id="virtual-machine">
+<h2>Virtual Machine<a class="headerlink" href="#virtual-machine" title="Permalink to this headline">¶</a></h2>
+<p>On your virtual machine:</p>
+<ul class="simple">
+<li>Set up a voice recognition environment. I use Oracle VirtualBox, 32-bit
+Windows 7, Dragon Naturally Speaking 13 Premium (although Home Edition should
+be fine), and a USB microphone, but feel free to mix and match as you like.</li>
+<li>Install Python (2 or 3)</li>
+<li><tt class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">pynguest</span></tt></li>
+</ul>
+<p>Set up <tt class="docutils literal"><span class="pre">&lt;Python</span> <span class="pre">Installation&gt;/pynhost/pynportal</span></tt> from your main operating system as a
+shared folder between your virtual machine and your main operating system. If you&#8217;re using
+VirtualBox, <a class="reference external" href="https://www.youtube.com/watch?v=eB211nF-Big">here</a> is a quick
+illustration of the process.</p>
+<p>On your virtual machine, run <tt class="docutils literal"><span class="pre">pynacea.py</span></tt>. If it&#8217;s your first use, the
+program will attempt to automatically locate the shared folder that you just
+created, but you may be prompted to provide its path.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Installation</a><ul>
+<li><a class="reference internal" href="#pocketsphinx">PocketSphinx</a></li>
+<li><a class="reference internal" href="#virtual-machine">Virtual Machine</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to Pynacea&#8217;s documentation!</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/installation.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Pynacea’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">Pynacea 0.3.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, Evan Fredericksen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

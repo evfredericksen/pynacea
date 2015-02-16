@@ -14,7 +14,7 @@ recognition program.
 Pynacea has built-in support for PocketSphinx, and relies on a virtual machine
 for other speech to text engines.
 
-Read the documentation [here](https://www.youtube.com/watch?v=eB211nF-Big).
+Read the documentation [here](https://pythonhosted.org/pynhost/).
 
 ##To Do
 

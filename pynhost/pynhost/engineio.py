@@ -33,14 +33,28 @@ class SphinxHandler:
                     yield ' '.join(split_line[1:])
 
 class SharedDirectoryHandler:
-    def __init__(self):
+    def __init__(self, filter_on=True):
         self.shared_dir = utilities.get_shared_directory()
         utilities.clear_directory(self.shared_dir)
+        self.filter_on = filter_on
 
     def get_lines(self):
         lines = utilities.get_buffer_lines(self.shared_dir)
         for line in lines:
+            if self.filter_duplicate_letters:
+                line = self.filter_duplicate_letters(line)
             yield line
+
+    def filter_duplicate_letters(self, line):
+        line_list = []
+        for word in line.split():
+            new_word = ''
+            for i, char in enumerate(word):
+                if (char.islower() or i in [0, len(word) - 1] or
+                    char.lower() != word[i + 1]):
+                    new_word += char
+            line_list.append(new_word)
+        return ' '.join(line_list)
 
 class DebugHandler:
     def __init__(self, delay):

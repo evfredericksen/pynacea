@@ -24,7 +24,7 @@ class SampleGrammar(grammarbase.GrammarBase):
 
             'say goodbye': ['Goodbye world. ', 'Hope to see you again soon!'],
 
-            'click [(left | middle | right)] [(up | down | both)]': self.click,
+            # 'click [(left | middle | right)] [(up | down | both)]': self.click,
             # matches 'click', followed optionally by 'left', 'right' or 'middle',
             # followed (again optionally) by 'up', 'down', or 'both'.
             # Sample matches: 'click', 'click left', 'click up', 'click left down'

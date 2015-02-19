@@ -119,6 +119,8 @@ def check_special(piece, rule_match):
         return check_num_range(piece, rule_match)
     elif len(tag) > 4 and tag[:4] == 'hom_':
        return check_homonym(piece, rule_match)
+    elif tag == 'end':
+        return check_end(piece, rule_match)
     assert False 
 
 def check_num(piece, rule_match):
@@ -167,6 +169,12 @@ def check_homonym(piece, rule_match):
                 if ' '.join(test_words).lower() == hom.lower():
                     rule_match.add(tag, piece)
                     return True
+    return False
+
+def check_end(piece, rule_match):
+    if not rule_match.remaining_words:
+        rule_match.add('', piece)
+        return True
     return False
 
 def get_regex_match(rule, words):

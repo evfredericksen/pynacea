@@ -321,5 +321,17 @@ class TestRuleMatching(unittest.TestCase):
         rule_match = matching.get_rule_match(rule, words, regex_mode=True)
         self.assertEqual(list(rule_match.get_words()), ['555-897-1923'])
 
+    def test_end1(self):
+        rule = ruleparser.Rule('hello world <end>')
+        words = 'hello world'.split()
+        rule_match = matching.get_rule_match(rule, words)
+        self.assertEqual(list(rule_match.get_words()), ['hello', 'world'])
+
+    def test_end2(self):
+        rule = ruleparser.Rule('hello world <end>')
+        words = 'hello world goodbye'.split()
+        rule_match = matching.get_rule_match(rule, words)
+        self.assertIsNone(rule_match)
+
 if __name__ == '__main__':
     unittest.main()

@@ -33,10 +33,11 @@ class Command:
 
     def get_rule_match(self, gram_handler):
         proc = subprocess.check_output(['xdotool', 'getactivewindow', 'getwindowname'])
-        window_name = proc.decode('utf8').rstrip('\n')
+        open_window_name = proc.decode('utf8').rstrip('\n')
         for module_obj in gram_handler.modules:
             split_name = module_obj.__name__.split('.')
-            if len(split_name) == 3 or re.search(split_name[2].lower(), window_name.lower()):
+            if (len(split_name) == 3 or re.search(split_name[2].lower(), open_window_name.lower())
+                    or split_name[2][0] == '_'):
                 for grammar in gram_handler.modules[module_obj]:
                     if grammar._check_grammar():
                         for rule in grammar._rules:
@@ -49,14 +50,14 @@ class Command:
                                 return rule_match
 
     def run(self):
-        for result in self.results:
+        for i, result in enumerate(self.results):
             if isinstance(result, matching.RuleMatch):
                 logging.info('Input "{}" matched rule "{}" in {}'.format(
                     ' '.join(list(result.matched_words.values())),
                     result.rule.raw_text, result.rule.grammar))
                 self.execute_rule_match(result)
             else:
-                utilities.transcribe_line(result, len(self.remaining_words) != 1)
+                utilities.transcribe_line(result, space= i + 1 < len(self.results))
                 logging.debug('Transcribed word "{}"'.format(result))
 
     def execute_rule_match(self, rule_match):

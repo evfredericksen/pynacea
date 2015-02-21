@@ -3,7 +3,7 @@ import re
 import inspect
 import sys
 import subprocess
-from pynhost import grammarbase
+from pynhost import grammarbase, utilities
 
 class GrammarHandler:
     def __init__(self):
@@ -34,3 +34,32 @@ class GrammarHandler:
                 grammars.append(member[1]())
                 grammarbase.set_rules(grammars[-1])
         return grammars
+
+    def get_matching_grammars(self):
+        open_window_name = utilities.get_open_window_name()
+        for module_obj in self.modules:
+            split_name = module_obj.__name__.split('.')
+            if (len(split_name) == 3 or re.search(split_name[2].lower(), open_window_name.lower())
+                or split_name[2][0] == '_'):
+                for grammar in self.modules[module_obj]:
+                    if grammar._check_grammar():
+                        yield grammar
+
+# local var match = match subdir and global
+# global var match = match global
+# no match: match open program and global
+
+    def add_command_to_recording_macros(self, command, matched_grammar):
+        matched_subdir = ''
+        if matched_grammar is None:
+            matched_subdir = utilities.get_open_window_name().lower()
+        elif len(matched_grammar.__module__.split('.')) >= 4:
+            matched_subdir = matched_grammar.__module__.split('.')[2]
+        for module_obj in self.modules:
+            split_name = module_obj.__name__.split('.')
+            if (len(split_name) == 3 or split_name[2].lower() == matched_subdir
+                or split_name[2][0] == '_'):
+                for grammar in self.modules[module_obj]:
+                    for name in grammar._recording_macros:
+                        if not grammar._recording_macros[name] or grammar._recording_macros[name][-1] is not command:
+                            grammar._recording_macros[name].append(command)

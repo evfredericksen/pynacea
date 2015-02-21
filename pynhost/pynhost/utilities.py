@@ -121,11 +121,6 @@ def get_tags(pieces, tag_name, matches=None):
             get_tags(piece.children, tag_name, matches)
     return matches
 
-def add_command_to_recording_macros(command, recording_macros):
-    for name in recording_macros:
-        if not recording_macros[name] or recording_macros[name][-1] is not command:
-            recording_macros[name].append(command)
-
 def split_into_words(list_of_strings):
     words = []
     for string in list_of_strings:
@@ -133,7 +128,7 @@ def split_into_words(list_of_strings):
             words.extend(string.split(' '))
     return words
 
-def get_open_window():
+def get_open_window_name():
     proc = subprocess.check_output(['xdotool', 'getactivewindow', 'getwindowname'])
     return proc.decode('utf8').rstrip('\n')
 

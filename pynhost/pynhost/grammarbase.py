@@ -17,12 +17,17 @@ class GrammarBase:
         logging.info("Started recording macro '{}' for grammar {}".format(rule_name, self))
         self._recording_macros[rule_name] = []
 
-    def _finish_recording_macro(self, rule_name):
-        logging.info("Finished recording macro '{}' for grammar {}".format(rule_name, self))
-        rule = ruleparser.Rule(rule_name, self.recording_macros[rule_name][:-1], self)
-        self.rules.append(rule)
-        del self._recording_macros[rule_name]
-
+    def _finish_recording_macros(self):
+        logging.info("Finished recording macros for grammar {}".format(self))
+        new_rules = []
+        for rule_name, macro in self._recording_macros.items():
+            new_rules.append(ruleparser.Rule(rule_name, macro[:-1], self))
+        for rule in self._rules:
+            if rule.raw_text not in [r.raw_text for r in new_rules]:
+                new_rules.append(rule)
+        self._rules = new_rules
+        self.recording_macros = {}
+        
     def _run_command(self, command):
         pass
 

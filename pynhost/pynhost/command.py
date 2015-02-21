@@ -23,31 +23,25 @@ class Command:
             if rule_match is not None:
                 self.results.append(rule_match)
                 self.remaining_words = rule_match.remaining_words
-                utilities.add_command_to_recording_macros(self, rule_match.rule.grammar._recording_macros)                              
+                gram_handler.add_command_to_recording_macros(self, rule_match.rule.grammar)
+                # print('trace', rule_match.rule.grammar.__module__)
+                # print('tra', rule_match.rule.grammar._recording_macros)
+                # utilities.add_command_to_recording_macros(self, rule_match.rule.grammar._recording_macros)
             else:
                 self.results.append(self.remaining_words[0])
-                for grammars in gram_handler.modules.values():
-                    for grammar in grammars:
-                        utilities.add_command_to_recording_macros(self, grammar._recording_macros)
+                gram_handler.add_command_to_recording_macros(self, None)
                 self.remaining_words = self.remaining_words[1:]
 
     def get_rule_match(self, gram_handler):
-        proc = subprocess.check_output(['xdotool', 'getactivewindow', 'getwindowname'])
-        open_window_name = proc.decode('utf8').rstrip('\n')
-        for module_obj in gram_handler.modules:
-            split_name = module_obj.__name__.split('.')
-            if (len(split_name) == 3 or re.search(split_name[2].lower(), open_window_name.lower())
-                    or split_name[2][0] == '_'):
-                for grammar in gram_handler.modules[module_obj]:
-                    if grammar._check_grammar():
-                        for rule in grammar._rules:
-                            rule = copy.copy(rule)
-                            rule_match = matching.get_rule_match(rule,
-                                         self.remaining_words,
-                                         grammar.settings['regex mode'],
-                                         grammar.settings['filtered words'])
-                            if rule_match is not None:
-                                return rule_match
+        for grammar in gram_handler.get_matching_grammars():
+            for rule in grammar._rules:
+                rule = copy.copy(rule)
+                rule_match = matching.get_rule_match(rule,
+                             self.remaining_words,
+                             grammar.settings['regex mode'],
+                             grammar.settings['filtered words'])
+                if rule_match is not None:
+                    return rule_match
 
     def run(self):
         for i, result in enumerate(self.results):
@@ -57,7 +51,7 @@ class Command:
                     result.rule.raw_text, result.rule.grammar))
                 self.execute_rule_match(result)
             else:
-                utilities.transcribe_line(result, space= i + 1 < len(self.results))
+                utilities.transcribe_line(result, space = i+1 < len(self.results))
                 logging.debug('Transcribed word "{}"'.format(result))
 
     def execute_rule_match(self, rule_match):

@@ -24,9 +24,6 @@ class Command:
                 self.results.append(rule_match)
                 self.remaining_words = rule_match.remaining_words
                 gram_handler.add_command_to_recording_macros(self, rule_match.rule.grammar)
-                # print('trace', rule_match.rule.grammar.__module__)
-                # print('tra', rule_match.rule.grammar._recording_macros)
-                # utilities.add_command_to_recording_macros(self, rule_match.rule.grammar._recording_macros)
             else:
                 self.results.append(self.remaining_words[0])
                 gram_handler.add_command_to_recording_macros(self, None)

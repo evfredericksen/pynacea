@@ -268,6 +268,11 @@ class TestRuleMatching(unittest.TestCase):
         words = 'outer'.split()
         self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['outer'])
 
+    def test_mix5(self):
+        rule = ruleparser.Rule('<hom_poke> <num>')
+        words = 'poke 12'.split()
+        self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['poke', '12'])
+
     def test_dict1(self):
         rule = ruleparser.Rule('{}')
         rule.dictionary = {

@@ -48,7 +48,8 @@ class Command:
                     result.rule.raw_text, result.rule.grammar))
                 self.execute_rule_match(result)
             else:
-                utilities.transcribe_line(result, space = i+1 < len(self.results))
+                add_space = i+1 < len(self.results) and isinstance(self.results[i + 1], str)
+                utilities.transcribe_line(result, space=add_space)
                 logging.debug('Transcribed word "{}"'.format(result))
 
     def execute_rule_match(self, rule_match):

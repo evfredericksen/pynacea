@@ -22,11 +22,13 @@ def main():
             logging.basicConfig(filename=log_file, level=log_level)
         command_history = []
         gram_handler = grammarhandler.GrammarHandler()
+        print('Loading grammars...')
         gram_handler.load_grammars(command_history)
         # Dict for simulation of special modes
         mode_status = {'asleep': False, 'dictation mode': False, 'number mode': False}
         updated_status = mode_status
         logging.info('Started listening at {}'.format(time.strftime("%Y-%m-%d %H:%M:%S")))
+        print('Ready!')
         # main loop
         while True:
             for line in engine_handler.get_lines():

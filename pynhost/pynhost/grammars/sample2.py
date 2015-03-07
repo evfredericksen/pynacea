@@ -40,7 +40,7 @@ class SampleGrammar(grammarbase.GrammarBase):
             'language (none | python | <hom_perl>)': self.change_language,
             # matches 'language' followed by either 'none', 'python', 'perl',
             # or any homonym of perl as defined in the
-            # pynhost.grammars._homonyms.HOMONYMS dictionary
+            # pynhost.grammars._homophones.HOMOPHONES dictionary
 
             'red rum': ['All work and no play...\n', 15]
             # An integer will repeat the previous action n number of times

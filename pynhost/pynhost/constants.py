@@ -27,7 +27,7 @@ NUMBERS_MAP = {
     'mine': '9',
 }
 
-HOMONYMS = {
+HOMOPHONES = {
     'args': ['arcs', 'our', 'arts', 'arms', 'are', "arby's", 'earns', 'orange',
         'birds', 'outs', 'ours'],
     'dent': ["didn't"],

@@ -38,7 +38,7 @@ def get_homonym(word):
     '''
     Replicate <hom> functionality in functions
     '''
-    for hom in _locals.HOMONYMS:
-        if word in _locals.HOMONYMS[hom]:
+    for hom in _locals.HOMOPHONES:
+        if word in _locals.HOMOPHONES[hom]:
             return hom
     return word

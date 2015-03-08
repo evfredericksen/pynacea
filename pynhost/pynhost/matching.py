@@ -13,11 +13,13 @@ class RuleMatch:
         self.matched_words = collections.OrderedDict()
         self.snapshot = {'remaining words': None, 'matched words': None}
 
-    def add(self, words, piece):
+    def add(self, words, piece, length=None):
         word_count = 1
         if not isinstance(words, str):
             word_count = len(words)
             words = ' '.join(words)
+        if length is not None:
+            word_count = length
         if piece in self.matched_words:
             words =  '{} {}'.format(self.matched_words[piece], words)
         self.matched_words[piece] = words
@@ -118,7 +120,7 @@ def check_special(piece, rule_match):
     elif tag[:-1].isdigit() or (len(tag) == 1 and tag.isdigit()):
         return check_num_range(piece, rule_match)
     elif len(tag) > 4 and tag[:4] == 'hom_':
-       return check_homonym(piece, rule_match)
+       return check_homophone(piece, rule_match)
     elif tag == 'end':
         return check_end(piece, rule_match)
     assert False 
@@ -154,7 +156,7 @@ def check_num_range(piece, rule_match):
         rule_match.add(words[:num], piece)
         return True       
 
-def check_homonym(piece, rule_match):
+def check_homophone(piece, rule_match):
     if rule_match.remaining_words:
         tag = piece.children[0][4:].lower()
         if tag == rule_match.remaining_words[0]:
@@ -167,7 +169,7 @@ def check_homonym(piece, rule_match):
             test_words.append(word)
             for hom in _locals.HOMOPHONES[tag]:
                 if ' '.join(test_words).lower() == hom.lower():
-                    rule_match.add(tag, piece)
+                    rule_match.add(tag, piece, length=len(test_words))
                     return True
     return False
 
@@ -182,5 +184,5 @@ def get_regex_match(rule, words):
     regex_match = re.match(rule.raw_text, ' '.join(words))
     if regex_match is not None:
         rule_match.matched_words[rule.raw_text] = regex_match.group()
-        rule_match.remaining_words = rule.raw_text[len(regex_match.group()):].split()
+        rule_match.remaining_words = ' '.join(rule_match.remaining_words)[len(regex_match.group()):].split()
         return rule_match

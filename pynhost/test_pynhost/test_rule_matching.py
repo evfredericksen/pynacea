@@ -228,22 +228,27 @@ class TestRuleMatching(unittest.TestCase):
         self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['select'])
         self.assertEqual(list(matching.get_rule_match(rule, words).remaining_words), ['fish'])
 
-    def test_homonym1(self):
+    def test_homophone1(self):
         rule = ruleparser.Rule('hello <hom_line>')
         words = 'hello line'.split()
         self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['hello', 'line'])
 
-    def test_homonym2(self):
+    def test_homophone2(self):
         rule = ruleparser.Rule('hello <hom_line>')
         words = 'hello wine'.split()
         self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['hello', 'line'])
 
-    def test_homonym_not_in_list1(self):
+    def test_homophone3(self):
+        rule = ruleparser.Rule('hello <hom_line>')
+        words = 'hello why n'.split()
+        self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['hello', 'line'])
+
+    def test_homophone_not_in_list1(self):
         rule = ruleparser.Rule('hello <hom_phone>')
         words = 'hello phone'.split()
         self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['hello', 'phone'])
 
-    def test_homonym_not_in_list2(self):
+    def test_homophone_not_in_list2(self):
         rule = ruleparser.Rule('hello <hom_phone>')
         words = 'hello bone'.split()
         self.assertIsNone(matching.get_rule_match(rule, words))
@@ -325,6 +330,14 @@ class TestRuleMatching(unittest.TestCase):
         words = '555-897-1923'.split()
         rule_match = matching.get_rule_match(rule, words, regex_mode=True)
         self.assertEqual(list(rule_match.get_words()), ['555-897-1923'])
+        self.assertEqual(list(rule_match.remaining_words), [])
+
+    def test_regex4(self):
+        rule = ruleparser.Rule(r'\(', regex_mode=True)
+        words = '('.split()
+        rule_match = matching.get_rule_match(rule, words, regex_mode=True)
+        self.assertEqual(list(rule_match.get_words()), ['('])
+        self.assertEqual(list(rule_match.remaining_words), [])
 
     def test_end1(self):
         rule = ruleparser.Rule('hello world <end>')

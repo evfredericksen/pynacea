@@ -66,15 +66,15 @@ Special Tags
 ^^^^^^^^^^^^^
 ``<>`` can contain one of the following "special" tags:
 
-* ``<num>`` will match any number. It will also match homonyms for certain numbers, like ``for`` and ``to``, so be careful about where you use this tag.
+* ``<num>`` will match any number. It will also match homophones for certain numbers, like ``for`` and ``to``, so be careful about where you use this tag.
 * ``<3>`` will match exactly three words. ``<3+>`` will greedily match at least three words. ``<3->`` will match two through zero words. These numbers can be any integer greater than or equal to zero.
-* ``<hom_sampleword>`` will match either ``sampleword`` or any homonym that you have defined for ``sampleword`` in the ``HOMONYMS`` dictionary residing in pynhost/grammars/_locals.py. Each key in this dictionary maps to a list of strings. For instance, if your _locals.HOMONYMS dictionary looks like::
+* ``<hom_sampleword>`` will match either ``sampleword`` or any homophone that you have defined for ``sampleword`` in the ``HOMOPHONES`` dictionary residing in pynhost/grammars/_locals.py. Each key in this dictionary maps to a list of strings. For instance, if your _locals.HOMOPHONES dictionary looks like::
     
-    HOMONYMS = {
+    HOMOPHONES = {
         'delete': ['fleet', 'elite', 'neat'],
     }
 
-  then if Pynacea gets the input ``elite word``, it will recognize ``elite`` as a homonym of ``delete``, and will match that input to the rule ``<hom_delete> word``.
+  then if Pynacea gets the input ``elite word``, it will recognize ``elite`` as a homophone of ``delete``, and will match that input to the rule ``<hom_delete> word``.
 
 Miscellaneous
 --------------

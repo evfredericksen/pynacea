@@ -25,12 +25,15 @@ class RulePiece:
         return '<RulePiece {}>'.format(self.mode)
 
 class Rule:
-    def __init__(self, raw_text, actions=None, grammar=None, dictionary=None):
+    def __init__(self, raw_text, actions=None, grammar=None, dictionary=None, regex_mode=False):
         if not isinstance(actions, list):
             actions = [actions]
         self.actions = actions
         self.raw_text = raw_text
-        self.pieces = parse(raw_text)
+        if regex_mode:
+            self.pieces = [raw_text]
+        else:
+            self.pieces = parse(raw_text)
         self.grammar = grammar
         self.dictionary = dictionary
 

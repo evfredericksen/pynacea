@@ -104,17 +104,17 @@ pynhost/pynhost/grammars/sample1.py:</p>
 <h3>Special Tags<a class="headerlink" href="#special-tags" title="Permalink to this headline">¶</a></h3>
 <p><tt class="docutils literal"><span class="pre">&lt;&gt;</span></tt> can contain one of the following &#8220;special&#8221; tags:</p>
 <ul>
-<li><p class="first"><tt class="docutils literal"><span class="pre">&lt;num&gt;</span></tt> will match any number. It will also match homonyms for certain numbers, like <tt class="docutils literal"><span class="pre">for</span></tt> and <tt class="docutils literal"><span class="pre">to</span></tt>, so be careful about where you use this tag.</p>
+<li><p class="first"><tt class="docutils literal"><span class="pre">&lt;num&gt;</span></tt> will match any number. It will also match homophones for certain numbers, like <tt class="docutils literal"><span class="pre">for</span></tt> and <tt class="docutils literal"><span class="pre">to</span></tt>, so be careful about where you use this tag.</p>
 </li>
 <li><p class="first"><tt class="docutils literal"><span class="pre">&lt;3&gt;</span></tt> will match exactly three words. <tt class="docutils literal"><span class="pre">&lt;3+&gt;</span></tt> will greedily match at least three words. <tt class="docutils literal"><span class="pre">&lt;3-&gt;</span></tt> will match two through zero words. These numbers can be any integer greater than or equal to zero.</p>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">&lt;hom_sampleword&gt;</span></tt> will match either <tt class="docutils literal"><span class="pre">sampleword</span></tt> or any homonym that you have defined for <tt class="docutils literal"><span class="pre">sampleword</span></tt> in the <tt class="docutils literal"><span class="pre">HOMONYMS</span></tt> dictionary residing in pynhost/grammars/_locals.py. Each key in this dictionary maps to a list of strings. For instance, if your _locals.HOMONYMS dictionary looks like:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">HOMONYMS</span> <span class="o">=</span> <span class="p">{</span>
+<li><p class="first"><tt class="docutils literal"><span class="pre">&lt;hom_sampleword&gt;</span></tt> will match either <tt class="docutils literal"><span class="pre">sampleword</span></tt> or any homophone that you have defined for <tt class="docutils literal"><span class="pre">sampleword</span></tt> in the <tt class="docutils literal"><span class="pre">HOMOPHONES</span></tt> dictionary residing in pynhost/grammars/_locals.py. Each key in this dictionary maps to a list of strings. For instance, if your _locals.HOMOPHONES dictionary looks like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">HOMOPHONES</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s">&#39;delete&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;fleet&#39;</span><span class="p">,</span> <span class="s">&#39;elite&#39;</span><span class="p">,</span> <span class="s">&#39;neat&#39;</span><span class="p">],</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>then if Pynacea gets the input <tt class="docutils literal"><span class="pre">elite</span> <span class="pre">word</span></tt>, it will recognize <tt class="docutils literal"><span class="pre">elite</span></tt> as a homonym of <tt class="docutils literal"><span class="pre">delete</span></tt>, and will match that input to the rule <tt class="docutils literal"><span class="pre">&lt;hom_delete&gt;</span> <span class="pre">word</span></tt>.</p>
+<p>then if Pynacea gets the input <tt class="docutils literal"><span class="pre">elite</span> <span class="pre">word</span></tt>, it will recognize <tt class="docutils literal"><span class="pre">elite</span></tt> as a homophone of <tt class="docutils literal"><span class="pre">delete</span></tt>, and will match that input to the rule <tt class="docutils literal"><span class="pre">&lt;hom_delete&gt;</span> <span class="pre">word</span></tt>.</p>
 </li>
 </ul>
 </div>

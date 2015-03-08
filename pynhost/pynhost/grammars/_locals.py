@@ -1,5 +1,5 @@
-HOMONYMS = {
-	'line': ['wine', 'dine'],
+HOMOPHONES = {
+	'line': ['wine', 'dine', 'why n'],
 	'perl': ['pearl', 'whirl'],
 }
 

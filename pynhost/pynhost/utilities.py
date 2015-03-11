@@ -31,7 +31,7 @@ def get_buffer_lines(buffer_path):
         with open(os.path.join(buffer_path, fname)) as fobj:
             for line in fobj:
                 lines.append(line.rstrip('\n'))
-    clear_directory(buffer_path)
+        os.remove(os.path.join(buffer_path, fname))
     return lines
 
 def get_mouse_location():

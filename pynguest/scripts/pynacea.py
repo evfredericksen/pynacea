@@ -7,7 +7,6 @@ import string
 import shutil
 import configparser
 from pkg_resources import Requirement, resource_filename
-import pynguest
 
 CONFIG_PATH = resource_filename(Requirement.parse("pynguest"), "pynguest_config.ini")
 

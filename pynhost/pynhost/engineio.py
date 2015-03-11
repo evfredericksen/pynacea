@@ -41,7 +41,7 @@ class SharedDirectoryHandler:
     def get_lines(self):
         lines = utilities.get_buffer_lines(self.shared_dir)
         for line in lines:
-            if self.filter_duplicate_letters:
+            if self.filter_on:
                 line = self.filter_duplicate_letters(line)
             yield line
 

@@ -5,14 +5,12 @@ OPENING_TOKEN_DICT = {
     '(': 'list',
     '[': 'optional',
     '<': 'special',
-    '{': 'dict',
 }
 
 CLOSING_TOKEN_DICT = {
     ')': 'list',
     ']': 'optional',
     '>': 'special',
-    '}': 'dict',
 }
 
 class RulePiece:
@@ -25,7 +23,7 @@ class RulePiece:
         return '<RulePiece {}>'.format(self.mode)
 
 class Rule:
-    def __init__(self, raw_text, actions=None, grammar=None, dictionary=None, regex_mode=False):
+    def __init__(self, raw_text, actions=None, grammar=None, regex_mode=False):
         if not isinstance(actions, list):
             actions = [actions]
         self.actions = actions
@@ -35,7 +33,6 @@ class Rule:
         else:
             self.pieces = parse(raw_text)
         self.grammar = grammar
-        self.dictionary = dictionary
 
     def __str__(self):
         return '<Rule: {}>'.format(self.raw_text)
@@ -50,7 +47,7 @@ def parse(rule_string):
     for i, char in enumerate(rule_string.strip()):
         if char == ' ':
             continue
-        if char in '([<{':
+        if char in '([<':
             if piece_stack and piece_stack[-1].mode == 'special':
                 raise ValueError('parsing error at char {}'.format(i))
             mode = OPENING_TOKEN_DICT[char]
@@ -59,7 +56,7 @@ def parse(rule_string):
                 pieces.append(piece_stack[0])
             else:
                 piece_stack[-2].children.append(piece_stack[-1])
-        elif char in ')]>}':
+        elif char in ')]>':
             if not piece_stack or CLOSING_TOKEN_DICT[char] != piece_stack[-1].mode:
                 raise ValueError('error balancing tokens at {}'.format(i))
             piece_stack.pop()

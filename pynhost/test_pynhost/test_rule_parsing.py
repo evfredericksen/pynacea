@@ -99,11 +99,5 @@ class TestRuleParsing(unittest.TestCase):
         teststr = 'range <num <any>>'
         self.assertRaises(ValueError, ruleparser.parse, teststr)       
 
-
-    def test_rule_parsing_dict(self):
-        teststr = '{}'
-        pieces = ruleparser.parse(teststr)
-        self.assertEqual('dict', pieces[0].mode)
-
 if __name__ == '__main__':
     unittest.main()

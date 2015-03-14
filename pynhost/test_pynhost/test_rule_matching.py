@@ -278,40 +278,6 @@ class TestRuleMatching(unittest.TestCase):
         words = 'poke 12'.split()
         self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['poke', '12'])
 
-    def test_dict1(self):
-        rule = ruleparser.Rule('{}')
-        rule.dictionary = {
-            'W.': '{left}',
-            }
-        words = 'W.'.split()
-        self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['{left}'])
-
-    def test_dict2(self):
-        rule = ruleparser.Rule('{} hello {}')
-        rule.dictionary = {
-            'W.': '{left}',
-            'q': '{right}',
-            }
-        words = 'W. hello q'.split()
-        self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['{left}', 'hello', '{right}'])
-
-    def test_dict3(self):
-        rule = ruleparser.Rule('(((<hom_above> | below) [<num>]) | {} [<num>] | (first | last | absolute | function | class | ((blue | fish) <1>)))')
-        rule.dictionary = {
-            'next': 'w',
-            }
-        words = 'next'.split()
-        self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['w'])
-
-    def test_dict4(self):
-        rule = ruleparser.Rule('(((<hom_above> | below) [<num>]) | {} [<num>] | (first | last | absolute | function | class | ((blue | fish) <1>)))')
-        rule.dictionary = {
-            'next': 'w',
-            }
-        words = 'class test'.split()
-        self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['class'])
-        self.assertEqual(list(matching.get_rule_match(rule, words).remaining_words), ['test'])
-
     def test_regex1(self):
         rule = ruleparser.Rule('hello')
         words = 'hello'.split()

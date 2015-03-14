@@ -21,6 +21,7 @@ NUMBERS_MAP = {
 	'to': '2',
 	'too': '2',
     'do': '2',
+    'free': '3',
 	'for': '4',
 	"i've": '5',
     'sex': '6',

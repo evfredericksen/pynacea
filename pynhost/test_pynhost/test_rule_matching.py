@@ -317,5 +317,35 @@ class TestRuleMatching(unittest.TestCase):
         rule_match = matching.get_rule_match(rule, words)
         self.assertIsNone(rule_match)
 
+    def test_wildcard1(self):
+        rule = ruleparser.Rule('<any>')
+        words = 'hello'.split()
+        rule_match = matching.get_rule_match(rule, words)
+        self.assertEqual(list(rule_match.get_words()), ['hello'])
+
+    def test_wildcard2(self):
+        rule = ruleparser.Rule('hello <any> world')
+        words = 'hello large world'.split()
+        rule_match = matching.get_rule_match(rule, words)
+        self.assertEqual(list(rule_match.get_words()), ['hello', 'large', 'world'])
+
+    def test_repetition1(self):
+        rule = ruleparser.Rule('hello <2-3>')
+        words = 'hello large world'.split()
+        rule_match = matching.get_rule_match(rule, words)
+        self.assertEqual(list(rule_match.get_words()), ['hello', 'large', 'world'])
+
+    def test_repetition2(self):
+        rule = ruleparser.Rule('hello <2->')
+        words = 'hello large world'.split()
+        rule_match = matching.get_rule_match(rule, words)
+        self.assertEqual(list(rule_match.get_words()), ['hello', 'large', 'world'])
+
+    def test_repetition3(self):
+        rule = ruleparser.Rule('hello large <0-2> world')
+        words = 'hello world'.split()
+        rule_match = matching.get_rule_match(rule, words)
+        self.assertEqual(list(rule_match.get_words()), ['hello', 'world'])
+
 if __name__ == '__main__':
     unittest.main()

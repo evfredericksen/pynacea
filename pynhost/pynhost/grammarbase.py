@@ -39,5 +39,5 @@ class GrammarBase:
 
 def set_rules(grammar):
     for rule_text, actions in grammar.mapping.items():
-        rule = ruleparser.Rule(rule_text, actions, grammar, dictionary=grammar.dictionary, regex_mode=grammar.settings['regex mode'])
+        rule = ruleparser.Rule(rule_text, actions, grammar, regex_mode=grammar.settings['regex mode'])
         grammar._rules.append(rule)

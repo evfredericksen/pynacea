@@ -48,7 +48,7 @@ def get_rule_match(rule, words, regex_mode=False, filter_list=None):
     else:
         rule_match = RuleMatch(words, rule)
         results = []
-        for piece in rule.pieces:
+        for i, piece in enumerate(rule.pieces):
             if isinstance(piece, str):
                 if rule_match.remaining_words and piece.lower() == rule_match.remaining_words[0]:
                     rule_match.add(rule_match.remaining_words[0], piece)
@@ -57,9 +57,9 @@ def get_rule_match(rule, words, regex_mode=False, filter_list=None):
                     return
             else:
                 result = words_match_piece(piece, rule_match)
-                results.append(result)
                 if result is False:
                     return
+                results.append(result)
         # optional pieces return None if they do not match
         if results.count(None) == len(rule.pieces):
             return
@@ -74,10 +74,10 @@ def words_match_piece(piece, rule_match):
         return check_special(piece, rule_match)
     buff = set()
     snapshot = rule_match.take_snapshot()
-    for child in piece.children:
+    for i, child in enumerate(piece.children):
         if isinstance(child, str):
             if not rule_match.remaining_words or rule_match.remaining_words[0] != child:
-                buff.add(False)
+                buff.add(false_unless_zero_lookahead(i, piece.children))
             else:
                 buff.add(True)
                 rule_match.add(child, piece)
@@ -97,6 +97,9 @@ def words_match_piece(piece, rule_match):
 
 def check_special(piece, rule_match):
     tag = piece.children[0]
+    if tag == 'any':
+        rule_match.add(rule_match.remaining_words[0], piece)
+        return True
     if tag == 'num':
         return check_num(piece, rule_match)
     elif tag[:-1].isdigit() or (len(tag) == 1 and tag.isdigit()):
@@ -105,6 +108,8 @@ def check_special(piece, rule_match):
        return check_homophone(piece, rule_match)
     elif tag == 'end':
         return check_end(piece, rule_match)
+    elif re.match(r'\d+-\d*', tag):
+        return check_repetition(piece, rule_match)
     assert False 
 
 def check_num(piece, rule_match):
@@ -161,6 +166,10 @@ def check_end(piece, rule_match):
         return True
     return False
 
+def check_repetition(piece, rule_match):
+    rep_min, rep_max = get_rep_limits(piece.children[0])
+    rep_count = 0
+
 def get_regex_match(rule, words):
     rule_match = RuleMatch(words, rule)
     regex_match = re.match(rule.raw_text, ' '.join(words))
@@ -168,3 +177,25 @@ def get_regex_match(rule, words):
         rule_match.matched_words[rule.raw_text] = regex_match.group()
         rule_match.remaining_words = ' '.join(rule_match.remaining_words)[len(regex_match.group()):].split()
         return rule_match
+
+def get_rep_limits(tag):
+    rep_max = None
+    split_tag = tag.split('-')
+    if (len(split_tag) not in (1, 2) or not split_tag[0].isdigit() or
+        (len(split_tag) == 2 and not split_tag[1].isdigit()) or
+        int(split_tag[0]) > int(split_tag[1])):
+        raise RuntimeError('Invalid repetition tag')
+    if len(split_tag) == 2:
+        rep_max = int(split_tag[1])
+    if '-' not in tag:
+        return split_tag[0], split_tag[0]
+    return split_tag[0], rep_max
+
+
+def false_unless_zero_lookahead(pos, piece_list):
+    if pos + 1 < len(piece_list):
+        piece = piece_list[pos + 1]
+        if (isinstance(piece, ruleparser.RulePiece) and len(piece.children) == 1
+            and piece.children[0][0] == '0'):
+            return
+    return False

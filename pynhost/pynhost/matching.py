@@ -77,7 +77,7 @@ def words_match_piece(piece, rule_match):
     for i, child in enumerate(piece.children):
         if isinstance(child, str):
             if not rule_match.remaining_words or rule_match.remaining_words[0] != child:
-                buff.add(false_unless_zero_lookahead(i, piece.children))
+                buff.add(false_unless_zero_lookahead(i, piece.children)) # usually false
             else:
                 buff.add(True)
                 rule_match.add(child, piece)

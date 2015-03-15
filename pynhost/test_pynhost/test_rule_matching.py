@@ -172,53 +172,53 @@ class TestRuleMatching(unittest.TestCase):
         self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['2'])
 
     def test_any1(self):
-        rule = ruleparser.Rule('<1>')
+        rule = ruleparser.Rule('<any>')
         words = 'yowza'.split()
         self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['yowza'])
 
     def test_any2(self):
-        rule = ruleparser.Rule('<1>')
+        rule = ruleparser.Rule('<any>')
         words = 'yowza wowza'.split()
         self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['yowza'])
         self.assertEqual(list(matching.get_rule_match(rule, words).remaining_words), ['wowza'])
 
     def test_any3(self):
-        rule = ruleparser.Rule('hello <1>')
+        rule = ruleparser.Rule('hello <any>')
         words = 'hello daisy'.split()
         self.assertTrue(list(matching.get_rule_match(rule, words).get_words()), ['hello', 'daisy'])
 
     def test_any4(self):
-        rule = ruleparser.Rule('hello <3>')
+        rule = ruleparser.Rule('hello <any> <3>')
         words = 'hello dear omnipotent leader'.split()
         self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['hello', 'dear', 'omnipotent', 'leader'])
 
     def test_any5(self):
-        rule = ruleparser.Rule('hello <3>')
+        rule = ruleparser.Rule('hello <any> <3>')
         words = 'hello dear leader'.split()
         self.assertIsNone(matching.get_rule_match(rule, words))
 
     def test_any6(self):
-        rule = ruleparser.Rule('hello <3+>')
+        rule = ruleparser.Rule('hello <any> <3->')
         words = 'hello dear leader how are you today'.split()
         self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['hello', 'dear', 'leader', 'how', 'are', 'you', 'today'])
 
     def test_any7(self):
-        rule = ruleparser.Rule('hello <3-> are you today')
+        rule = ruleparser.Rule('hello <any> <0-3> are you today')
         words = 'hello dear leader how are you today'.split()
         self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['hello', 'dear', 'leader', 'how', 'are', 'you', 'today'])
 
     def test_any8(self):
-        rule = ruleparser.Rule('hello <3->')
+        rule = ruleparser.Rule('hello <any> <0-3>')
         words = 'hello dear leader'.split()
         self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['hello', 'dear', 'leader'])
 
     def test_any9(self):
-        rule = ruleparser.Rule('word <1+>')
+        rule = ruleparser.Rule('word <any> <1->')
         words = 'word'.split()
         self.assertIsNone(matching.get_rule_match(rule, words))
 
     def test_any10(self):
-        rule = ruleparser.Rule('word <1->')
+        rule = ruleparser.Rule('word <any> <0-1>')
         words = 'word'.split()
         self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['word'])
 
@@ -259,12 +259,12 @@ class TestRuleMatching(unittest.TestCase):
         self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['cat'])
         
     def test_mix2(self):
-        rule = ruleparser.Rule('[<1>] test')
+        rule = ruleparser.Rule('[<any>] test')
         words = 'cat'.split()
         self.assertIsNone(matching.get_rule_match(rule, words))
 
     def test_mix3(self):
-        rule = ruleparser.Rule('(camel | score | title | upper) <1+>')
+        rule = ruleparser.Rule('(camel | score | title | upper) <any> <1->')
         words = 'upper hello world'.split()
         self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['upper', 'hello', 'world'])
 

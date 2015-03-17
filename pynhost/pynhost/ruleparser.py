@@ -76,7 +76,7 @@ def compile_to_regex(rule_string):
 
 def token_to_regex(token):
     if token[-1] == '>':
-        elif token == '<start>':
+        if token == '<start>':
             return '^'
         elif token == '<end>':
             return '$'

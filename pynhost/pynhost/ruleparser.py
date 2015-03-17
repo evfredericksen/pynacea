@@ -1,5 +1,11 @@
+import re
 from pynhost import utilities
 from pynhost import dynamic
+try:
+    from pynhost.grammars import _locals
+    locals_available = True
+except ImportError:
+    locals_available = False
 
 OPENING_TOKEN_DICT = {
     '(': 'list',
@@ -40,58 +46,65 @@ class Rule:
     def __repr__(self):
         return '<Rule: {}>'.format(self.raw_text)
 
-def parse(rule_string):
-    pieces = []
-    piece_stack = []
-    mode = 'normal'
-    for i, char in enumerate(rule_string.strip()):
-        if char == ' ':
-            continue
+def compile_to_regex(rule_string):
+    regex_pattern = ''
+    token = ''
+    stack = []
+    for i, char in enumerate(rule_string):
         if char in '([<':
-            if piece_stack and piece_stack[-1].mode == 'special':
-                raise ValueError('parsing error at char {}'.format(i))
-            mode = OPENING_TOKEN_DICT[char]
-            piece_stack.append(RulePiece(mode))
-            if len(piece_stack) == 1:
-                pieces.append(piece_stack[0])
-            else:
-                piece_stack[-2].children.append(piece_stack[-1])
+            stack.append(char)
+            regex_pattern += token
+            token = char.replace('[', '(')
         elif char in ')]>':
-            if not piece_stack or CLOSING_TOKEN_DICT[char] != piece_stack[-1].mode:
-                raise ValueError('error balancing tokens at {}'.format(i))
-            piece_stack.pop()
-            if piece_stack:
-                mode = piece_stack[-1].mode
-            else:
-                mode = 'normal'
+            if not stack or CLOSING_TOKEN_DICT[char] != OPENING_TOKEN_DICT[stack.pop()]:
+                raise ValueError('token balancing error for rule {} at index {}'.format(rule_string, i))
+            regex_pattern += token_to_regex(token + char)
+            token = ''
+        elif char in '.':
+            token += '\\{}'.format(char)
+        elif char == ' ':
+            if not (rule_string[i + 1] == '<' and i + 2 < len(rule_string) and
+                    rule_string[i + 2].isdigit()) and (not regex_pattern or
+                    regex_pattern[-1] not in '([<| '):
+                regex_pattern += token + char
+                token = ''
         else:
-            if mode == 'list':
-                if char == '|':
-                    piece_stack[-1].children.append(OrToken())
-                else:
-                    if (not piece_stack[-1].children or rule_string[i - 1] in ['|', ' '] or 
-                        not isinstance(piece_stack[-1].children[-1], str)):
-                        piece_stack[-1].children.append(char)
-                    else:
-                        piece_stack[-1].children[-1] += char
-            elif mode == 'normal':
-                add_or_append(rule_string, i, pieces)
-            else:  # special or optional
-                add_or_append(rule_string, i, piece_stack[-1].children)
-    if piece_stack:
-        raise ValueError('error balancing tokens at end')
-    return pieces
+            token += char
+    if token and token[0] in '([<':
+        raise ValueError('token balancing error for rule {} at end'.format(rule_string))
+    regex_pattern += token
+    return regex_pattern
 
-def add_or_append(rule_string, pos, alist):
-    char = rule_string[pos]
-    if alist:
-        if isinstance(alist[-1], str) and rule_string[pos - 1] != ' ':
-            alist[-1] += char
-        else:
-            alist.append(char)
-    else:
-        alist.append(char)
+def token_to_regex(token):
+    if token[-1] == '>':
+        if token == '<any>':
+            return '.'
+        elif token == '<end>':
+            return '$'
+        elif token == '<num>':
+            return r'-*\d+(\.d+)*'
+        elif re.match(r'<\d+(-\d*)*>', token):
+            split_tag = token.replace('<', '').replace('>', '').split('-')
+            if len(split_tag) == 1:
+                return '{' + split_tag[0] + '}'
+            return '{' + '{},{}'.format(split_tag[0], split_tag[1]) + '}'
+        elif re.match(r'<hom_.+>', token):
+            if not (locals_available and hasattr(_locals, 'HOMOPHONES') and
+                token in _locals.HOMOPHONES):
+                return
+            text_list = ['(token']
+            for hom in _locals.HOMOPHONES[token]:
+                text_list.append('|{}'.format(hom))
+            return ''.join(text_list) + ')'
+        raise ValueError("invalid token '{}'".format(token))
+    elif token[-1] == ')':
+        return '{})'.format(token[-1])
+    else: # ]
+        new_token = token[1:-1]
+        if token[0] in '([':
+            new_token = '(' + new_token
+        return '{})*'.format(new_token)
 
-class OrToken:
-    def __init__(self):
-        pass
+def merge_regex_list(regex_list):
+    regex_text = ''
+    

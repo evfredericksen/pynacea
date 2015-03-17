@@ -98,7 +98,7 @@ def token_to_regex(token):
             return ''.join(text_list) + ')'
         raise ValueError("invalid token '{}'".format(token))
     elif token[-1] == ')':
-        return '{})'.format(token[-1])
+        return '{})'.format(token[:-1])
     else: # ]
         new_token = token[1:-1]
         if token[0] in '([':

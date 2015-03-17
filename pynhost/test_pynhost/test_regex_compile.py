@@ -54,6 +54,11 @@ class TestRegexCompile(unittest.TestCase):
        input_str = 'hello <2->'
        compiled = ruleparser.compile_to_regex(input_str)
        self.assertEqual(compiled, r'hello{2,}')
+       
+    def test_compile9(self):
+       input_str = '(world | universe)'
+       compiled = ruleparser.compile_to_regex(input_str)
+       self.assertEqual(compiled, r'(world|universe)')
 
 if __name__ == '__main__':
     unittest.main()

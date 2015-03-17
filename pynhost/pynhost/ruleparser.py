@@ -76,13 +76,15 @@ def compile_to_regex(rule_string):
 
 def token_to_regex(token):
     if token[-1] == '>':
-        if token == '<any>':
-            return '.'
+        elif token == '<start>':
+            return '^'
         elif token == '<end>':
             return '$'
+        elif token == '<any>':
+            return '.'
         elif token == '<num>':
-            return r'-*\d+(\.d+)*'
-        elif re.match(r'<\d+(-\d*)*>', token):
+            return r'-?\d+(\.d+)?'
+        elif re.match(r'<\d+(-\d?)?>', token):
             split_tag = token.replace('<', '').replace('>', '').split('-')
             if len(split_tag) == 1:
                 return '{' + split_tag[0] + '}'
@@ -102,7 +104,7 @@ def token_to_regex(token):
         new_token = token[1:-1]
         if token[0] in '([':
             new_token = '(' + new_token
-        return '{})*'.format(new_token)
+        return '{})?'.format(new_token)
 
 def add_space(pos, rule_string, regex_pattern):
     delim_ahead = rule_string[pos + 1] in '>])|'

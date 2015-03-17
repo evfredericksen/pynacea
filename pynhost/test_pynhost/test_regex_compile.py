@@ -23,7 +23,7 @@ class TestRegexCompile(unittest.TestCase):
     def test_compile2(self):
        input_str = 'hello [world]'
        compiled = ruleparser.compile_to_regex(input_str)
-       self.assertEqual(compiled, 'hello (world)*')
+       self.assertEqual(compiled, 'hello (world)?')
 
     def test_compile3(self):
        input_str = 'hello     world'
@@ -33,17 +33,17 @@ class TestRegexCompile(unittest.TestCase):
     def test_compile4(self):
        input_str = '<num>'
        compiled = ruleparser.compile_to_regex(input_str)
-       self.assertEqual(compiled, r'-*\d+(\.d+)*')
+       self.assertEqual(compiled, r'-?\d+(\.d+)?')
 
     def test_compile5(self):
        input_str = '[<num>]'
        compiled = ruleparser.compile_to_regex(input_str)
-       self.assertEqual(compiled, r'(-*\d+(\.d+)*)*')
+       self.assertEqual(compiled, r'(-?\d+(\.d+)?)?')
 
     def test_compile6(self):
        input_str = 'range [<num>]'
        compiled = ruleparser.compile_to_regex(input_str)
-       self.assertEqual(compiled, r'range (-*\d+(\.d+)*)*')
+       self.assertEqual(compiled, r'range (-?\d+(\.d+)?)?')
 
     def test_compile7(self):
        input_str = 'hello large <0-2> world'

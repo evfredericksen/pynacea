@@ -50,6 +50,7 @@ def compile_to_regex(rule_string):
     regex_pattern = ''
     token = ''
     stack = []
+    rule_string = ' '.join(rule_string.strip().split())
     for i, char in enumerate(rule_string):
         if char in '([<':
             stack.append(char)
@@ -63,9 +64,7 @@ def compile_to_regex(rule_string):
         elif char in '.':
             token += '\\{}'.format(char)
         elif char == ' ':
-            if not (rule_string[i + 1] == '<' and i + 2 < len(rule_string) and
-                    rule_string[i + 2].isdigit()) and (not regex_pattern or
-                    regex_pattern[-1] not in '([<| '):
+            if add_space(i, rule_string, regex_pattern):
                 regex_pattern += token + char
                 token = ''
         else:
@@ -105,6 +104,10 @@ def token_to_regex(token):
             new_token = '(' + new_token
         return '{})*'.format(new_token)
 
-def merge_regex_list(regex_list):
-    regex_text = ''
+def add_space(pos, rule_string, regex_pattern):
+    delim_ahead = rule_string[pos + 1] in '>])|'
+    delim_behind = rule_string[pos - 1] in '<(|['
+    num_range = (rule_string[pos + 1] == '<' and pos + 2 < len(rule_string) and 
+                 rule_string[pos + 2].isdigit())
+    return not (delim_ahead or delim_behind or num_range) 
     

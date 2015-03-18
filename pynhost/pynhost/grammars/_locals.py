@@ -3,6 +3,11 @@ HOMOPHONES = {
 	'perl': ['pearl', 'whirl'],
 }
 
+NUMBERS_MAP = {
+	'zero': '0',
+	'one': '1',
+}
+
 SLEEP_PATTERNS = [
 	
 ]

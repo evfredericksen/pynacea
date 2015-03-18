@@ -47,7 +47,7 @@
 #         words = 'hello world'.split()
 #         self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['hello', 'world'])
 
-#     def test_basic4(self):
+#     def test_basic5(self):
 #         rule = ruleparser.Rule('hello [there] world')
 #         words = 'hello there world'.split()
 #         self.assertEqual(list(matching.get_rule_match(rule, words).get_words()), ['hello', 'there', 'world'])

@@ -159,10 +159,10 @@ def convert_to_regex_pattern(rule_string):
     rule_string = ' '.join(rule_string.strip().split())
     group_num = 0
     for i, char in enumerate(rule_string):
+        print(char, 'STACK', stack)
         if stack and stack[-1] == '<':
             tag += char
             if char == '>':
-                print('THIS IS MY SUPER AWESOME PATTERN', regex_pattern, 'TAG', tag)
                 if tag == '<num>':
                     group_num += 1
                 if re.match(REP_PATTERN, tag):
@@ -176,10 +176,13 @@ def convert_to_regex_pattern(rule_string):
             if word:
                 regex_pattern += '{} '.format(word)
             word = ''
-            regex_pattern += '('
             stack.append(char)
+            if char == '<':
+                tag = '<'
+                continue
+            regex_pattern += '('
             tag = char
-        elif char in ')]>':
+        elif char in ')]':
             stack.pop()
             if word:
                 word += ' '
@@ -193,12 +196,9 @@ def convert_to_regex_pattern(rule_string):
         elif char == ' ':
             if word and rule_string[i + 1] not in '|>)]' and rule_string[i - 1] not in '(<[|]>)':
                 regex_pattern += '{} '.format(word)
-                word = ''          
+                word = ''              
         else:
-            print(char, i)
-            print('TRACE1', tag, char)
             word += char
-            print('TRACE2', tag, char)
     if word:
          regex_pattern += '{} '.format(word)
     assert not stack

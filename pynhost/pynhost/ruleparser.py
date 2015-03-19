@@ -151,66 +151,75 @@ class OrToken:
 
 def convert_to_regex_pattern(rule_string):
     regex_pattern = ''
-    token = ''
+    tag = ''
+    word = ''
     stack = []
     rule_string = ' '.join(rule_string.strip().split())
-    group_num = 1
+    group_num = 0
     for i, char in enumerate(rule_string):
-        if char in '([<':
-            stack.append(char)
-            regex_pattern += token
-            token = char.replace('[', '(')
-        elif char == '|' and stack and stack[-1] == '(' and token:
-            token += ' |'
-        elif char == ' ':
-            if rule_string[i + 1] not in '|>)]' and rule_string[i - 1] not in '(<[|]>)':
-                token += char
-        elif char in ')]>':
-            stack.pop()
+        if stack and stack[-1] == '<':
+            tag += char
             if char == '>':
-                token = token_to_regex(token + char, group_num)
-                regex_pattern += token
-                token = ''
-                group_num += 1
-            else:
-                if token:
-                    token += ' '
-                if char == ']':
-                    char = ')?'
-                regex_pattern += token + char
-            token = ''
+                if tag == '<num>':
+                    group_num += 1
+                regex_pattern += token_to_regex(tag, group_num)
+                tag = ''
+                stack.pop()
+        if char in '([':
+            if word:
+                regex_pattern += '({} )'.format(word)
+            word = ''
+            regex_pattern += '('
+            stack.append(char)
+        elif char in ')]':
+            stack.pop()
+            if word:
+                word += ' '
+            if char == ']':
+                char = ')?'
+            regex_pattern += word + char
+            word = ''
+        elif char == '|' and stack and stack[-1] == '(' and word:
+            regex_pattern += '{} |'.format(word)
+            word = ''
+        elif char == ' ':
+            if word and rule_string[i + 1] not in '|>)]' and rule_string[i - 1] not in '(<[|]>)':
+                regex_pattern += '({} )'.format(word)
+                word = ''              
         else:
-            token += char
-    regex_pattern += token
+            word += char
+    if word:
+         regex_pattern += '{} '.format(word)
+    assert not stack
     return regex_pattern
-
-    #         stack.append(char)
     #         regex_pattern += token
     #         token = char.replace('[', '(')
-    #     elif char in ')]>':
-    #         if not stack or CLOSING_TOKEN_DICT[char] != OPENING_TOKEN_DICT[stack.pop()]:
-    #             raise ValueError('token balancing error for rule {} at index {}'.format(rule_string, i))
-    #         regex_pattern += token_to_regex(token + char, group_num)
-    #         if token + char == '<num>':
-    #             group_num += 1
-    #         token = ''
-    #     elif char in '.':
-    #         token += '\\{}'.format(char)
+    #     elif char == '|' and stack and stack[-1] == '(' and token:
+    #         token += ' |'
     #     elif char == ' ':
-    #         if add_space(i, rule_string, regex_pattern):
-    #             regex_pattern += token + char
+    #         if rule_string[i + 1] not in '|>)]' and rule_string[i - 1] not in '(<[|]>)':
+    #             token += char
+    #     elif char in ')]>':
+    #         stack.pop()
+    #         if char == '>':
+    #             token = token_to_regex(token + char, group_num)
+    #             regex_pattern += token
     #             token = ''
+    #             group_num += 1
+    #         else:
+                # if token:
+                #     token += ' '
+                # if char == ']':
+                #     char = ')?'
+    #             regex_pattern += token + char
+    #         token = ''
     #     else:
+    #         word += char
     #         token += char
-    # if token and token[0] in '([<':
-    #     raise ValueError('token balancing error for rule {} at end'.format(rule_string))
     # regex_pattern += token
-    # if not regex_pattern or regex_pattern[-1] != '$':
-    #     regex_pattern += '( |$)' #patterns must match at the with last char or space
     # return regex_pattern
 
 def token_to_regex(token, group_num):
-    print(token)
     if token == '<start>':
         return '^'
     elif token == '<end>':

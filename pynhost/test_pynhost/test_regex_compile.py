@@ -15,20 +15,20 @@ class TestRegexConvert(unittest.TestCase):
     def setUpClass(cls):
         cls.num_text = ''
 
-    def test_surround_previous_word1(self):
-        input_str = 'hello world  '
-        paren = ruleparser.surround_previous_word(input_str)
-        self.assertEqual(paren, 'hello (world)  ')
+    # def test_surround_previous_word1(self):
+    #     input_str = 'hello world '
+    #     paren = ruleparser.surround_previous_word(input_str)
+    #     self.assertEqual(paren, 'hello (world )')
 
-    def test_surround_previous_word2(self):
-        input_str = 'hello world]  '
-        paren = ruleparser.surround_previous_word(input_str)
-        self.assertEqual(paren, 'hello world]  ')
+    # def test_surround_previous_word2(self):
+    #     input_str = 'hello world]  '
+    #     paren = ruleparser.surround_previous_word(input_str)
+    #     self.assertEqual(paren, 'hello world]  ')
 
-    def test_surround_previous_word3(self):
-        input_str = '(hello)test '
-        paren = ruleparser.surround_previous_word(input_str)
-        self.assertEqual(paren, '(hello)(test) ')
+    # def test_surround_previous_word3(self):
+    #     input_str = '(hello)test '
+    #     paren = ruleparser.surround_previous_word(input_str)
+    #     self.assertEqual(paren, '(hello)(test )')
 
     # def test_compile1(self):
     #    input_str = 'hello'
@@ -90,15 +90,15 @@ class TestRegexConvert(unittest.TestCase):
     #    compiled = ruleparser.convert_to_regex_pattern(input_str)
     #    self.assertEqual(compiled, r'dance( |$)')
 
-    def test_compile13(self):
-        input_str = '( hola)   <3>'
-        compiled = ruleparser.convert_to_regex_pattern(input_str)
-        self.assertEqual(compiled, r'(hola ){3}')
+    # def test_compile13(self):
+    #     input_str = '( hola)   <3>'
+    #     compiled = ruleparser.convert_to_regex_pattern(input_str)
+    #     self.assertEqual(compiled, r'(hola ){3}')
 
     # def test_compile14(self):
     #     input_str = '(hello  | hola|salut   )   <3-5> (world|  universe)<0-2>'
     #     compiled = ruleparser.convert_to_regex_pattern(input_str)
-    #     self.assertEqual(compiled, r'(hello |hola |salut ){3,5}(world |universe )')
+    #     self.assertEqual(compiled, r'(hello |hola |salut ){3,5}(world |universe ){0,2}')
 
     # def test_compile13(self):
     #    input_str =  'range <num>[through <num>[step <num>]]'
@@ -134,6 +134,11 @@ class TestRegexConvert(unittest.TestCase):
     #     input_str = '(hola   | salut)    (hello| goodbye) <0-2>  '
     #     compiled = ruleparser.convert_to_regex_pattern(input_str)
     #     self.assertEqual(compiled, r'(hola |salut )(hello |goodbye ){0,2}')
+
+    def test_compile21(self):
+        input_str = ' hola   <3>'
+        compiled = ruleparser.convert_to_regex_pattern(input_str)
+        self.assertEqual(compiled, r'(hola ){3}')
 
 def num(n):
     return r'((?P<num{}>-?\d+(\.d+)?)|one|zero)'.format(n)

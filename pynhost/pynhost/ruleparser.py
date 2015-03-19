@@ -159,7 +159,6 @@ def convert_to_regex_pattern(rule_string):
     rule_string = ' '.join(rule_string.strip().split())
     group_num = 0
     for i, char in enumerate(rule_string):
-        print(i, char, list(regex_pattern))
         if stack and stack[-1] == '<':
             tag += char
             if char == '>':
@@ -202,35 +201,8 @@ def convert_to_regex_pattern(rule_string):
     if word:
          regex_pattern += '{} '.format(word)
     assert not stack
-    print(list(regex_pattern))
     return regex_pattern
-    #         regex_pattern += token
-    #         token = char.replace('[', '(')
-    #     elif char == '|' and stack and stack[-1] == '(' and token:
-    #         token += ' |'
-    #     elif char == ' ':
-    #         if rule_string[i + 1] not in '|>)]' and rule_string[i - 1] not in '(<[|]>)':
-    #             token += char
-    #     elif char in ')]>':
-    #         stack.pop()
-    #         if char == '>':
-    #             token = token_to_regex(token + char, group_num)
-    #             regex_pattern += token
-    #             token = ''
-    #             group_num += 1
-    #         else:
-                # if token:
-                #     token += ' '
-                # if char == ']':
-                #     char = ')?'
-    #             regex_pattern += token + char
-    #         token = ''
-    #     else:
-    #         word += char
-    #         token += char
-    # regex_pattern += token
-    # return regex_pattern
-
+ 
 def token_to_regex(token, group_num):
     if token == '<start>':
         return '^'
@@ -289,6 +261,7 @@ def surround_previous_word(input_str):
     start = None
     end = None
     for i, char in enumerate(reversed(input_str)):
+        print(i, char)
         if start is None:
             if char in '{}()[]<>?|':
                 return input_str
@@ -298,12 +271,22 @@ def surround_previous_word(input_str):
             if char in '{}()[]<>?| ':
                 end = i
                 break
+    if start is None:
+        return input_str
+    if end is None:
+        end = len(input_str)
+    print(start, end, input_str)
     new_str = ''
     for i, char in enumerate(reversed(input_str)):
+        if char == ' ' and i + 1 == start:
+            print('sadasdsad')
+            continue
         if i == start:
-            new_str += ')'
+            new_str += ') '
         elif i == end:
             new_str += '('
         new_str += char
+    if end == len(input_str):
+        new_str += '('
     return new_str[::-1]
 

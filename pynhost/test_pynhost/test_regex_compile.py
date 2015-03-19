@@ -90,10 +90,15 @@ class TestRegexConvert(unittest.TestCase):
     #    compiled = ruleparser.convert_to_regex_pattern(input_str)
     #    self.assertEqual(compiled, r'dance( |$)')
 
-    def test_compile14(self):
-        input_str = '(hello  | hola|salut   )   <3-5> (world|  universe)<0-2>'
+    def test_compile13(self):
+        input_str = '( hola)   <3>'
         compiled = ruleparser.convert_to_regex_pattern(input_str)
-        self.assertEqual(compiled, r'(hello |hola |salut ){3,5}(world |universe ){0,2}')
+        self.assertEqual(compiled, r'(hola ){3}')
+
+    # def test_compile14(self):
+    #     input_str = '(hello  | hola|salut   )   <3-5> (world|  universe)<0-2>'
+    #     compiled = ruleparser.convert_to_regex_pattern(input_str)
+    #     self.assertEqual(compiled, r'(hello |hola |salut ){3,5}(world |universe )')
 
     # def test_compile13(self):
     #    input_str =  'range <num>[through <num>[step <num>]]'

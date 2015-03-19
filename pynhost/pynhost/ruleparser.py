@@ -159,14 +159,14 @@ def convert_to_regex_pattern(rule_string):
     rule_string = ' '.join(rule_string.strip().split())
     group_num = 0
     for i, char in enumerate(rule_string):
-        print(char, 'STACK', stack)
+        print(i, char, list(regex_pattern))
         if stack and stack[-1] == '<':
             tag += char
             if char == '>':
                 if tag == '<num>':
                     group_num += 1
                 if re.match(REP_PATTERN, tag):
-                    regex_pattern = surround_previous_word(rule_string)
+                    regex_pattern = surround_previous_word(regex_pattern)
                 regex_pattern += token_to_regex(tag, group_num)
                 tag = ''
                 word = ''
@@ -202,6 +202,7 @@ def convert_to_regex_pattern(rule_string):
     if word:
          regex_pattern += '{} '.format(word)
     assert not stack
+    print(list(regex_pattern))
     return regex_pattern
     #         regex_pattern += token
     #         token = char.replace('[', '(')

@@ -19,6 +19,8 @@ CLOSING_TOKEN_DICT = {
     '>': 'special',
 }
 
+REP_PATTERN = r'<\d+(-\d?)?>'
+
 class RulePiece:
     def __init__(self, mode):
         self.children = []
@@ -160,18 +162,24 @@ def convert_to_regex_pattern(rule_string):
         if stack and stack[-1] == '<':
             tag += char
             if char == '>':
+                print('THIS IS MY SUPER AWESOME PATTERN', regex_pattern, 'TAG', tag)
                 if tag == '<num>':
                     group_num += 1
+                if re.match(REP_PATTERN, tag):
+                    regex_pattern = surround_previous_word(rule_string)
                 regex_pattern += token_to_regex(tag, group_num)
                 tag = ''
+                word = ''
                 stack.pop()
-        if char in '([':
+            continue
+        if char in '([<':
             if word:
-                regex_pattern += '({} )'.format(word)
+                regex_pattern += '{} '.format(word)
             word = ''
             regex_pattern += '('
             stack.append(char)
-        elif char in ')]':
+            tag = char
+        elif char in ')]>':
             stack.pop()
             if word:
                 word += ' '
@@ -184,10 +192,13 @@ def convert_to_regex_pattern(rule_string):
             word = ''
         elif char == ' ':
             if word and rule_string[i + 1] not in '|>)]' and rule_string[i - 1] not in '(<[|]>)':
-                regex_pattern += '({} )'.format(word)
-                word = ''              
+                regex_pattern += '{} '.format(word)
+                word = ''          
         else:
+            print(char, i)
+            print('TRACE1', tag, char)
             word += char
+            print('TRACE2', tag, char)
     if word:
          regex_pattern += '{} '.format(word)
     assert not stack
@@ -230,7 +241,7 @@ def token_to_regex(token, group_num):
         if not (locals_available and hasattr(_locals, 'NUMBERS_MAP')):
             return r'(?P<num{}>-?\d+(\.d+)?)'.format(group_num)
         return regex_string_from_list(sorted(_locals.NUMBERS_MAP), r'(?P<num{}>-?\d+(\.d+)?)'.format(group_num))
-    elif re.match(r'<\d+(-\d?)?>', token): # ex: <0-3>, <4->
+    elif re.match(REP_PATTERN, token): # ex: <0-3>, <4->
         split_tag = token.replace('<', '').replace('>', '').split('-')
         if len(split_tag) == 1:
             return '{' + split_tag[0] + '}'
@@ -269,5 +280,29 @@ def regex_string_from_list(input_list, token):
                 text_list.append(ele)
     return ''.join(text_list) + ')'
 
-
+def surround_previous_word(input_str):
+    '''
+    Surround last word in string with parentheses. If last non-whitespace character
+    is delimiter, do nothing
+    '''
+    start = None
+    end = None
+    for i, char in enumerate(reversed(input_str)):
+        if start is None:
+            if char in '{}()[]<>?|':
+                return input_str
+            elif char != ' ':
+                start = i
+        else:
+            if char in '{}()[]<>?| ':
+                end = i
+                break
+    new_str = ''
+    for i, char in enumerate(reversed(input_str)):
+        if i == start:
+            new_str += ')'
+        elif i == end:
+            new_str += '('
+        new_str += char
+    return new_str[::-1]
 

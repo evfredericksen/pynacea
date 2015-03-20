@@ -33,7 +33,7 @@ def get_rule_match(rule, words, filter_list=None):
             remaining_words = ' '.join(words)[len(raw_results):].split()
         remaining_words = utilities.reinsert_filtered_words(
             remaining_words, filtered_positions)
-        # print(rule, matched, remaining_words, nums)
+        print(rule, matched, remaining_words, nums)
         return RuleMatch(rule, matched, remaining_words, nums)
 
 def replace_values(regex_match):
@@ -44,6 +44,7 @@ def replace_values(regex_match):
     for k, v in regex_match.groupdict().items():
         if v is not None:
             values[k] = v
+    print('MACH', values, raw_text)
     for word, value in sorted(values.items()):
         value = value.rstrip()
         matched.append('')
@@ -51,14 +52,19 @@ def replace_values(regex_match):
         while pos < span[0]:
             matched[-1] += raw_text[pos]
             pos += 1
-        if word[2:5] == 'num':
+        if word[-3:] == 'num':
             if not (locals_available and hasattr(_locals, 'NUMBERS_MAP') and
                 value in _locals.NUMBERS_MAP):
                 matched.append(value)
             else:
                 matched.append(_locals.NUMBERS_MAP[value])
-        elif word[2:6] == 'hom_':
-            matched.append(word[6:])
+        else: # homophones
+            # handle n followed by 2+ digits
+            pos = 2
+            while word[pos].isdigit():
+                pos += 1
+            if word[pos:pos + 4] == 'hom_':
+                matched.append(word[pos + 4:])
         pos = span[1]
     if not matched:
         return raw_text.split()
@@ -67,7 +73,8 @@ def replace_values(regex_match):
     while pos < len(raw_text):
         matched[-1] += raw_text[pos]
         pos += 1
-    return [ele for ele in matched if ele]
+    print('RETURN', [ele for ele in matched if ele])
+    return [ele.strip() for ele in matched if ele]
 
 def get_numbers(regex_match):
     nums = []

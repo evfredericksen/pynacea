@@ -157,7 +157,7 @@ class TestRegexConvert(unittest.TestCase):
        converted = ruleparser.convert_to_regex_pattern(input_str)
        print(converted)
        re.compile(converted)
-       self.assertEqual(converted, r'((?P<n1hom_line> |wine |dine |why n )|(?P<n2hom_perl>perl |pearl |whirl ))')
+       self.assertEqual(converted, r'((?P<n1hom_line>line |wine |dine |why n )|(?P<n2hom_perl>perl |pearl |whirl ))')
 
     def test_compile27(self):
        input_str = 'range <num>[through <num>]'

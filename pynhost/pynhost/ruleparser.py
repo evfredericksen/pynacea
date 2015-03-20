@@ -21,15 +21,6 @@ CLOSING_TOKEN_DICT = {
 
 REP_PATTERN = r'<\d+(-\d?)?>'
 
-class RulePiece:
-    def __init__(self, mode):
-        self.children = []
-        self.mode = mode
-        self.current_text = ''
-
-    def __repr__(self):
-        return '<RulePiece {}>'.format(self.mode)
-
 class Rule:
     def __init__(self, raw_text, actions=None, grammar=None, regex_mode=False):
         if not isinstance(actions, list):

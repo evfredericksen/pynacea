@@ -35,7 +35,6 @@ class Command:
                 rule = copy.copy(rule)
                 rule_match = matching.get_rule_match(rule,
                              self.remaining_words,
-                             grammar.settings['regex mode'],
                              grammar.settings['filtered words'])
                 if rule_match is not None:
                     return rule_match

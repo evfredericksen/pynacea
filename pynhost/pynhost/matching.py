@@ -33,7 +33,6 @@ def get_rule_match(rule, words, filter_list=None):
             remaining_words = ' '.join(words)[len(raw_results):].split()
         remaining_words = utilities.reinsert_filtered_words(
             remaining_words, filtered_positions)
-        print(rule, matched, remaining_words, nums)
         return RuleMatch(rule, matched, remaining_words, nums)
 
 def replace_values(regex_match):
@@ -44,7 +43,6 @@ def replace_values(regex_match):
     for k, v in regex_match.groupdict().items():
         if v is not None:
             values[k] = v
-    print('MACH', values, raw_text)
     for word, value in sorted(values.items()):
         value = value.rstrip()
         matched.append('')
@@ -73,7 +71,6 @@ def replace_values(regex_match):
     while pos < len(raw_text):
         matched[-1] += raw_text[pos]
         pos += 1
-    print('RETURN', [ele for ele in matched if ele])
     return [ele.strip() for ele in matched if ele]
 
 def get_numbers(regex_match):

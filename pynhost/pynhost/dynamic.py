@@ -15,11 +15,7 @@ class Num(DynamicAction):
         self.change = 0
 
     def evaluate(self, rule_match):
-        nums = []
-        for piece, num in rule_match.matched_words.items():
-            if not isinstance(piece, str) and piece.children[0] == 'num':
-                nums.append(num)
-        num = int(nums[self.index]) + self.change
+        num = int(rule_match.nums[self.index]) + self.change
         if self.integer:
             return num
         return str(num)

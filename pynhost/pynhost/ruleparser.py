@@ -59,11 +59,15 @@ def convert_to_regex_pattern(rule_string):
         if stack and stack[-1] == '<':
             tag += char
             if char == '>':
-                if tag == '<num>':
-                    group_num += 1
-                if re.match(REP_PATTERN, tag):
-                    regex_pattern = surround_previous_word(regex_pattern)
-                regex_pattern += token_to_regex(tag, group_num, rule_string)
+                if re.match(r'<hom_.+>', tag) and not (locals_available and hasattr(_locals, 'HOMOPHONES') and
+                tag[5:-1] in _locals.HOMOPHONES and _locals.HOMOPHONES[tag[5:-1]]):
+                    regex_pattern += tag[5:-1] + ' '
+                else:
+                    if tag == '<num>' or re.match(r'<hom_.+>', tag):
+                        group_num += 1
+                    if re.match(REP_PATTERN, tag):
+                        regex_pattern = surround_previous_word(regex_pattern)
+                    regex_pattern += token_to_regex(tag, group_num, rule_string)
                 tag = ''
                 word = ''
                 stack.pop()
@@ -86,9 +90,12 @@ def convert_to_regex_pattern(rule_string):
                 char = ')?'
             regex_pattern += word + char
             word = ''
-        elif char == '|' and stack and stack[-1] == '(' and word:
-            regex_pattern += '{} |'.format(word)
-            word = ''
+        elif char == '|':
+            if word:
+                regex_pattern += '{} |'.format(word)
+                word = ''
+            else:
+                regex_pattern += '|'
         elif char == ' ':
             if word and rule_string[i + 1] not in '|>)]' and rule_string[i - 1] not in '(<[|]>)':
                 regex_pattern += '{} '.format(word)
@@ -112,7 +119,7 @@ def token_to_regex(token, group_num, rule_string):
     elif token == '<num>':
         if not (locals_available and hasattr(_locals, 'NUMBERS_MAP')):
             return r'(?P<num{}>-?\d+(\.d+)? )'.format(group_num)
-        return regex_string_from_list(sorted(_locals.NUMBERS_MAP), r'?P<num{}>(-?\d+(\.d+)?)'.format(group_num))
+        return regex_string_from_list(sorted(_locals.NUMBERS_MAP), r'?P<n{}num>(-?\d+(\.d+)?)'.format(group_num))
     elif re.match(REP_PATTERN, token): # ex: <0-3>, <4->
         split_tag = token.replace('<', '').replace('>', '').split('-')
         if len(split_tag) == 1:
@@ -120,10 +127,7 @@ def token_to_regex(token, group_num, rule_string):
         return '{' + '{},{}'.format(split_tag[0], split_tag[1]) + '}'
     elif re.match(r'<hom_.+>', token):
         token = token[5:-1]
-        if not (locals_available and hasattr(_locals, 'HOMOPHONES') and
-            token in _locals.HOMOPHONES and _locals.HOMOPHONES[token]):
-            return '{} '.format(token)
-        return regex_string_from_list(_locals.HOMOPHONES[token], token)
+        return regex_string_from_list(_locals.HOMOPHONES[token], '?P<n{0}hom_{1}>{1}'.format(group_num, token))
     raise ValueError("invalid token '{}' for rule string '{}'".format(token, rule_string))
 
 def regex_string_from_list(input_list, token):

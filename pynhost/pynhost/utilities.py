@@ -249,3 +249,14 @@ def convert_to_num(word):
         return str(num)
     except (ValueError, TypeError, IndexError):
         return None
+
+def list_to_rule_string(alist, homify=True):
+    rule_list = []
+    for word in alist:
+        if homify:
+            word = homify_text(word)
+        rule_list.append(word)
+    return '({})'.format(' | '.join(rule_list))
+
+def homify_text(word_text):
+    return ' '.join(['<hom_{}>'.format(word) for word in word_text.split()])

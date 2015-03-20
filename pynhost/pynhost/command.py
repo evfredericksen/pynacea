@@ -43,7 +43,7 @@ class Command:
         for i, result in enumerate(self.results):
             if isinstance(result, matching.RuleMatch):
                 logging.info('Input "{}" matched rule "{}" in {}'.format(
-                    ' '.join(list(result.matched_words.values())),
+                    ' '.join(list(result.matched_words)),
                     result.rule.raw_text, result.rule.grammar))
                 self.execute_rule_match(result)
             else:
@@ -72,8 +72,7 @@ class Command:
         elif isinstance(action, Command):
             action.run()
         elif isinstance(action, (types.FunctionType, types.MethodType)):
-            words = utilities.split_into_words(list(rule_match.matched_words.values()))
-            action(words)
+            action(rule_match.matched_words)
         elif isinstance(action, int) and last_action is not None:
             for i in range(action):
                 self.handle_action(last_action, rule_match)

@@ -1,7 +1,13 @@
 HOMOPHONES = {
 	'line': ['wine', 'dine', 'why n'],
-	'perl': ['pearl', 'whirl'],
-}
+	
+                                       'perl': ['pearl', 'whirl'],
+	
+                                       'boat': {'boats'},
+	
+                                       'rib': {'red', 'webb', 'ridden', 'rid'},
+
+                                 }
 
 NUMBERS_MAP = {
 	'zero': '0',

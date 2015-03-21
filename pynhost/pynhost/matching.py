@@ -71,14 +71,12 @@ def replace_values(regex_match):
         return raw_text.split()
     if matched[-1] and pos < len(raw_text):
         matched.append('')
-    print('MACH', matched)
     while pos < len(raw_text):
         if raw_text[pos] == ' ':
             matched.append('')
         else:
             matched[-1] += raw_text[pos]
         pos += 1
-    print('MACH2', matched)
     return [ele.strip() for ele in matched if ele]
 
 def get_numbers(regex_match):

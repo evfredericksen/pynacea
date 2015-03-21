@@ -106,11 +106,11 @@ def token_to_regex(token, group_num, rule_string):
     elif token == '<end>':
         return '$'
     elif token == '<any>':
-        return r'([^()<>|[\]]+ )'
+        return r'([^()<>|[\] ]+ )'
     elif token == '<num>':
         if not (locals_available and hasattr(_locals, 'NUMBERS_MAP')):
             return r'(?P<num{}>-?\d+(\.d+)? )'.format(group_num)
-        return regex_string_from_list(sorted(_locals.NUMBERS_MAP), r'?P<n{}num>(-?\d+(\.d+)?)'.format(group_num))
+        return regex_string_from_list(sorted(_locals.NUMBERS_MAP), r'?P<n{}num>(-?\d+(\.\d+)?)'.format(group_num))
     elif re.match(REP_PATTERN, token): # ex: <0-3>, <4->
         split_tag = token.replace('<', '').replace('>', '').split('-')
         if len(split_tag) == 1:

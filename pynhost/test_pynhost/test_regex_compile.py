@@ -155,7 +155,6 @@ class TestRegexConvert(unittest.TestCase):
     def test_compile26(self):
        input_str = '(<hom_line> |<hom_perl>)'
        converted = ruleparser.convert_to_regex_pattern(input_str)
-       print(converted)
        re.compile(converted)
        self.assertEqual(converted, r'((?P<n1hom_line>line |wine |dine |why n )|(?P<n2hom_perl>perl |pearl |whirl ))')
 
@@ -164,8 +163,13 @@ class TestRegexConvert(unittest.TestCase):
        converted = ruleparser.convert_to_regex_pattern(input_str)
        self.assertEqual(converted, r'range {}(through {})?'.format(num('1'), num('2')))
 
+    def test_compile28(self):
+       input_str = '<any>'
+       converted = ruleparser.convert_to_regex_pattern(input_str)
+       self.assertEqual(converted, r'([^()<>|[\] ]+ )')
+
 def num(n):
-    return r'(?P<n{}num>(-?\d+(\.d+)?) |one |zero )'.format(n)
+    return r"(?P<n{}num>(-?\d+(\.\d+)?) |do |eight |five |for |four |free |i've |mine |nine |one |sets |seven |six |three |to |too |two |won |zero )".format(n)
 
 if __name__ == '__main__':
     unittest.main()

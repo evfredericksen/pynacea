@@ -30,10 +30,10 @@ Getting Started
    installation
    usage
 
-Grammars
----------
+Using Pynacea
+--------------
 .. toctree::
    :maxdepth: 2
    
-   grammars/introduction
-
+   using/grammars
+   using/modes

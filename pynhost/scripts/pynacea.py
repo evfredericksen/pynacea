@@ -25,7 +25,7 @@ def main():
         print('Loading grammars...')
         gram_handler.load_grammars(command_history)
         # Dict for simulation of special modes
-        mode_status = {'asleep': False, 'dictation mode': False, 'number mode': False}
+        mode_status = {'sleep mode': False, 'dictation mode': False, 'number mode': False}
         updated_status = mode_status
         logging.info('Started listening at {}'.format(time.strftime("%Y-%m-%d %H:%M:%S")))
         print('Ready!')
@@ -35,7 +35,7 @@ def main():
                 mode_status = updated_status
                 updated_status, matched_pattern = utilities.get_new_status(mode_status, line)
                 # go to next line if line matched mode status pattern or not currently awake
-                if matched_pattern or updated_status['asleep']:
+                if matched_pattern or updated_status['sleep mode']:
                     continue
                 if mode_status['dictation mode']:
                     utilities.transcribe_line(line.split(), transcribe_mode=True)

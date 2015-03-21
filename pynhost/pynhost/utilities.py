@@ -136,8 +136,8 @@ def get_new_status(current_status, words):
     new_status = copy.copy(current_status)
     matched_pattern = False
     patterns = {
-        'SLEEP_PATTERNS': {'opposite': 'WAKE_UP_PATTERNS', 'name': 'asleep'},
-        'BEGIN_DICTATION_PATTERNS': {'opposite': 'END_DICTATION_PATTERNS', 'name': 'dictation mode'},
+        'BEGIN_SLEEP_MODE_PATTERNS': {'opposite': 'END_SLEEP_MODE_PATTERNS', 'name': 'sleep mode'},
+        'BEGIN_DICTATION_MODE_PATTERNS': {'opposite': 'END_DICTATION_MODE_PATTERNS', 'name': 'dictation mode'},
         'BEGIN_NUMBER_MODE_PATTERNS': {'opposite': 'END_NUMBER_MODE_PATTERNS', 'name': 'number mode'},
     }
     for p in patterns:

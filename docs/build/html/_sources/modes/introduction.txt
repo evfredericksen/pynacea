@@ -1,4 +1,4 @@
-Grammars
+Modes
 ==============
 
 Grammars allow you to run callback functions in your host operating system.

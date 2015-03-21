@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Grammars &mdash; Pynacea 0.3.2 documentation</title>
+    <title>Modes &mdash; Pynacea 0.3.2 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Pynacea 0.3.2 documentation" href="../index.html" />
-    <link rel="prev" title="Using Pynacea" href="../usage.html" /> 
+    <link rel="prev" title="Grammars" href="grammars.html" /> 
   </head>
   <body>
     <div class="related">
@@ -34,7 +34,7 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../usage.html" title="Using Pynacea"
+          <a href="grammars.html" title="Grammars"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Pynacea 0.3.2 documentation</a> &raquo;</li> 
       </ul>
@@ -45,49 +45,16 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="grammars">
-<h1>Grammars<a class="headerlink" href="#grammars" title="Permalink to this headline">¶</a></h1>
-<p>Grammars allow you to run callback functions in your host operating system.
-They reside in the grammars directory of your pynhost installation.
-These functions will be called when your voice input matches a particular rule
-pattern that you have created.</p>
-<div class="section" id="basic-usage">
-<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h2>
-<p>The following is an example of a basic Grammar class, taken from
-pynhost/pynhost/grammars/sample1.py:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pynhost</span> <span class="kn">import</span> <span class="n">grammarbase</span><span class="p">,</span> <span class="n">api</span>
-
-<span class="k">class</span> <span class="nc">BasicSampleGrammar</span><span class="p">(</span><span class="n">grammarbase</span><span class="o">.</span><span class="n">GrammarBase</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Barebones grammar class that can be used as a template for new</span>
-<span class="sd">    grammars. See grammars/sample2.py for a more indepth example</span>
-<span class="sd">    of grammars.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&#39;sample hello&#39;</span><span class="p">:</span> <span class="s">&#39;Hello World!&#39;</span><span class="p">,</span>
-            <span class="s">&#39;sample goodbye &lt;num&gt;&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">goodbye</span><span class="p">,</span>
-        <span class="p">}</span>
-
-    <span class="k">def</span> <span class="nf">goodbye</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">words</span><span class="p">):</span>
-        <span class="n">iter_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">words</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iter_count</span><span class="p">):</span>
-            <span class="n">api</span><span class="o">.</span><span class="n">send_string</span><span class="p">(</span><span class="s">&#39;Goodbye World!&#39;</span><span class="p">)</span>
-</pre></div>
+  <div class="section" id="modes">
+<h1>Modes<a class="headerlink" href="#modes" title="Permalink to this headline">¶</a></h1>
+<p>Pynacea can run in one of several modes. These modes can be turned off and on by speaking patterns that match regular expressions in <tt class="docutils literal"><span class="pre">pynhost/grammars/_locals</span></tt></p>
+<div class="section" id="normal-mode">
+<h2>Normal Mode<a class="headerlink" href="#normal-mode" title="Permalink to this headline">¶</a></h2>
+<p>This is the default mode that runs when no other mode is active. It attemps to match spoken input to rule patterns, and sends whatever input doesn&#8217;t match as keypresses to the operating system.</p>
 </div>
-<p>The most important property of Grammar classes is the <tt class="docutils literal"><span class="pre">self.mapping</span></tt> property. The keys of <tt class="docutils literal"><span class="pre">self.mapping</span></tt> are rules, similar to regular expression patterns. If your speech input matches one of these patterns, then Pynacea will execute the corresponding value, which can be a string for the operating system to type, a method, or something else. For example, with this class in your grammars directory, if you say (or at least if your speech to text engine thinks that you said) <tt class="docutils literal"><span class="pre">sample</span> <span class="pre">hello</span></tt>, then Pynacea will tell the operating system to type <tt class="docutils literal"><span class="pre">Hello</span> <span class="pre">World!</span></tt>. If you say <tt class="docutils literal"><span class="pre">sample</span> <span class="pre">goodbye</span></tt> followed by a number, then Pynacea will call the <tt class="docutils literal"><span class="pre">self.goodbye</span></tt> method.</p>
-<p>Note that these methods expect one additional parameter, which contain the list of spoken words that triggered the method. This allows for flexibility in running the method based on the possible variations that could potentially match its corresponding rule.</p>
-</div>
-<div class="section" id="keypresses">
-<h2>Keypresses<a class="headerlink" href="#keypresses" title="Permalink to this headline">¶</a></h2>
-<p>Keypresses are sent to the operating system in one of three ways:</p>
-<ol class="arabic simple">
-<li>By default if spoken input does not match any patterns</li>
-<li>If a matched rule maps to a string or a list containing one or more strings</li>
-<li>By passing a string argument to <tt class="docutils literal"><span class="pre">api.send_string()</span></tt></li>
-</ol>
-<p>Special keypresses are surrounded by curly braces and combined through addition signs, such as <tt class="docutils literal"><span class="pre">{ctrl+alt+del}</span></tt> or <tt class="docutils literal"><span class="pre">{ctrl+f}apples{enter}</span></tt>. Use a second consecutive curly brace as an escape character to type a literal curly brace.</p>
+<div class="section" id="dictation-mode">
+<h2>Dictation Mode<a class="headerlink" href="#dictation-mode" title="Permalink to this headline">¶</a></h2>
+<p>Dictation mode ignores all grammars</p>
 </div>
 <div class="section" id="rules-tags">
 <h2>Rules Tags<a class="headerlink" href="#rules-tags" title="Permalink to this headline">¶</a></h2>
@@ -143,9 +110,9 @@ pynhost/pynhost/grammars/sample1.py:</p>
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Grammars</a><ul>
-<li><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
-<li><a class="reference internal" href="#keypresses">Keypresses</a></li>
+<li><a class="reference internal" href="#">Modes</a><ul>
+<li><a class="reference internal" href="#normal-mode">Normal Mode</a></li>
+<li><a class="reference internal" href="#dictation-mode">Dictation Mode</a></li>
 <li><a class="reference internal" href="#rules-tags">Rules Tags</a><ul>
 <li><a class="reference internal" href="#list-tags">List Tags</a></li>
 <li><a class="reference internal" href="#optional-tags">Optional Tags</a></li>
@@ -158,11 +125,11 @@ pynhost/pynhost/grammars/sample1.py:</p>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../usage.html"
-                        title="previous chapter">Using Pynacea</a></p>
+  <p class="topless"><a href="grammars.html"
+                        title="previous chapter">Grammars</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../_sources/grammars/introduction.txt"
+    <li><a href="../_sources/using/modes.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -189,7 +156,7 @@ pynhost/pynhost/grammars/sample1.py:</p>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../usage.html" title="Using Pynacea"
+          <a href="grammars.html" title="Grammars"
              >previous</a> |</li>
         <li><a href="../index.html">Pynacea 0.3.2 documentation</a> &raquo;</li> 
       </ul>

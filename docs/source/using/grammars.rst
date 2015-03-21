@@ -66,8 +66,8 @@ Special Tags
 ^^^^^^^^^^^^^
 ``<>`` can contain one of the following "special" tags:
 
-* ``<num>`` will match any number. It will also match homophones for certain numbers, like ``for`` and ``to``, so be careful about where you use this tag.
-* ``<3>`` will match exactly three words. ``<3+>`` will greedily match at least three words. ``<3->`` will match two through zero words. These numbers can be any integer greater than or equal to zero.
+* ``<num>`` will match any number. It will also match homophones for certain numbers, like ``for`` and ``to``. These mappings can be changed by modifying ``NUMBERS_MAP`` in ``pynhost/grammars/_locals.py``.
+* ``<3>`` will match the preceding word or tag three times. ``<3->`` will greedily match the preceding word or tag *at least* 3 times. ``<0-2>`` will match zero through two times. These numbers can be any integer greater than or equal to zero.
 * ``<hom_sampleword>`` will match either ``sampleword`` or any homophone that you have defined for ``sampleword`` in the ``HOMOPHONES`` dictionary residing in pynhost/grammars/_locals.py. Each key in this dictionary maps to a list of strings. For instance, if your _locals.HOMOPHONES dictionary looks like::
     
     HOMOPHONES = {
@@ -75,11 +75,12 @@ Special Tags
     }
 
   then if Pynacea gets the input ``elite word``, it will recognize ``elite`` as a homophone of ``delete``, and will match that input to the rule ``<hom_delete> word``.
+* ``<any>`` will match any word.
 
 Miscellaneous
 --------------
 
-* Tags can be nested. ``range <num>[through <num>[step <num>]]`` is an example that matches inputs like ``range 4``, ``range 4 through 16``, ``range 4 through 16 step 2``.
+* Tags can be nested. ``range <num>[through <num>[step <num>]]`` is an example that matches inputs like ``range 4``, ``range 4 through 16`` and ``range 4 through 16 step 2``.
 
 * Grammar classes residing in the top level of the ``pynhost/grammars`` directory are treated as global grammars, and their rules can be matched anywhere. Grammar classes residing in a subdirectory are application-specific, and their name must match a regular expression search with the currently open process.
 

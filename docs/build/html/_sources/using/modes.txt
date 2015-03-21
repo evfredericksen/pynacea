@@ -1,51 +1,17 @@
-Grammars
+Modes
 ==============
 
-Grammars allow you to run callback functions in your host operating system.
-They reside in the grammars directory of your pynhost installation.
-These functions will be called when your voice input matches a particular rule
-pattern that you have created.
+Pynacea can run in one of several modes. These modes can be turned off and on by speaking patterns that match regular expressions in ``pynhost/grammars/_locals``
 
-Basic Usage
+Normal Mode
 ------------
 
-The following is an example of a basic Grammar class, taken from
-pynhost/pynhost/grammars/sample1.py::
+This is the default mode that runs when no other mode is active. It attemps to match spoken input to rule patterns, and sends whatever input doesn't match as keypresses to the operating system.
 
-    from pynhost import grammarbase, api
+Dictation Mode
+---------------
 
-    class BasicSampleGrammar(grammarbase.GrammarBase):
-        '''
-        Barebones grammar class that can be used as a template for new
-        grammars. See grammars/sample2.py for a more indepth example
-        of grammars.
-        '''
-        def __init__(self):
-            super().__init__()
-            self.mapping = {
-                'sample hello': 'Hello World!',
-                'sample goodbye <num>': self.goodbye,
-            }
-
-        def goodbye(self, words):
-            iter_count = int(words[-1])
-            for i in range(iter_count):
-                api.send_string('Goodbye World!')
-
-The most important property of Grammar classes is the ``self.mapping`` property. The keys of ``self.mapping`` are rules, similar to regular expression patterns. If your speech input matches one of these patterns, then Pynacea will execute the corresponding value, which can be a string for the operating system to type, a method, or something else. For example, with this class in your grammars directory, if you say (or at least if your speech to text engine thinks that you said) ``sample hello``, then Pynacea will tell the operating system to type ``Hello World!``. If you say ``sample goodbye`` followed by a number, then Pynacea will call the ``self.goodbye`` method.
-
-Note that these methods expect one additional parameter, which contain the list of spoken words that triggered the method. This allows for flexibility in running the method based on the possible variations that could potentially match its corresponding rule.
-
-Keypresses
-----------
-
-Keypresses are sent to the operating system in one of three ways:
-
-1. By default if spoken input does not match any patterns
-2. If a matched rule maps to a string or a list containing one or more strings
-3. By passing a string argument to ``api.send_string()``
-
-Special keypresses are surrounded by curly braces and combined through addition signs, such as ``{ctrl+alt+del}`` or ``{ctrl+f}apples{enter}``. Use a second consecutive curly brace as an escape character to type a literal curly brace.
+Dictation mode ignores all grammars
 
 Rules Tags
 -----------

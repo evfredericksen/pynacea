@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Modes &mdash; Pynacea 0.3.2 documentation</title>
+    <title>Basic Usage &mdash; Pynacea 0.3.2 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -24,7 +24,8 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Pynacea 0.3.2 documentation" href="../index.html" />
-    <link rel="prev" title="Grammars" href="grammars.html" /> 
+    <link rel="next" title="Grammars" href="grammars.html" />
+    <link rel="prev" title="Installation" href="../installation.html" /> 
   </head>
   <body>
     <div class="related">
@@ -35,6 +36,9 @@
              accesskey="I">index</a></li>
         <li class="right" >
           <a href="grammars.html" title="Grammars"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../installation.html" title="Installation"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Pynacea 0.3.2 documentation</a> &raquo;</li> 
       </ul>
@@ -45,24 +49,26 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="modes">
-<h1>Modes<a class="headerlink" href="#modes" title="Permalink to this headline">¶</a></h1>
-<p>Pynacea can run in one of several modes. With the exception of debug mode, these modes can be turned off and on by speaking patterns that match regular expressions in <tt class="docutils literal"><span class="pre">pynhost/grammars/_locals</span></tt>.</p>
-<div class="section" id="normal-mode">
-<h2>Normal Mode<a class="headerlink" href="#normal-mode" title="Permalink to this headline">¶</a></h2>
-<p>This is the default mode that runs when no other mode is active. It attemps to match spoken input to rule patterns, and sends whatever input doesn&#8217;t match as keypresses to the operating system.</p>
+  <div class="section" id="basic-usage">
+<h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="pocketsphinx">
+<h2>PocketSphinx<a class="headerlink" href="#pocketsphinx" title="Permalink to this headline">¶</a></h2>
+<p>Simply run <tt class="docutils literal"><span class="pre">pynacea.py</span></tt>, wait for the engine to load, and begin speaking.</p>
 </div>
-<div class="section" id="dictation-mode">
-<h2>Dictation Mode<a class="headerlink" href="#dictation-mode" title="Permalink to this headline">¶</a></h2>
-<p>Dictation mode ignores all grammars, and instead types out all spoken input word for word. It can be turned on by spoken input that matches a pattern in <tt class="docutils literal"><span class="pre">BEGIN_DICTATION_MODE_PATTERNS</span></tt> and turned off by patterns in <tt class="docutils literal"><span class="pre">END_DICTATION_MODE_PATTERNS</span></tt>.</p>
-</div>
-<div class="section" id="numbers-mode">
-<h2>Numbers Mode<a class="headerlink" href="#numbers-mode" title="Permalink to this headline">¶</a></h2>
-<p>Number mode will only type out numbers, ignoring all grammars and non-numeric input. It can be turned on by spoken input that matches a pattern in <tt class="docutils literal"><span class="pre">BEGIN_NUMBER_MODE_PATTERNS</span></tt> and turned off by patterns in <tt class="docutils literal"><span class="pre">END_NUMBER_MODE_PATTERNS</span></tt>.</p>
-</div>
-<div class="section" id="debug-mode">
-<h2>Debug Mode<a class="headerlink" href="#debug-mode" title="Permalink to this headline">¶</a></h2>
-<p>Debug mode does <em>not</em> accept spoken input. Rather, it accepts typed input through the terminal. It can be useful for debugging grammar files, particularly in settings where verbal input is not possible. Debug mode is enabled by setting the <tt class="docutils literal"><span class="pre">-d</span></tt> flag when running Pynacea. Typed input runs four seconds after it is entered, to allow for the opportunity to switch programs. This length of time can be modified by passing a number to the <tt class="docutils literal"><span class="pre">--debug_delay</span></tt> command line argument.</p>
+<div class="section" id="virtual-machine">
+<h2>Virtual Machine<a class="headerlink" href="#virtual-machine" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Begin running your voice recognition software on your virtual machine.
+Then start <tt class="docutils literal"><span class="pre">pynacea.py</span></tt>.</li>
+<li>Keep the focus on the <tt class="docutils literal"><span class="pre">PynGuest</span></tt> GUI window that appears, otherwise nothing
+will be passed to your main operating system.</li>
+<li>Start <tt class="docutils literal"><span class="pre">pynacea.py</span></tt> in your main operating system.</li>
+<li>Say something. The text should appear in your active process several seconds
+later.</li>
+</ul>
+<p>Note that if you are using Dragon NaturallySpeaking, it is important to stay in
+dictation mode. Otherwise, the program will run commands in your virtual
+machine, rather than send text to your main one.</p>
 </div>
 </div>
 
@@ -74,21 +80,22 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Modes</a><ul>
-<li><a class="reference internal" href="#normal-mode">Normal Mode</a></li>
-<li><a class="reference internal" href="#dictation-mode">Dictation Mode</a></li>
-<li><a class="reference internal" href="#numbers-mode">Numbers Mode</a></li>
-<li><a class="reference internal" href="#debug-mode">Debug Mode</a></li>
+<li><a class="reference internal" href="#">Basic Usage</a><ul>
+<li><a class="reference internal" href="#pocketsphinx">PocketSphinx</a></li>
+<li><a class="reference internal" href="#virtual-machine">Virtual Machine</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
+  <p class="topless"><a href="../installation.html"
+                        title="previous chapter">Installation</a></p>
+  <h4>Next topic</h4>
   <p class="topless"><a href="grammars.html"
-                        title="previous chapter">Grammars</a></p>
+                        title="next chapter">Grammars</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../_sources/using/modes.txt"
+    <li><a href="../_sources/using/basic.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -116,6 +123,9 @@
              >index</a></li>
         <li class="right" >
           <a href="grammars.html" title="Grammars"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../installation.html" title="Installation"
              >previous</a> |</li>
         <li><a href="../index.html">Pynacea 0.3.2 documentation</a> &raquo;</li> 
       </ul>

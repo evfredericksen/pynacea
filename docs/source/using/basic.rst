@@ -1,4 +1,4 @@
-Using Pynacea
+Basic Usage
 ==============
 
 PocketSphinx

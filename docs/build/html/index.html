@@ -51,12 +51,6 @@
 software on a virtual machine and transcribe the result into their
 main operating system. Users may also create grammars, which contain
 rules that call user-defined functions upon triggering.</p>
-<p>This project is similar to the Natlink/Dragonfly/Aenea stack. However, Pynacea
-does not hook into Dragon NaturallySpeaking. In exchange for losing the
-ability to send commands to NaturallySpeaking, this project hopefully gains
-stability and flexibility in that it does not require access to APIs from any
-proprietary voice recognition software, and can in fact run alongside any voice
-recognition program.</p>
 <div class="toctree-wrapper compound">
 <ul class="simple">
 </ul>
@@ -70,11 +64,6 @@ recognition program.</p>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#virtual-machine">Virtual Machine</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Using Pynacea</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="usage.html#pocketsphinx">PocketSphinx</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usage.html#virtual-machine">Virtual Machine</a></li>
-</ul>
-</li>
 </ul>
 </div>
 </div>
@@ -82,6 +71,11 @@ recognition program.</p>
 <h2>Using Pynacea<a class="headerlink" href="#using-pynacea" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="using/basic.html">Basic Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="using/basic.html#pocketsphinx">PocketSphinx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using/basic.html#virtual-machine">Virtual Machine</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="using/grammars.html">Grammars</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="using/grammars.html#basic-usage">Basic Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="using/grammars.html#keypresses">Keypresses</a></li>
@@ -92,8 +86,8 @@ recognition program.</p>
 <li class="toctree-l1"><a class="reference internal" href="using/modes.html">Modes</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="using/modes.html#normal-mode">Normal Mode</a></li>
 <li class="toctree-l2"><a class="reference internal" href="using/modes.html#dictation-mode">Dictation Mode</a></li>
-<li class="toctree-l2"><a class="reference internal" href="using/modes.html#rules-tags">Rules Tags</a></li>
-<li class="toctree-l2"><a class="reference internal" href="using/modes.html#miscellaneous">Miscellaneous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using/modes.html#numbers-mode">Numbers Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using/modes.html#debug-mode">Debug Mode</a></li>
 </ul>
 </li>
 </ul>

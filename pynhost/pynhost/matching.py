@@ -78,5 +78,10 @@ def get_numbers(regex_match):
     numdict = regex_match.groupdict()
     for word in sorted(numdict):
         if word[2:] == 'num' and numdict[word] is not None:
-            nums.append(numdict[word].rstrip())
+            num = numdict[word].rstrip()
+            if (locals_available and hasattr(_locals, 'NUMBERS_MAP') and
+                num in _locals.NUMBERS_MAP):
+                nums.append(_locals.NUMBERS_MAP[num])
+            else:
+                nums.append(num)
     return nums

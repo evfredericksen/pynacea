@@ -39,37 +39,37 @@ def replace_values(regex_match):
     pos = 0
     matched = []
     raw_text = regex_match.group()[:-1]
-    values = {}
-    for k, v in regex_match.groupdict().items():
-        if v is not None:
-            values[k] = v
-    for word, value in sorted(values.items()):
+    for word, value in get_sorted_group_dict(regex_match).items():
         value = value.rstrip()
-        matched.append('')
         span = regex_match.span(word)
         while pos < span[0]:
             if raw_text[pos] == ' ':
                 matched.append('')
             else:
-                matched[-1] += raw_text[pos]
+                if not matched:
+                    matched.append(raw_text[pos])
+                else:
+                    matched[-1] += raw_text[pos]
             pos += 1
         if word[-3:] == 'num':
             if not (locals_available and hasattr(_locals, 'NUMBERS_MAP') and
                 value in _locals.NUMBERS_MAP):
-                matched.append(value)
+                add_or_append(value, matched)
             else:
-                matched.append(_locals.NUMBERS_MAP[value])
+                add_or_append(_locals.NUMBERS_MAP[value], matched)
         else: # homophones
             # handle n followed by 2+ digits
             pos = 2
             while word[pos].isdigit():
                 pos += 1
             if word[pos:pos + 4] == 'hom_':
-                matched.append(word[pos + 4:])
+                add_or_append(word[pos + 4:], matched)
         pos = span[1]
+        if pos + 1 < len(raw_text):
+            matched.append('')
     if not matched:
         return raw_text.split()
-    if matched[-1] and pos < len(raw_text):
+    if pos < len(raw_text):
         matched.append('')
     while pos < len(raw_text):
         if raw_text[pos] == ' ':
@@ -91,3 +91,27 @@ def get_numbers(regex_match):
             else:
                 nums.append(num)
     return nums
+
+def add_or_append(value, alist):
+    if not alist or alist[-1]:
+        alist.append(value)
+    else:
+        alist[-1] = value
+
+def get_sorted_group_dict(regex_match):
+    nums = []
+    keys = []
+    d = regex_match.groupdict()
+    for k, v in d.items():
+        if v is not None:
+            keys.append(k)
+            pos = 1
+            while k[pos].isdigit():
+                pos += 1
+            nums.append(int(k[1:pos]))
+    sorted_dict = collections.OrderedDict()
+    if keys:
+        sorted_keys = [list(x) for x in zip(*sorted(zip(nums, keys), key=lambda pair: pair[0]))][1]
+        for k in sorted_keys:
+            sorted_dict[k] = d[k]
+    return sorted_dict

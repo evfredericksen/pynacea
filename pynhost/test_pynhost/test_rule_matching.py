@@ -320,5 +320,12 @@ class TestRuleMatching(unittest.TestCase):
        rule_match = matching.get_rule_match(rule, words)
        self.assertEqual(list(rule_match.matched_words), ['hello', 'large', 'world'])
 
+    def test_repetition4(self):
+       rule = ruleparser.Rule('<hom_line> this is a test')
+       words = 'line this is a test'.split()
+       rule_match = matching.get_rule_match(rule, words)
+       self.assertEqual(list(rule_match.matched_words), ['line', 'this', 'is', 'a', 'test'])
+
+
 if __name__ == '__main__':
     unittest.main()

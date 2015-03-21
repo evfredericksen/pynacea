@@ -51,7 +51,8 @@ def replace_values(regex_match):
                 else:
                     matched[-1] += raw_text[pos]
             pos += 1
-        if word[-3:] == 'num':
+        n = get_last_consec_digit(1, word) + 1
+        if word[n:n + 3] == 'num':
             if not (locals_available and hasattr(_locals, 'NUMBERS_MAP') and
                 value in _locals.NUMBERS_MAP):
                 add_or_append(value, matched)
@@ -59,11 +60,8 @@ def replace_values(regex_match):
                 add_or_append(_locals.NUMBERS_MAP[value], matched)
         else: # homophones
             # handle n followed by 2+ digits
-            pos = 2
-            while word[pos].isdigit():
-                pos += 1
-            if word[pos:pos + 4] == 'hom_':
-                add_or_append(word[pos + 4:], matched)
+            if word[n:n + 4] == 'hom_':
+                add_or_append(word[n + 4:], matched)
         pos = span[1]
         if pos + 1 < len(raw_text):
             matched.append('')
@@ -105,9 +103,7 @@ def get_sorted_group_dict(regex_match):
     for k, v in d.items():
         if v is not None:
             keys.append(k)
-            pos = 1
-            while k[pos].isdigit():
-                pos += 1
+            pos = get_last_consec_digit(1, k) + 1
             nums.append(int(k[1:pos]))
     sorted_dict = collections.OrderedDict()
     if keys:
@@ -115,3 +111,9 @@ def get_sorted_group_dict(regex_match):
         for k in sorted_keys:
             sorted_dict[k] = d[k]
     return sorted_dict
+
+def get_last_consec_digit(start, input_str):
+    assert input_str[start].isdigit()
+    while start < len(input_str) and input_str[start].isdigit():
+        start += 1
+    return start - 1

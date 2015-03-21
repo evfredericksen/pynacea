@@ -326,6 +326,17 @@ class TestRuleMatching(unittest.TestCase):
        rule_match = matching.get_rule_match(rule, words)
        self.assertEqual(list(rule_match.matched_words), ['line', 'this', 'is', 'a', 'test'])
 
+    def test_num_range1(self):
+       rule = ruleparser.Rule('<num_44>')
+       words = '32'.split()
+       rule_match = matching.get_rule_match(rule, words)
+       self.assertEqual(list(rule_match.matched_words), ['32'])
+
+    def test_num_range2(self):
+       rule = ruleparser.Rule('<num_5_44>')
+       words = 'six'.split()
+       rule_match = matching.get_rule_match(rule, words)
+       self.assertEqual(list(rule_match.matched_words), ['6'])
 
 if __name__ == '__main__':
     unittest.main()

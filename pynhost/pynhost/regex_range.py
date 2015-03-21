@@ -28,7 +28,7 @@ def regex_for_range(min_, max_):
     """
     positive_subpatterns = []
     negative_subpatterns = []
-
+    max_ -= 1
     if min_ < 0:
         min__ = 1
         if max_ < 0:

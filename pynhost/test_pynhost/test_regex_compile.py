@@ -156,12 +156,24 @@ class TestRegexConvert(unittest.TestCase):
        converted = ruleparser.convert_to_regex_pattern(input_str)
        self.assertEqual(converted, r'range {}(through {})?'.format(num('1'), num('2')))
 
-    def test_compile28(self):
+    def test_compile_range1(self):
+       input_str = '<num_3>'
+       converted = ruleparser.convert_to_regex_pattern(input_str)
+       re.compile(converted)
+       self.assertEqual(converted, '(?P<n0num>[0-2] |do |one |to |too |two |won |zero )')
+
+    def test_compile_range2(self):
+       input_str = '<num_-3_1529>'
+       converted = ruleparser.convert_to_regex_pattern(input_str)
+       re.compile(converted)
+       self.assertEqual(converted, r"(?P<n0num>-[1-3] |\d |[1-9]\d |[1-9]\d{2} |1[0-4]\d{2} |15[0-1]\d |152[0-8] |do |eight |five |for |four |free |i've |mine |nine |one |sets |seven |six |three |to |too |two |won |zero )")
+
+    def test_compilelast(self):
        input_str = '<any>'
        converted = ruleparser.convert_to_regex_pattern(input_str)
        self.assertEqual(converted, r'([^()<>|[\] ]+ )')
 
-    def test_compile_last(self):
+    def test_compile_last2(self):
        input_str = 'say <any> <1->'
        converted = ruleparser.convert_to_regex_pattern(input_str)
        re.compile(converted)

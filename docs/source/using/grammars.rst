@@ -10,7 +10,7 @@ Basic Usage
 ------------
 
 The following is an example of a basic Grammar class, taken from
-pynhost/pynhost/grammars/sample1.py::
+``pynhost/grammars/sample1.py``::
 
     from pynhost import grammarbase, api
 
@@ -82,7 +82,9 @@ Miscellaneous
 
 * Tags can be nested. ``range <num>[through <num>[step <num>]]`` is an example that matches inputs like ``range 4``, ``range 4 through 16`` and ``range 4 through 16 step 2``.
 
-* Grammar classes residing in the top level of the ``pynhost/grammars`` directory are treated as global grammars, and their rules can be matched anywhere. Grammar classes residing in a subdirectory are application-specific, and their name must match a regular expression search with the currently open process.
+* Grammars whose ``app_context`` field is an empty string (the default value) are treated as global grammars, and their rules can be matched anywhere.
+
+* Grammars classes are application-specific if their ``app_context`` field is a non-empty string. Application-specific grammars' ``app_context`` value must match a regular expression search within the title of the current active window for their rules to be checked.
 
 * A command (a single utterance without a pause) can match multiple rules in a "chained" fashion. For example, the speech input ``goodbye world for hello world`` will result in ``self.goodbye`` being called, followed by ``Hello World!`` being sent as keypresses to the operating system. These rules do not need to all originate from the same Grammar class.
 

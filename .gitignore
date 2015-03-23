@@ -10,6 +10,7 @@ docs/site
 pynhost/pynhost/__pycache__
 pynhost/pynhost/logs/*
 pynhost/pynhost/grammars/*
+docs/build
 !pynhost/pynhost/grammars/sample1.py
 !pynhost/pynhost/grammars/sample2.py
 !pynhost/pynhost/grammars/_locals.py

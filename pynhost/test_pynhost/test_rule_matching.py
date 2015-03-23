@@ -333,10 +333,15 @@ class TestRuleMatching(unittest.TestCase):
        self.assertEqual(list(rule_match.matched_words), ['32'])
 
     def test_num_range2(self):
-       rule = ruleparser.Rule('<num_5_44>')
-       words = 'six'.split()
-       rule_match = matching.get_rule_match(rule, words)
-       self.assertEqual(list(rule_match.matched_words), ['6'])
+        rule = ruleparser.Rule('<num_5_44>')
+        words = 'six'.split()
+        rule_match = matching.get_rule_match(rule, words)
+        self.assertEqual(list(rule_match.matched_words), ['6'])
+
+    def test_num_range3(self):
+        rule = ruleparser.Rule('<num_5_44>')
+        words = '44'.split()
+        self.assertIsNone(matching.get_rule_match(rule, words))
 
 if __name__ == '__main__':
     unittest.main()

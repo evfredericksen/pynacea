@@ -25,8 +25,9 @@ Getting Started
 Using Pynacea
 --------------
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    
    using/basic
    using/grammars
    using/modes
+   using/api

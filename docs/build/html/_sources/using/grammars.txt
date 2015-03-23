@@ -66,9 +66,9 @@ Special Tags
 ^^^^^^^^^^^^^
 ``<>`` can contain one of the following "special" tags:
 
-* ``<num>`` will match any number. It will also match homophones for certain numbers, like ``for`` and ``to``. These mappings can be changed by modifying ``NUMBERS_MAP`` in ``pynhost/grammars/_locals.py``.
+* ``<num>`` will match any number. It will also match homophones for certain numbers, like ``for`` and ``to``. These mappings can be changed by modifying ``NUMBERS_MAP`` in ``pynhost/grammars/_locals.py``. ``<num_8>`` will match any number from 0 through 7. ``<num_12_33>`` will match any number from 12 through 32.
 * ``<3>`` will match the preceding word or tag three times. ``<3->`` will greedily match the preceding word or tag *at least* 3 times. ``<0-2>`` will match zero through two times. These numbers can be any integer greater than or equal to zero.
-* ``<hom_sampleword>`` will match either ``sampleword`` or any homophone that you have defined for ``sampleword`` in the ``HOMOPHONES`` dictionary residing in pynhost/grammars/_locals.py. Each key in this dictionary maps to a list of strings. For instance, if your _locals.HOMOPHONES dictionary looks like::
+* ``<hom_sampleword>`` will match either ``sampleword`` or any homophone that you have defined for ``sampleword`` in the ``HOMOPHONES`` dictionary residing in ``pynhost/grammars/_locals.py``. Each key in this dictionary maps to a list of strings. For instance, if your _locals.HOMOPHONES dictionary looks like::
     
     HOMOPHONES = {
         'delete': ['fleet', 'elite', 'neat'],

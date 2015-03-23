@@ -4,6 +4,7 @@ from pynhost import ruleparser
 class GrammarBase:
     def __init__(self):
         self.mapping = {}
+        self.app_context = ''
         self.settings = {
             'regex mode': False,
             'filtered words': [],

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Grammars &mdash; Pynacea 0.3.2 documentation</title>
+    <title>Grammars &mdash; Pynacea 0.3.4 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.3.2',
+        VERSION:     '0.3.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,9 +23,9 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Pynacea 0.3.2 documentation" href="../index.html" />
+    <link rel="top" title="Pynacea 0.3.4 documentation" href="../index.html" />
     <link rel="next" title="Modes" href="modes.html" />
-    <link rel="prev" title="Using Pynacea" href="../usage.html" /> 
+    <link rel="prev" title="Basic Usage" href="basic.html" /> 
   </head>
   <body>
     <div class="related">
@@ -38,9 +38,9 @@
           <a href="modes.html" title="Modes"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../usage.html" title="Using Pynacea"
+          <a href="basic.html" title="Basic Usage"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Pynacea 0.3.2 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">Pynacea 0.3.4 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -108,11 +108,11 @@ pynhost/pynhost/grammars/sample1.py:</p>
 <h3>Special Tags<a class="headerlink" href="#special-tags" title="Permalink to this headline">¶</a></h3>
 <p><tt class="docutils literal"><span class="pre">&lt;&gt;</span></tt> can contain one of the following &#8220;special&#8221; tags:</p>
 <ul>
-<li><p class="first"><tt class="docutils literal"><span class="pre">&lt;num&gt;</span></tt> will match any number. It will also match homophones for certain numbers, like <tt class="docutils literal"><span class="pre">for</span></tt> and <tt class="docutils literal"><span class="pre">to</span></tt>. These mappings can be changed by modifying <tt class="docutils literal"><span class="pre">NUMBERS_MAP</span></tt> in <tt class="docutils literal"><span class="pre">pynhost/grammars/_locals.py</span></tt>.</p>
+<li><p class="first"><tt class="docutils literal"><span class="pre">&lt;num&gt;</span></tt> will match any number. It will also match homophones for certain numbers, like <tt class="docutils literal"><span class="pre">for</span></tt> and <tt class="docutils literal"><span class="pre">to</span></tt>. These mappings can be changed by modifying <tt class="docutils literal"><span class="pre">NUMBERS_MAP</span></tt> in <tt class="docutils literal"><span class="pre">pynhost/grammars/_locals.py</span></tt>. <tt class="docutils literal"><span class="pre">&lt;num_8&gt;</span></tt> will match any number from 0 through 7. <tt class="docutils literal"><span class="pre">&lt;num_12_33&gt;</span></tt> will match any number from 12 through 32.</p>
 </li>
 <li><p class="first"><tt class="docutils literal"><span class="pre">&lt;3&gt;</span></tt> will match the preceding word or tag three times. <tt class="docutils literal"><span class="pre">&lt;3-&gt;</span></tt> will greedily match the preceding word or tag <em>at least</em> 3 times. <tt class="docutils literal"><span class="pre">&lt;0-2&gt;</span></tt> will match zero through two times. These numbers can be any integer greater than or equal to zero.</p>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">&lt;hom_sampleword&gt;</span></tt> will match either <tt class="docutils literal"><span class="pre">sampleword</span></tt> or any homophone that you have defined for <tt class="docutils literal"><span class="pre">sampleword</span></tt> in the <tt class="docutils literal"><span class="pre">HOMOPHONES</span></tt> dictionary residing in pynhost/grammars/_locals.py. Each key in this dictionary maps to a list of strings. For instance, if your _locals.HOMOPHONES dictionary looks like:</p>
+<li><p class="first"><tt class="docutils literal"><span class="pre">&lt;hom_sampleword&gt;</span></tt> will match either <tt class="docutils literal"><span class="pre">sampleword</span></tt> or any homophone that you have defined for <tt class="docutils literal"><span class="pre">sampleword</span></tt> in the <tt class="docutils literal"><span class="pre">HOMOPHONES</span></tt> dictionary residing in <tt class="docutils literal"><span class="pre">pynhost/grammars/_locals.py</span></tt>. Each key in this dictionary maps to a list of strings. For instance, if your _locals.HOMOPHONES dictionary looks like:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">HOMOPHONES</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s">&#39;delete&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;fleet&#39;</span><span class="p">,</span> <span class="s">&#39;elite&#39;</span><span class="p">,</span> <span class="s">&#39;neat&#39;</span><span class="p">],</span>
 <span class="p">}</span>
@@ -162,8 +162,8 @@ pynhost/pynhost/grammars/sample1.py:</p>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../usage.html"
-                        title="previous chapter">Using Pynacea</a></p>
+  <p class="topless"><a href="basic.html"
+                        title="previous chapter">Basic Usage</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="modes.html"
                         title="next chapter">Modes</a></p>
@@ -199,9 +199,9 @@ pynhost/pynhost/grammars/sample1.py:</p>
           <a href="modes.html" title="Modes"
              >next</a> |</li>
         <li class="right" >
-          <a href="../usage.html" title="Using Pynacea"
+          <a href="basic.html" title="Basic Usage"
              >previous</a> |</li>
-        <li><a href="../index.html">Pynacea 0.3.2 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">Pynacea 0.3.4 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

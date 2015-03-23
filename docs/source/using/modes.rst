@@ -21,4 +21,4 @@ Number mode will only type out numbers, ignoring all grammars and non-numeric in
 Debug Mode
 -------------
 
-Debug mode does *not* accept spoken input. Rather, it accepts typed input through the terminal. It can be useful for debugging grammar files, particularly in settings where verbal input is not possible. Debug mode is enabled by setting the ``-d`` flag when running Pynacea. Typed input runs four seconds after it is entered, to allow for the opportunity to switch programs. This length of time can be modified by passing a number to the ``--debug_delay`` command line argument.
+Debug mode does *not* accept spoken input. Rather, it accepts typed input through the terminal. This can be useful for debugging grammar files, particularly in settings where verbal input is not possible. Debug mode is enabled by setting the ``-d`` flag when running Pynacea. Typed input runs four seconds after it is entered, to allow for the opportunity to switch programs. This length of time can be modified by passing a number to the ``--debug_delay`` command line argument.

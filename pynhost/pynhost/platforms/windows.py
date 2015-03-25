@@ -10,23 +10,24 @@ import shutil
 import re
 import sys
 import copy
+import win32gui
 import pynhost
 from pynhost import constants
 from pynhost.grammars import _locals
 
-def transcribe_line(key_inputs, delay=0, space=True, transcribe_mode=False):
-    print(key_inputs)
-    delay = delay/1000 # seconds to milliseconds
-    if transcribe_mode:
-        subprocess.call(['xdotool', 'type', '--delay', '{}ms'.format(delay), ' '.join(key_inputs)])
-        return
-    for key in key_inputs:
-        if len(key) == 1:
-            subprocess.call(['xdotool', 'type', '--delay', '{}ms'.format(delay), key])
-        else:
-            subprocess.call(['xdotool', 'key', '--delay', '{}ms'.format(delay), key])
-    if space:
-        subprocess.call(['xdotool', 'key', '--delay', '{}ms'.format(delay), '0x0020'])
+def flush_io_buffer(delay):
+    tcflush(sys.stdin, TCIFLUSH)
+    lines = [input('\n> ')]
+    time.sleep(delay)
+    return lines
+
+def get_open_window_name():
+    pid = win32gui.GetForegroundWindow()
+    return win32gui.GetWindowText(pid)
+
+def transcribe_line(key_inputs, delay, space, transcribe_mode):
+    pass
+    
 
 def get_mouse_location():
     return xdotool.check_output('getmouselocation')
@@ -47,10 +48,6 @@ def split_send_string(string_to_send):
         else:
             split_string[-1] += char
     return split_string
-
-def get_open_window_name():
-    proc = subprocess.check_output(['xdotool', 'getactivewindow', 'getwindowname'])
-    return proc.decode('utf8').rstrip('\n')
 
 def convert_for_xdotool(split_string):
     chars = []

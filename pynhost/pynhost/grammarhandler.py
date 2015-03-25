@@ -4,6 +4,7 @@ import inspect
 import sys
 import subprocess
 from pynhost import grammarbase, utilities
+from pynhost.platforms import platformhandler
 
 class GrammarHandler:
     def __init__(self):
@@ -17,12 +18,12 @@ class GrammarHandler:
             for filename in files:
                 if filename.endswith('.py') and filename.replace('.', '').isalnum():
                     index = -1 - depth
-                    path = root.split('/')[index:]
+                    path = root.split(os.sep)[index:]
                     path.append(filename[:-3])
-                    rel = '.'.join(path) 
+                    rel = '.'.join(path)
                     module = __import__('pynhost.{}'.format(rel), fromlist=[abs_path])
                     self.load_grammars_from_module(module, command_history)
-   
+
     def load_grammars_from_module(self, module, command_history):
         clsmembers = inspect.getmembers(sys.modules[module.__name__], inspect.isclass)
         for member in clsmembers:
@@ -38,7 +39,7 @@ class GrammarHandler:
                     self.grammars[grammar.app_context] = [grammar]
 
     def get_matching_grammars(self):
-        for context in ['', utilities.get_open_window_name().lower()]:
+        for context in ['', platformhandler.get_open_window_name().lower()]:
             try:
                 for grammar in self.grammars[context]:
                     if grammar._check_grammar():
@@ -53,12 +54,13 @@ class GrammarHandler:
     def add_command_to_recording_macros(self, command, matched_grammar):
         contexts = ['']
         if matched_grammar is None:
-            contexts.append(utilities.get_open_window_name().lower())
-        if matched_grammar.app_context:
+            contexts.append(platformhandler.get_open_window_name().lower())
+        elif matched_grammar.app_context:
             contexts.append(matched_grammar.app_context)
         for context in contexts:
-            for grammar in self.grammars[context]:
-                for name in grammar._recording_macros:
-                    if (not grammar._recording_macros[name] or
-                        grammar._recording_macros[name][-1] is not command):
-                        grammar._recording_macros[name].append(command)
+            if context in self.grammars:
+                for grammar in self.grammars[context]:
+                    for name in grammar._recording_macros:
+                        if (not grammar._recording_macros[name] or
+                            grammar._recording_macros[name][-1] is not command):
+                            grammar._recording_macros[name].append(command)

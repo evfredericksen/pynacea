@@ -73,16 +73,31 @@ def get_shared_directory():
         os.mkdirs(buffer_dir)
     return buffer_dir
 
+def get_config_file():
+    paths = {
+        'win32': (
+            os.path.join(os.getenv('APPDATA'), constants.CONFIG_FILE_NAME),
+            os.path.join('c\\', 'pynacea', constants.CONFIG_FILE_NAME),
+        ),
+        'linux': (
+            os.path.join(os.path.sep, 'usr', 'local', 'etc', constants.CONFIG_FILE_NAME),
+        )
+    }
+    for p in paths[sys.platform]:
+        if os.path.isfile(p):
+            return p
+    raise RuntimeError('could not locate config file')
+
 def get_config_setting(title, setting):
     config = configparser.ConfigParser()
-    config.read(constants.CONFIG_PATH)
+    config.read(get_config_file())
     return(config[title][setting])
     
 def save_config_setting(title, setting, value):
     config = configparser.ConfigParser()
-    config.read(constants.CONFIG_PATH)
+    config.read(get_config_file())
     config[title][setting] = value
-    with open(constants.CONFIG_PATH, 'w') as configfile:
+    with open(get_config_file(), 'w') as configfile:
         config.write(configfile)
 
 def get_cl_args():
@@ -103,6 +118,9 @@ def get_logging_config():
         log_level = get_config_setting('logging', 'logging_level')
         if log_file.lower() == 'default':
             log_file = constants.DEFAULT_LOGGING_FILE
+            if not os.path.isfile(constants.DEFAULT_LOGGING_FILE):
+                with open(constants.DEFAULT_LOGGING_FILE, 'w') as f:
+                    pass
         if log_level.lower() in constants.LOGGING_LEVELS:
             log_level = constants.LOGGING_LEVELS[log_level.lower()]
         return log_file, int(log_level)

@@ -2,7 +2,6 @@ import unittest
 import re
 from pynhost import grammarbase
 from pynhost import ruleparser
-from pynhost.grammars import baseutils
 
 class TestRegexConvert(unittest.TestCase):
 

@@ -4,7 +4,7 @@ import pynhost
 
 DEFAULT_LOGGING_FILE = os.path.join(os.path.dirname(pynhost.__file__), 'logs', 'pynacea.log')
 
-CONFIG_PATH = os.path.join(os.path.sep, 'usr', 'local', 'etc', 'pynhost.ini')
+CONFIG_FILE_NAME = 'pynhost.ini'
 
 NUMBERS_MAP = {
 	'zero': '0',

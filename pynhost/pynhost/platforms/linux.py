@@ -10,9 +10,17 @@ import shutil
 import re
 import sys
 import copy
+from termios import tcflush, TCIFLUSH
 import pynhost
 from pynhost import constants
 from pynhost.grammars import _locals
+
+def flush_io_buffer(delay):
+    tcflush(sys.stdin, TCIFLUSH)
+    lines = [input('\n> ')]
+    time.sleep(delay)
+    return lines
+
 
 def transcribe_line(key_inputs, delay=0, space=True, transcribe_mode=False):
     print(key_inputs)

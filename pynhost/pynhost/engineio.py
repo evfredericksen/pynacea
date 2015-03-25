@@ -2,7 +2,8 @@ import subprocess
 import os
 import sys
 import time
-from termios import tcflush, TCIFLUSH
+from pynhost.platforms import platformhandler
+# from termios import tcflush, TCIFLUSH
 from pynhost import utilities
 
 class SphinxHandler:
@@ -61,7 +62,9 @@ class DebugHandler:
         self.delay = delay
 
     def get_lines(self):
-        tcflush(sys.stdin, TCIFLUSH)
+        sys.stdout.flush()
+        # platformhandler.flush_io_buffer()
+        # tcflush(sys.stdin, TCIFLUSH)
         lines = [input('\n> ')]
         time.sleep(self.delay)
         return lines

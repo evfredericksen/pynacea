@@ -2,6 +2,7 @@ import subprocess
 import os
 import sys
 import time
+import msvcrt
 from pynhost.platforms import platformhandler
 # from termios import tcflush, TCIFLUSH
 from pynhost import utilities
@@ -62,8 +63,7 @@ class DebugHandler:
         self.delay = delay
 
     def get_lines(self):
-        sys.stdout.flush()
-        # platformhandler.flush_io_buffer()
+        platformhandler.flush_io_buffer()
         # tcflush(sys.stdin, TCIFLUSH)
         lines = [input('\n> ')]
         time.sleep(self.delay)

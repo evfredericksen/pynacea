@@ -15,12 +15,8 @@ import pynhost
 from pynhost import constants
 from pynhost.grammars import _locals
 
-def flush_io_buffer(delay):
+def flush_io_buffer():
     tcflush(sys.stdin, TCIFLUSH)
-    lines = [input('\n> ')]
-    time.sleep(delay)
-    return lines
-
 
 def transcribe_line(key_inputs, delay=0, space=True, transcribe_mode=False):
     print(key_inputs)

@@ -9,6 +9,6 @@ class BasicSampleGrammar(grammarbase.GrammarBase):
     def __init__(self):
         super().__init__()
         self.mapping = {
-            'say hello': 'hello world', 
+            'say hello': 'hello world',
             # matches 'say hello', enters keys 'hello world'
         }

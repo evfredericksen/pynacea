@@ -9,6 +9,7 @@ from pynhost import api
 from pynhost import utilities
 from pynhost import dynamic
 from pynhost import grammarbase
+from pynhost.platforms import platformhandler
 
 class Command:
     def __init__(self, words, command_history):
@@ -47,9 +48,11 @@ class Command:
                     result.rule.raw_text, result.rule.grammar))
                 self.execute_rule_match(result)
             else:
-                add_space = i+1 < len(self.results) and isinstance(self.results[i + 1], str)
-                utilities.transcribe_line(result, space=add_space)
                 logging.debug('Transcribed word "{}"'.format(result))
+                result = list(result)
+                if i+1 < len(self.results) and isinstance(self.results[i + 1], str):
+                    result.append(' ')
+                platformhandler.transcribe_line(result)
 
     def execute_rule_match(self, rule_match):
         for i, piece in enumerate(rule_match.rule.actions):

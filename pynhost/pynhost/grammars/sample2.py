@@ -36,6 +36,7 @@ class SampleGrammar(grammarbase.GrammarBase):
 
             'count to <num>': self.count,
             # matches 'count to' followed by any number
+            'meep': '{mute}',
 
             'language (none | python | <hom_perl>)': self.change_language,
             # matches 'language' followed by either 'none', 'python', 'perl',

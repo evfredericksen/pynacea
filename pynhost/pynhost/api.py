@@ -1,12 +1,12 @@
 import subprocess
 import sys
-from pynhost import utilities
+from pynhost import utilities, keyinput
+from pynhost.platforms import platformhandler
 from pynhost.grammars import _locals
 
 def send_string(string_to_send, delay=0):
-    split_string = utilities.split_send_string(string_to_send)
-    chars = utilities.convert_for_xdotool(split_string)
-    utilities.transcribe_line(chars, space=False, delay=delay)
+    tokenized_keys = keyinput.tokenize_keypresses(string_to_send)
+    platformhandler.transcribe_line(tokenized_keys, delay)
 
 def mouse_move(x=None, y=None, relative=False):
     if not relative:

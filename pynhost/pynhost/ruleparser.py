@@ -189,7 +189,7 @@ def token_to_regex(token, group_num, rule_string):
         return '{' + '{},{}'.format(split_tag[0], split_tag[1]) + '}'
     elif re.match(r'<hom_.+>', token):
         token = token[5:-1]
-        return regex_string_from_list(_locals.HOMOPHONES[token], '?P<n{0}hom_{1}>{1}'.format(group_num, token))
+        return regex_string_from_list(sorted(_locals.HOMOPHONES[token]), '?P<n{0}hom_{1}>{1}'.format(group_num, token))
     elif token == '<any>':
         return r'([^()<>|[\] ]+ )'
     raise ValueError("invalid token '{}' for rule string '{}'".format(token, rule_string))

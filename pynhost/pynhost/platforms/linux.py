@@ -15,17 +15,16 @@ def flush_io_buffer():
     tcflush(sys.stdin, TCIFLUSH)
 
 def transcribe_line(key_inputs, delay):
-    print(key_inputs)
     delay = delay/1000 # seconds to milliseconds
     for key_input in key_inputs:
         if isinstance(key_input, str):
             subprocess.call(['xdotool', 'type', '--delay', '{}ms'.format(delay), key_input])
         else:
-            press_key_combination(key_input, delay)
+            press_key_combination(key_input.keys, delay)
 
 def press_key_combination(key_list, delay):
     new_list = []
-    for key in keys_list:
+    for key in key_list:
         if key.lower() in linuxconstants.XDOTOOL_KEYMAP:
             key = linuxconstants.XDOTOOL_KEYMAP[key.lower()]
         new_list.append(key)
@@ -33,7 +32,6 @@ def press_key_combination(key_list, delay):
 
 def get_mouse_location():
     return subprocess.check_output(['xdotool', 'getmouselocation'])
-
 
 def mouse_click():
     pass

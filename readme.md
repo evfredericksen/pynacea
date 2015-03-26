@@ -18,7 +18,6 @@ Read the documentation [here](https://pythonhosted.org/pynhost/).
 
 ##To Do
 
-- Support for Windows and Mac OS X host machines
-- Customize num tag to allow for ranges of numbers
+- Support for Mac OS X host machines
 - Better logging
 - Support for individual down and up keypresses

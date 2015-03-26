@@ -1,8 +1,6 @@
 HOMOPHONES = {
-    'line': ['wine', 'dine', 'why n'],
-    'perl': ['pearl', 'whirl'],
-    'boat': ['boats'],
-    'rib': ['red', 'webb', 'ridden', 'rid'],
+    'line': {'wine', 'dine', 'why n'},
+    'perl': {'pearl', 'whirl'},
 }
 
 NUMBERS_MAP = {
@@ -27,19 +25,19 @@ NUMBERS_MAP = {
     'mine': '9',
 }
 
-BEGIN_SLEEP_MODE_PATTERNS = [
+SLEEP_PATTERNS = [
 
 ]
 
-END_SLEEP_MODE_PATTERNS = [
+WAKE_UP_PATTERNS = [
 
 ]
 
-BEGIN_DICTATION_MODE_PATTERNS = [
+BEGIN_DICTATION_PATTERNS = [
 
 ]
 
-END_DICTATION_MODE_PATTERNS = [
+END_DICTATION_PATTERNS = [
 
 ]
 

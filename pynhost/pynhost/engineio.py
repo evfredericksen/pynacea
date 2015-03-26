@@ -2,9 +2,7 @@ import subprocess
 import os
 import sys
 import time
-import msvcrt
 from pynhost.platforms import platformhandler
-# from termios import tcflush, TCIFLUSH
 from pynhost import utilities
 
 class SphinxHandler:

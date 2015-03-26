@@ -28,9 +28,10 @@ class GrammarHandler:
         clsmembers = inspect.getmembers(sys.modules[module.__name__], inspect.isclass)
         for member in clsmembers:
             # screen for objects with obj.GrammarBase ancestor
-            if grammarbase.GrammarBase == inspect.getmro(member[1])[-2]:
+            class_hierarchy = inspect.getmro(member[1])
+            if len(class_hierarchy) > 2 and grammarbase.GrammarBase == class_hierarchy[-3]:
                 grammar = member[1]()
-                grammarbase.set_rules(grammar)
+                grammar._set_rules()
                 grammar.command_history = command_history
                 grammar.app_context = grammar.app_context.lower()
                 try:

@@ -29,10 +29,10 @@ class SampleGrammar(grammarbase.GrammarBase):
             # followed (again optionally) by 'up', 'down', or 'both'.
             # Sample matches: 'click', 'click left', 'click up', 'click left down'
 
-            'new function <1+>': self.new_function,
+            'new function <any> <1->': self.new_function,
             # matches 'new function' followed by one or more words
-            # <3+> matches at least 3 words, <3> matches exactly 3 words,
-            # <3-> matches 0 to 3 words
+            # <3-> matches at least 3 words, <3> matches exactly 3 words,
+            # <0-3> matches 0 to 3 words
 
             'count to <num>': self.count,
             # matches 'count to' followed by any number

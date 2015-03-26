@@ -19,5 +19,4 @@ Read the documentation [here](https://pythonhosted.org/pynhost/).
 ##To Do
 
 - Support for Mac OS X host machines
-- Better logging
 - Support for individual down and up keypresses

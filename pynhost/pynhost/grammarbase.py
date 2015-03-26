@@ -1,7 +1,7 @@
 import logging
 from pynhost import ruleparser
 
-class GrammarBase:
+class BaseTemplate:
     def __init__(self):
         self.mapping = {}
         self.app_context = ''
@@ -11,6 +11,19 @@ class GrammarBase:
         }
         # no touchy
         self._rules = []
+
+    def _check_grammar(self):
+        return True
+
+    def _set_rules(self):
+        for rule_text, actions in self.mapping.items():
+            rule = ruleparser.Rule(rule_text, actions, self, regex_mode=self.settings['regex mode'])
+            self._rules.append(rule)
+
+
+class GrammarBase(BaseTemplate):
+    def __init__(self):
+        super().__init__()
         self._recording_macros = {}
 
     def _begin_recording_macro(self, rule_name):
@@ -34,10 +47,7 @@ class GrammarBase:
     def _load_rule(self, rule, actions):
         pass
 
-    def _check_grammar(self):
-        return True
-
-def set_rules(grammar):
-    for rule_text, actions in grammar.mapping.items():
-        rule = ruleparser.Rule(rule_text, actions, grammar, regex_mode=grammar.settings['regex mode'])
-        grammar._rules.append(rule)
+class TriggerBase(BaseTemplate):
+    def __init__(self):
+        super().__init__()
+        self.settings['timing'] = 'after' #options are after, before, both

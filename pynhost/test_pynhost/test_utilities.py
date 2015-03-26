@@ -15,15 +15,7 @@ class TestUtilities(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         pass
-
-    def test_split_send_string1(self):
-        mystr = '{{{}}}'
-        self.assertEqual(['{{{', '}}}'], utilities.split_send_string(mystr))
-
-    def test_split_send_string2(self):
-        mystr = '{{hello}}'
-        self.assertEqual(['{{', 'hello', '}}'], utilities.split_send_string(mystr))
-
+        
     def test_reinsert_filtered_words1(self):
         remaining_words = ['hello', 'world']
         filtered_positions = {

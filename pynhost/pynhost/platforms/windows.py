@@ -1,5 +1,5 @@
 '''
-collection of Windows-specific I/O functions
+Collection of Windows-specific I/O functions
 '''
 
 import subprocess
@@ -51,7 +51,6 @@ def press_key(key_input):
 
 def press_key_combination(keys):
     for key_stroke in keys:
-        print(winconstants.WINDOWS_KEYCODES[key_stroke])
         win32api.keybd_event(winconstants.WINDOWS_KEYCODES[key_stroke], 0, 0, 0)
     time.sleep(.01)
     for key_stroke in keys:
@@ -59,3 +58,9 @@ def press_key_combination(keys):
 
 def get_mouse_location():
     return xdotool.check_output('getmouselocation')
+
+def mouse_click():
+    pass
+
+def mouse_move(x=None, y=None):
+    pass

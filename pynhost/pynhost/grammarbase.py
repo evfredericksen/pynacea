@@ -1,7 +1,7 @@
 import logging
 from pynhost import ruleparser
 
-class BaseTemplate:
+class SharedGrammarBase:
     def __init__(self):
         self.mapping = {}
         self.app_context = ''
@@ -11,6 +11,12 @@ class BaseTemplate:
         }
         # no touchy
         self._rules = []
+        self._command_history = []
+
+    def _initialize(self, command_history):
+        self._set_rules()
+        self._command_history = command_history
+        self.app_context = self.app_context.lower()
 
     def _check_grammar(self):
         return True
@@ -21,7 +27,7 @@ class BaseTemplate:
             self._rules.append(rule)
 
 
-class GrammarBase(BaseTemplate):
+class GrammarBase(SharedGrammarBase):
     def __init__(self):
         super().__init__()
         self._recording_macros = {}
@@ -47,7 +53,7 @@ class GrammarBase(BaseTemplate):
     def _load_rule(self, rule, actions):
         pass
 
-class TriggerBase(BaseTemplate):
+class AsyncGrammarBase(SharedGrammarBase):
     def __init__(self):
         super().__init__()
         self.settings['timing'] = 'after' #options are after, before, both

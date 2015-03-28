@@ -9,6 +9,7 @@ from pynhost import grammarhandler
 from pynhost import command
 from pynhost import configmenu
 from pynhost import engineio
+from pynhost import history
 
 def main():
     try:
@@ -28,6 +29,7 @@ def main():
         mode_status = {'sleep mode': False, 'dictation mode': False, 'number mode': False}
         updated_status = mode_status
         logging.info('Started listening at {}'.format(time.strftime("%Y-%m-%d %H:%M:%S")))
+        process_history = history.ProcessHistory()
         print('Ready!')
         # main loop
         while True:
@@ -45,11 +47,10 @@ def main():
                     continue
                 logging.info('Received input "{}" at {}'.format(line,
                     time.strftime("%Y-%m-%d %H:%M:%S")))
-                current_command = command.Command(line.split(' '),
-                    copy.copy(command_history))
+                current_command = command.Command(line.split(' '))
                 current_command.set_results(gram_handler)
-                command_history.append(current_command)
-                current_command.run()
+                process_history.run_command(current_command)
+                
             time.sleep(.1)
     except Exception as e:
         logging.exception(e)

@@ -10,6 +10,7 @@ class GrammarHandler:
     def __init__(self):
         # grammar.app_context: [grammar instances with given app_content field]
         self.grammars = {}
+        self.async_grammars = {}
 
     def load_grammars(self, command_history):
         abs_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'grammars')
@@ -29,20 +30,25 @@ class GrammarHandler:
         for member in clsmembers:
             # screen for objects with obj.GrammarBase ancestor
             class_hierarchy = inspect.getmro(member[1])
-            if len(class_hierarchy) > 2 and grammarbase.GrammarBase == class_hierarchy[-3]:
+            if len(class_hierarchy) > 2 and class_hierarchy[-2] == grammarbase.SharedGrammarBase:
                 grammar = member[1]()
-                grammar._set_rules()
-                grammar.command_history = command_history
-                grammar.app_context = grammar.app_context.lower()
+                grammar._initialize(command_history)
+                if class_hierarchy[-3] == grammarbase.GrammarBase:
+                    grammar_dict = self.grammars
+                elif class_hierarchy[-3] == grammarbase.AsyncGrammarBase:
+                    grammar_dict = self.async_grammars
                 try:
-                    self.grammars[grammar.app_context].append(grammar)
+                    grammar_dict[grammar.app_context].append(grammar)
                 except KeyError:
-                    self.grammars[grammar.app_context] = [grammar]
+                    grammar_dict[grammar.app_context] = [grammar]
 
-    def get_matching_grammars(self):
+    def get_matching_grammars(self, async):
+        grammar_dict = self.grammars
+        if async:
+            grammar_dict = self.async_grammars
         for context in ['', platformhandler.get_open_window_name().lower()]:
             try:
-                for grammar in self.grammars[context]:
+                for grammar in grammar_dict[context]:
                     if grammar._check_grammar():
                         yield grammar
             except KeyError:
@@ -58,10 +64,9 @@ class GrammarHandler:
             contexts.append(platformhandler.get_open_window_name().lower())
         elif matched_grammar.app_context:
             contexts.append(matched_grammar.app_context)
-        for context in contexts:
-            if context in self.grammars:
-                for grammar in self.grammars[context]:
-                    for name in grammar._recording_macros:
-                        if (not grammar._recording_macros[name] or
-                            grammar._recording_macros[name][-1] is not command):
-                            grammar._recording_macros[name].append(command)
+        for context in (c for c in contexts if c in self.grammars):
+            for grammar in self.grammars[context]:
+                for name in grammar._recording_macros:
+                    if (not grammar._recording_macros[name] or
+                        grammar._recording_macros[name][-1] is not command):
+                        grammar._recording_macros[name].append(command)

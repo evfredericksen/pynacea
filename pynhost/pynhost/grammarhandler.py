@@ -59,6 +59,7 @@ class GrammarHandler:
 # no match: match open program and global
 
     def add_command_to_recording_macros(self, command, matched_grammar):
+        print('sf', command, matched_grammar)
         contexts = ['']
         if matched_grammar is None:
             contexts.append(platformhandler.get_open_window_name().lower())
@@ -67,6 +68,10 @@ class GrammarHandler:
         for context in (c for c in contexts if c in self.grammars):
             for grammar in self.grammars[context]:
                 for name in grammar._recording_macros:
-                    if (not grammar._recording_macros[name] or
-                        grammar._recording_macros[name][-1] is not command):
-                        grammar._recording_macros[name].append(command)
+                    if not grammar._recording_macros[name]:
+                        grammar._recording_macros[name] = [None]
+                    else:
+                        grammar._recording_macros[name].extend(command.results)
+
+
+

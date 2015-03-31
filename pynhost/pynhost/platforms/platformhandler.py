@@ -24,4 +24,5 @@ def get_open_window_name():
 	return platform_dict[sys.platform].get_open_window_name()
 
 def transcribe_line(key_inputs, delay=0):
-	platform_dict[sys.platform].transcribe_line(key_inputs, delay)
+    print(key_inputs)
+    platform_dict[sys.platform].transcribe_line(key_inputs, delay)

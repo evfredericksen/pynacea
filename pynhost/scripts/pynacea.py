@@ -6,7 +6,7 @@ import copy
 import sys
 from pynhost import utilities
 from pynhost import grammarhandler
-from pynhost import command
+from pynhost import commands
 from pynhost import configmenu
 from pynhost import engineio
 from pynhost import history
@@ -47,9 +47,9 @@ def main():
                     continue
                 logging.info('Received input "{}" at {}'.format(line,
                     time.strftime("%Y-%m-%d %H:%M:%S")))
-                current_command = command.Command(line.split(' '))
+                current_command = commands.Command(line.split(' '))
                 current_command.set_results(gram_handler)
-                process_history.run_command(current_command)
+                process_history.run_command(current_command, cl_arg_namespace.split_dictation)
                 
             time.sleep(.1)
     except Exception as e:

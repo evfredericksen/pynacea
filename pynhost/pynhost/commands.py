@@ -15,10 +15,9 @@ class Command:
         self.words = words
         self.remaining_words = words
         self.results = [] # result can be a string or a RuleMatch
-        self.async_actions = {
+        self.async_actions = { # strings, ints, dynamic.RepeatCommand 
             'before': [],
             'after': [],
-            'both': [],
         }
 
     def set_results(self, gram_handler):
@@ -31,7 +30,10 @@ class Command:
             else:
                 rule_match = self.get_rule_match(gram_handler, True)
                 if rule_match is not None:
-                    self.async_actions[rule_match.rule.grammar.settings['timing']].extend(rule_match.rule.actions)
+                    if rule_match.rule.grammar.settings['timing'] in ('before', 'both'):
+                        self.async_actions['before'] += rule_match.rule.actions
+                    if rule_match.rule.grammar.settings['timing'] in ('after', 'both'):
+                        self.async_actions['after'] += rule_match.rule.actions
                     self.remaining_words = rule_match.remaining_words
                 else:
                     self.results.append(self.remaining_words[0])

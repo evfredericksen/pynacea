@@ -12,6 +12,7 @@ XDOTOOL_KEYMAP = {
     'del': 'Delete',
     'delete': 'Delete',
     'backspace': 'BackSpace',
+    'back': 'BackSpace',
     'pageup': 'Page_Up',
     'page_up': 'Page_Up',
     'pagedown': 'Page_Down',

@@ -9,13 +9,17 @@ class DynamicAction:
         pass
 
 class Num(DynamicAction):
-    def __init__(self, index=0, integer=True):
+    def __init__(self, index=0, integer=True, default=0):
         self.index = index
         self.integer = integer
+        self.default = default
         self.change = 0
 
     def evaluate(self, rule_match):
-        num = int(rule_match.nums[self.index]) + self.change
+        try:
+            num = int(rule_match.nums[self.index]) + self.change
+        except IndexError:
+            num = self.default
         if self.integer:
             return num
         return str(num)
@@ -29,26 +33,7 @@ class Num(DynamicAction):
         return self
 
 class RepeatCommand(DynamicAction):
-    def __init__(self, start=-1, stop=None, step=None):
-        self.start = start
-        self.stop = stop
-        self.step = step
-
-    def evaluate(self, command):
-        if self.stop is None:
-            self.run_command(command.command_history[self.start])
-            if isinstance(command.command_history[self.start].results[-1], str):
-                api.send_string(' ')
-        elif self.step is None:
-            for previous in list(command.command_history)[self.start: self.stop]:
-                self.run_command(previous)
-        else:
-            for previous in list(command.command_history)[self.start: self.stop: self.step]:
-                self.run_command(previous)
-
-    def run_command(self, command):
-        for result in command.results:
-            if isinstance(result, str):
-                api.send_string(result)
-            else:
-                command.execute_rule_match(result)
+    def __init__(self, depth=1):
+        self.depth = depth
+    # def evaluate(self, command):
+    #     if self.stop is None:

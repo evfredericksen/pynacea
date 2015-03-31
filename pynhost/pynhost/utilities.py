@@ -81,6 +81,7 @@ def get_cl_args():
     parser.add_argument("--logging_file", help="Log file path for Pynacea",
         default=None)
     parser.add_argument("--logging_level", help="Logging level for Pynacea")
+    parser.add_argument('-s', "--split_dictation", help="Apply asyncronous actions to individual words", action='store_true')
     return parser.parse_args()
 
 def get_logging_config():
@@ -116,10 +117,6 @@ def split_into_words(list_of_strings):
         if string:
             words.extend(string.split(' '))
     return words
-
-def get_open_window_name():
-    proc = subprocess.check_output(['xdotool', 'getactivewindow', 'getwindowname'])
-    return proc.decode('utf8').rstrip('\n')
 
 def get_new_status(current_status, words):
     new_status = copy.copy(current_status)
@@ -179,40 +176,6 @@ def check_negative(value):
         raise e
     return fvalue
 
-def convert_for_xdotool(split_string):
-    chars = []
-    special_mode = False
-    for i, group in enumerate(split_string):
-        if group[0] == '{':
-            assert not special_mode
-            for j, char in enumerate(group):
-                if j % 2 == 1:
-                    chars.append(char)
-            if len(group) % 2 == 1:
-                special_mode = True
-        elif group[0] not in '{}':
-            if special_mode:
-                chars.append(replace_xdotool_keys(group))
-            else:
-                for char in group:
-                    chars.append(char)
-        else:
-            for j, char in enumerate(group):
-                if j % 2 == 1:
-                    chars.append(char)
-            if len(group) % 2 == 1:
-                assert special_mode
-                special_mode = False
-    return chars
-
-def replace_xdotool_keys(keys):
-    new_list = []
-    for key in keys.split('+'):
-        if key.lower() in constants.XDOTOOL_KEYMAP:
-            key = constants.XDOTOOL_KEYMAP[key.lower()]
-        new_list.append(key)
-    return '+'.join(new_list)
-
 def transcribe_numbers(line):
     num_words = []
     for word in line.split():
@@ -249,3 +212,13 @@ def list_to_rule_string(alist, homify=True):
 
 def homify_text(word_text):
     return ' '.join(['<hom_{}>'.format(word) for word in word_text.split()])
+
+def merge_strings(input_list):
+    new_list = []
+    for ele in input_list:
+        if isinstance(ele, str) and new_list and isinstance(new_list[-1], str):
+            new_list[-1] += ' {}'.format(ele)
+        else:
+            new_list.append(ele)
+    return new_list
+

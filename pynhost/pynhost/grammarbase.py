@@ -40,11 +40,11 @@ class GrammarBase(SharedGrammarBase):
         logging.info("Finished recording macros for grammar {}".format(self))
         new_rules = []
         for rule_name, macro in self._recording_macros.items():
-            print(macro)
             new_rules.append(ruleparser.Rule(rule_name, macro[1:], self))
         for rule in self._rules:
             if rule.raw_text not in [r.raw_text for r in new_rules]:
                 new_rules.append(rule)
+        #print(self, 'DA RULEZ', new_rules)
         self._rules = new_rules
         self.recording_macros = {}
         

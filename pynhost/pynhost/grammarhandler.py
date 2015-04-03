@@ -3,7 +3,7 @@ import re
 import inspect
 import sys
 import subprocess
-from pynhost import grammarbase, utilities
+from pynhost import grammarbase, utilities, history, snapshot
 from pynhost.platforms import platformhandler
 
 class GrammarHandler:
@@ -59,7 +59,6 @@ class GrammarHandler:
 # no match: match open program and global
 
     def add_command_to_recording_macros(self, command, matched_grammar):
-        print('sf', command, matched_grammar)
         contexts = ['']
         if matched_grammar is None:
             contexts.append(platformhandler.get_open_window_name().lower())
@@ -71,7 +70,10 @@ class GrammarHandler:
                     if not grammar._recording_macros[name]:
                         grammar._recording_macros[name] = [None]
                     else:
-                        grammar._recording_macros[name].extend(command.results)
-
-
-
+                        snapshots = []
+                        for result in command.results:
+                            if isinstance (result, str):
+                                actions.append(result)
+                            else:
+                                actions.extend(result.rule.actions) 
+                        grammar._recording_macros[name].extend(actions)

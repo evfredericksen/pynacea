@@ -60,6 +60,8 @@ class ProcessHistory:
                 start_pos -= 1
         return start_pos
 
+    def execute_async_list(self, pos)
+
 def merge_async(dict1, dict2):
     dict1['before'] += dict2['before']
     dict1['after'] += dict2['after']

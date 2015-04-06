@@ -33,8 +33,6 @@ class Num(DynamicAction):
         return self
 
 class RepeatCommand(DynamicAction):
-    def __init__(self, depth=1):
+    def __init__(self, depth=1, count=1):
         self.depth = depth
-        
-    # def evaluate(self, command):
-    #     if self.stop is None:
+        self.count = count

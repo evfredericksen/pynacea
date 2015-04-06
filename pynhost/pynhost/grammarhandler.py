@@ -2,6 +2,7 @@ import os
 import re
 import inspect
 import sys
+import types
 import subprocess
 from pynhost import grammarbase, utilities, history, snapshot
 from pynhost.platforms import platformhandler
@@ -67,13 +68,14 @@ class GrammarHandler:
         for context in (c for c in contexts if c in self.grammars):
             for grammar in self.grammars[context]:
                 for name in grammar._recording_macros:
-                    if not grammar._recording_macros[name]:
-                        grammar._recording_macros[name] = [None]
-                    else:
-                        snapshots = []
-                        for result in command.results:
-                            if isinstance (result, str):
-                                actions.append(result)
-                            else:
-                                actions.extend(result.rule.actions) 
-                        grammar._recording_macros[name].extend(actions)
+                    snapshots = []
+                    for result in command.results:
+                        if isinstance (result, str):
+                            snapshots.append(result)
+                        else:
+                            for action_piece in result.rule.actions:
+                                if isinstance(action_piece, (types.FunctionType, types.MethodType)):
+                                    snapshots.append(snapshot.ActionPieceSnapshot(action_piece, command.async_actions, result.matched_words, command, result))
+                                else:
+                                    snapshots.append(action_piece)
+                    grammar._recording_macros[name].extend(snapshots)

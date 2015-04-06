@@ -36,7 +36,10 @@ class Command:
                         self.async_actions['after'] += rule_match.rule.actions
                     self.remaining_words = rule_match.remaining_words
                 else:
-                    self.results.append(self.remaining_words[0])
+                    if self.results and isinstance(self.results[-1], str):
+                        self.results[-1] += ' {}'.format(self.remaining_words[0])
+                    else:
+                        self.results.append(self.remaining_words[0])
                     gram_handler.add_command_to_recording_macros(self, None)
                     self.remaining_words = self.remaining_words[1:]
 

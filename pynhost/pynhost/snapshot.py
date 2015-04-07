@@ -11,7 +11,7 @@ class ActionPieceSnapshot:
         self.rule_match = rule_match
 
     def __str__(self):
-        return '<Snapshot piece {} from rule match {}>'.format(self.action_piece, self.rule_match)
+        return '<Snapshot piece {}>'.format(self.action_piece)
 
     def __repr__(self):
         return str(self)
@@ -29,7 +29,7 @@ def get_snapshots(command, async_action_pieces):
                 if i+1 < len(command.results) and isinstance(command.results[i + 1], str):
                     result += ' '
                 ss = ActionPieceSnapshot(result, async_action_pieces, result.split(), command)
-            snapshots.append([ss]) 
+            snapshots.append([ss])
         else:
             actions = []
             for piece in result.rule.actions:

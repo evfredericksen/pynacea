@@ -70,12 +70,13 @@ class GrammarHandler:
                 for name in grammar._recording_macros:
                     snapshots = []
                     for result in command.results:
-                        if isinstance (result, str):
+                        if isinstance(result, str):
                             snapshots.append(result)
                         else:
                             for action_piece in result.rule.actions:
                                 if isinstance(action_piece, (types.FunctionType, types.MethodType)):
-                                    snapshots.append(snapshot.ActionPieceSnapshot(action_piece, command.async_actions, result.matched_words, command, result))
+                                    snapshots.append(snapshot.ActionPieceSnapshot(action_piece,
+                                        command.async_actions, result.matched_words, command, result))
                                 else:
                                     snapshots.append(action_piece)
                     grammar._recording_macros[name].extend(snapshots)

@@ -50,7 +50,6 @@ def main():
                 current_command = commands.Command(line.split(' '))
                 current_command.set_results(gram_handler)
                 process_history.run_command(current_command, cl_arg_namespace.split_dictation)
-                
             time.sleep(.1)
     except Exception as e:
         logging.exception(e)

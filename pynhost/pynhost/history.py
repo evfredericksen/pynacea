@@ -35,10 +35,12 @@ class ProcessHistory:
                 if pos == 0:
                     return
                 for i in range(ss.action_piece):
-                    self.execute_snapshot(pos - 1, run_async)
+                    for j in range(self.get_previous_rulepiece_pos(pos), pos):
+                        # print(j, self.snapshots)
+                        self.execute_snapshot(j, run_async)
             elif isinstance(ss.action_piece, dynamic.RepeatCommand):
                 for i in range(ss.action_piece.count):
-                    self.execute_range(self.get_previous_start(pos, 'command'), pos, run_async)
+                    self.execute_range(self.get_previous_command_start(pos), pos, run_async)
 
     def execute_string_or_func(self, ss):
         if isinstance(ss.action_piece, str):
@@ -52,23 +54,23 @@ class ProcessHistory:
     def get_previous_rulepiece_pos(self, pos):
         assert pos > 0
         start_pos = pos - 1
-        while self.snapshots[pos - 1].rule_match is self.snapshots[start_pos].rule_match and start_pos >= 0: 
+        while self.snapshots[pos - 1].rule_match.rule is self.snapshots[start_pos].rule_match.rule and start_pos >= 0: 
             start_pos -= 1
         return start_pos + 1
 
-    def get_previous_start(self, pos, attr):
+    def get_previous_command_start(self, pos):
         assert pos >= 0
         if pos == 0:
             return pos
         start_pos = pos
-        attr_count = 0
+        command_count = 0
         depth = self.snapshots[pos].action_piece.depth      
-        while start_pos > 0 and attr_count <= depth:
-            current_value = getattr(self.snapshots[start_pos], attr)
-            previous_value = getattr(self.snapshots[start_pos - 1], attr)
-            if previous_value is not current_value:
-                attr_count += 1
-            if attr_count <= depth:
+        while start_pos > 0 and command_count <= depth:
+            current_command = self.snapshots[start_pos].command
+            previous_value = self.snapshots[start_pos - 1].command
+            if previous_value is not current_command:
+                command_count += 1
+            if command_count <= depth:
                 start_pos -= 1
         return start_pos
 

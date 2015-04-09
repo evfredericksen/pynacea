@@ -55,28 +55,31 @@ class GrammarHandler:
             except KeyError:
                 pass
 
-# local var match = match subdir and global
-# global var match = match global
-# no match: match open program and global
+# local grammar match = match grammar context and global
+# global grammar match = match global
+# no match: match open process grammars and global
 
-    def add_command_to_recording_macros(self, command, matched_grammar):
-        contexts = ['']
-        if matched_grammar is None:
-            contexts.append(platformhandler.get_open_window_name().lower())
-        elif matched_grammar.app_context:
-            contexts.append(matched_grammar.app_context)
-        for context in (c for c in contexts if c in self.grammars):
-            for grammar in self.grammars[context]:
-                for name in grammar._recording_macros:
-                    snapshots = []
-                    for result in command.results:
-                        if isinstance(result, str):
-                            snapshots.append(result)
-                        else:
-                            for action_piece in result.rule.actions:
-                                if isinstance(action_piece, (types.FunctionType, types.MethodType)):
-                                    snapshots.append(snapshot.ActionPieceSnapshot(action_piece,
-                                        command.async_actions, result.matched_words, command, result))
-                                else:
-                                    snapshots.append(action_piece)
-                    grammar._recording_macros[name].extend(snapshots)
+    def add_command_to_recording_macros(self, command):
+        for result in command.results:
+            contexts = ['']
+            if isinstance(result, str):
+                context = platformhandler.get_open_window_name().lower()
+                if context:
+                    contexts.append(context)
+            elif result.rule.grammar.app_context:
+                contexts.append(result.rule.grammar.app_context)
+            for context in (c for c in contexts if c in self.grammars):
+                for grammar in self.grammars[context]:
+                    self.add_result_to_grammar_recording_macros(grammar, result, command)
+
+    def add_result_to_grammar_recording_macros(self, grammar, result, command):
+        for name in grammar._recording_macros:
+            if isinstance(result, str):
+                grammar._recording_macros[name].append(result)
+            else:
+                for action_piece in result.rule.actions:
+                    if isinstance(action_piece, (types.FunctionType, types.MethodType)):
+                        grammar._recording_macros[name].append(snapshot.ActionPieceSnapshot(action_piece,
+                            command.async_actions, result.matched_words, command, result))
+                    else:
+                        grammar._recording_macros[name].append(action_piece)

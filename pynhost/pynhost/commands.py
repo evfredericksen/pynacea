@@ -21,12 +21,13 @@ class Command:
         }
 
     def set_results(self, gram_handler):
+        results = []
         while self.remaining_words:
             rule_match = self.get_rule_match(gram_handler, False)
             if rule_match is not None:
                 self.results.append(rule_match)
                 self.remaining_words = rule_match.remaining_words
-                gram_handler.add_command_to_recording_macros(self, rule_match.rule.grammar)
+                # gram_handler.add_command_to_recording_macros(self, rule_match.rule.grammar)
             else:
                 rule_match = self.get_rule_match(gram_handler, True)
                 if rule_match is not None:
@@ -40,8 +41,9 @@ class Command:
                         self.results[-1] += ' {}'.format(self.remaining_words[0])
                     else:
                         self.results.append(self.remaining_words[0])
-                    gram_handler.add_command_to_recording_macros(self, None)
+                    # gram_handler.add_command_to_recording_macros(self, None)
                     self.remaining_words = self.remaining_words[1:]
+        gram_handler.add_command_to_recording_macros(self)
 
     def get_rule_match(self, gram_handler, async):
         for grammar in gram_handler.get_matching_grammars(async):

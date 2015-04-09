@@ -18,6 +18,7 @@ class ProcessHistory:
         merge_async(self.async_action_pieces, command.async_actions)
         snapshots = snapshot.get_snapshots(command, self.async_action_pieces)
         pos = len(self.snapshots)
+        # print(sum(snapshots, []))
         for ss_group in snapshots:
             for ss in ss_group:
                 pos += 1
@@ -36,7 +37,6 @@ class ProcessHistory:
                     return
                 for i in range(ss.action_piece):
                     for j in range(self.get_previous_rulepiece_pos(pos), pos):
-                        # print(j, self.snapshots)
                         self.execute_snapshot(j, run_async)
             elif isinstance(ss.action_piece, dynamic.RepeatCommand):
                 for i in range(ss.action_piece.count):

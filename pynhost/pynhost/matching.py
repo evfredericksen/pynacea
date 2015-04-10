@@ -1,9 +1,6 @@
-import copy
-import re
 import collections
-from pynhost import constants
-from pynhost import utilities
-from pynhost import ruleparser
+from pynhost import constants, utilities, ruleparser
+
 try:
     from pynhost.grammars import _locals
     locals_available = True

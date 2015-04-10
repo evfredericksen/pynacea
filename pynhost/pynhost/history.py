@@ -39,6 +39,7 @@ class ProcessHistory:
                     for j in range(self.get_previous_rulepiece_pos(pos), pos):
                         self.execute_snapshot(j, run_async)
             elif isinstance(ss.action_piece, dynamic.RepeatCommand):
+                print('COUNT', ss.action_piece.count)
                 for i in range(ss.action_piece.count):
                     self.execute_range(self.get_previous_command_start(pos), pos, run_async)
 

@@ -1,5 +1,6 @@
 import types
 import logging
+import copy
 from pynhost import api, dynamic
 
 class ActionPieceSnapshot:
@@ -15,18 +16,15 @@ class ActionPieceSnapshot:
 
     def __repr__(self):
         return str(self)
-    
-def merge_async(dict1, dict2):
-    dict1['before'] += dict2['before']
-    dict1['after'] += dict2['after']
 
 def get_snapshots(command, async_action_pieces):
     snapshots = []
+    # print([r.rule.actions for r in command.results])
     for i, result in enumerate(command.results):
         if isinstance(result, str) or isinstance(result, ActionPieceSnapshot):
             ss = result
             if isinstance(result, str):
-                if i+1 < len(command.results) and isinstance(command.results[i + 1], str):
+                if i + 1 < len(command.results) and isinstance(command.results[i + 1], str):
                     result += ' '
                 ss = ActionPieceSnapshot(result, async_action_pieces, result.split(), command)
             snapshots.append([ss])
@@ -36,7 +34,8 @@ def get_snapshots(command, async_action_pieces):
                 if isinstance(piece, dynamic.Num):
                     piece = piece.evaluate(result)
                 elif isinstance(piece, dynamic.RepeatCommand) and isinstance(piece.count, dynamic.Num):
-                    piece = piece.count.evaluate(result)
+                    piece = copy.copy(piece)
+                    piece.count = piece.count.evaluate(result)
                 if isinstance(piece, ActionPieceSnapshot):
                     ss = piece
                 else:

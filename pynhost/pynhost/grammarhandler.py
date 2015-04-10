@@ -61,13 +61,7 @@ class GrammarHandler:
 
     def add_command_to_recording_macros(self, command):
         for result in command.results:
-            contexts = ['']
-            if isinstance(result, str):
-                context = platformhandler.get_open_window_name().lower()
-                if context:
-                    contexts.append(context)
-            elif result.rule.grammar.app_context:
-                contexts.append(result.rule.grammar.app_context)
+            contexts = self.get_contexts(result)
             for context in (c for c in contexts if c in self.grammars):
                 for grammar in self.grammars[context]:
                     self.add_result_to_grammar_recording_macros(grammar, result, command)
@@ -83,3 +77,13 @@ class GrammarHandler:
                             command.async_actions, result.matched_words, command, result))
                     else:
                         grammar._recording_macros[name].append(action_piece)
+
+    def get_contexts(self, result):
+        contexts = ['']
+        if isinstance(result, str):
+            context = platformhandler.get_open_window_name().lower()
+            if context:
+                contexts.append(context)
+        elif result.rule.grammar.app_context:
+            contexts.append(result.rule.grammar.app_context)
+        return contexts

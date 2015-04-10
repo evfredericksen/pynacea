@@ -4,10 +4,6 @@ import sys
 import types
 import logging
 from pynhost import matching
-from pynhost import api
-from pynhost import utilities
-from pynhost import dynamic
-from pynhost import grammarbase
 from pynhost.platforms import platformhandler
 
 class Command:

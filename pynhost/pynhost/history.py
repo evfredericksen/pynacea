@@ -19,6 +19,7 @@ class ProcessHistory:
         snapshots = snapshot.get_snapshots(command, self.async_action_pieces)
         pos = len(self.snapshots)
         # print(sum(snapshots, []))
+        # print(self.snapshots, pos)
         for ss_group in snapshots:
             for ss in ss_group:
                 pos += 1
@@ -39,8 +40,8 @@ class ProcessHistory:
                     for j in range(self.get_previous_rulepiece_pos(pos), pos):
                         self.execute_snapshot(j, run_async)
             elif isinstance(ss.action_piece, dynamic.RepeatCommand):
-                print('COUNT', ss.action_piece.count)
                 for i in range(ss.action_piece.count):
+                    print(self.get_previous_command_start(pos), pos)
                     self.execute_range(self.get_previous_command_start(pos), pos, run_async)
 
     def execute_string_or_func(self, ss):

@@ -19,7 +19,6 @@ class ActionPieceSnapshot:
 
 def get_snapshots(command, async_action_pieces):
     snapshots = []
-    # print([r.rule.actions for r in command.results])
     for i, result in enumerate(command.results):
         if isinstance(result, str) or isinstance(result, ActionPieceSnapshot):
             ss = result
@@ -38,6 +37,8 @@ def get_snapshots(command, async_action_pieces):
                     piece.count = piece.count.evaluate(result)
                 if isinstance(piece, ActionPieceSnapshot):
                     ss = piece
+                    ss.command = command
+                    ss.async_action_pieces = async_action_pieces
                 else:
                     ss = ActionPieceSnapshot(piece, async_action_pieces, result.matched_words, command, result)
                 actions.append(ss)

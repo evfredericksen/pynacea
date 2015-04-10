@@ -16,7 +16,6 @@ class Num(DynamicAction):
         self.change = 0
 
     def evaluate(self, rule_match):
-        print('eval', rule_match.nums, self.index, self.change)
         try:
             num = int(rule_match.nums[self.index]) + self.change
         except IndexError:

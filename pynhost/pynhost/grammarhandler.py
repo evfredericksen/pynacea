@@ -4,7 +4,7 @@ import inspect
 import sys
 import types
 import subprocess
-from pynhost import grammarbase, utilities, history, snapshot
+from pynhost import grammarbase, utilities, history, commands
 from pynhost.platforms import platformhandler
 
 class GrammarHandler:
@@ -59,31 +59,29 @@ class GrammarHandler:
 # global grammar match = match global
 # no match: match open process grammars and global
 
-    def add_command_to_recording_macros(self, command):
-        for result in command.results:
-            contexts = self.get_contexts(result)
-            for context in (c for c in contexts if c in self.grammars):
-                for grammar in self.grammars[context]:
-                    self.add_result_to_grammar_recording_macros(grammar, result, command)
+    def add_actions_to_recording_macros(self, action_list):
+        contexts = self.get_contexts(action_list)
+        # print('TRACE', result, contexts)
+        for context in (c for c in contexts if c in self.grammars):
+            for grammar in self.grammars[context]:
+                self.add_actions_to_grammar_recording_macros(grammar, action_list)
 
-    def add_result_to_grammar_recording_macros(self, grammar, result, command):
+    def add_actions_to_grammar_recording_macros(self, grammar, action_list):
         for name in grammar._recording_macros:
-            if isinstance(result, str):
-                grammar._recording_macros[name].append(result)
-            else:
-                for action_piece in result.rule.actions:
-                    if isinstance(action_piece, (types.FunctionType, types.MethodType)):
-                        grammar._recording_macros[name].append(snapshot.ActionPieceSnapshot(action_piece,
-                            command.async_actions, result.matched_words, command, result))
-                    else:
-                        grammar._recording_macros[name].append(action_piece)
+            for action in action_list.actions:
+                if isinstance(action, str):
+                    grammar._recording_macros[name].append(action)
+                elif isinstance(action, (types.FunctionType, types.MethodType)):
+                    grammar._recording_macros[name].append(commands.FunctionWrapper(action, action_list.matched_words))
+                else:
+                    grammar._recording_macros[name].append(action)
 
-    def get_contexts(self, result):
+    def get_contexts(self, action_list):
         contexts = ['']
-        if isinstance(result, str):
+        if action_list.rule_match is None:
             context = platformhandler.get_open_window_name().lower()
             if context:
                 contexts.append(context)
-        elif result.rule.grammar.app_context:
-            contexts.append(result.rule.grammar.app_context)
+        elif action_list.rule_match.rule.grammar.app_context:
+            contexts.append(action_list.rule_match.rule.grammar.app_context)
         return contexts

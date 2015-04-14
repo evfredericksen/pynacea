@@ -29,7 +29,7 @@ def main():
         mode_status = {'sleep mode': False, 'dictation mode': False, 'number mode': False}
         updated_status = mode_status
         logging.info('Started listening at {}'.format(time.strftime("%Y-%m-%d %H:%M:%S")))
-        process_history = history.ProcessHistory()
+        command_history = history.CommandHistory()
         print('Ready!')
         # main loop
         while True:
@@ -49,7 +49,7 @@ def main():
                     time.strftime("%Y-%m-%d %H:%M:%S")))
                 current_command = commands.Command(line.split(' '))
                 current_command.set_results(gram_handler)
-                process_history.run_command(current_command, cl_arg_namespace.split_dictation)
+                command_history.run_command(current_command, cl_arg_namespace.split_dictation)
             time.sleep(.1)
     except Exception as e:
         logging.exception(e)

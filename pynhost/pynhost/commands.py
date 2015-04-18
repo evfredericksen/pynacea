@@ -12,7 +12,6 @@ class Command:
         self.words = words
         self.remaining_words = words
         self.action_lists = []
-        self.results = [] # result can be a string or a RuleMatch
         self.async_action_lists = { # instances of ActionList
             'before': [],
             'after': [],
@@ -70,6 +69,10 @@ class ActionList:
         self.actions = []
         self.matched_words = []
         self.rule_match = None
+        self.async_action_lists = { # instances of ActionList
+            'before': [],
+            'after': [],
+        }
 
     def add_rule_match(self, rule_match):
         for action in rule_match.rule.actions:

@@ -41,13 +41,12 @@ class GrammarBase(SharedGrammarBase):
         new_rules = []
         for rule_name, macro in self._recording_macros.items():
             rule_name = '{} [<num>]'.format(rule_name)
-            print('macro', macro)
             new_rules.append(ruleparser.Rule(rule_name, macro[:-1] + [dynamic.Num(-1).add(-1)], self))
         for rule in self._rules:
             if rule.raw_text not in [r.raw_text for r in new_rules]:
                 new_rules.append(rule)
         self._rules = new_rules
-        self.recording_macros = {}
+        self._recording_macros = {}
 
 class AsyncGrammarBase(SharedGrammarBase):
     def __init__(self):

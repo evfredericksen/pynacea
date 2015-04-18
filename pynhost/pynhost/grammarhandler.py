@@ -47,7 +47,11 @@ class GrammarHandler:
         grammar_dict = self.grammars
         if async:
             grammar_dict = self.async_grammars
-        for context in ['', platformhandler.get_open_window_name().lower()]:
+        contexts = ['']
+        open_window_name = platformhandler.get_open_window_name().lower()
+        if open_window_name:
+            contexts.append(open_window_name)
+        for context in contexts:
             try:
                 for grammar in grammar_dict[context]:
                     if grammar._check_grammar():
@@ -61,7 +65,6 @@ class GrammarHandler:
 
     def add_actions_to_recording_macros(self, action_list):
         contexts = self.get_contexts(action_list)
-        # print('TRACE', result, contexts)
         for context in (c for c in contexts if c in self.grammars):
             for grammar in self.grammars[context]:
                 self.add_actions_to_grammar_recording_macros(grammar, action_list)

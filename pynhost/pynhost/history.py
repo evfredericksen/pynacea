@@ -7,19 +7,18 @@ from pynhost import dynamic, commands
 class CommandHistory:
     def __init__(self):
         self.commands = []
-        self.async_action_pieces = {
+        self.async_action_lists = {
             'before': [],
             'after': [],
         }
 
     def run_command(self, command, split_dictation):
-        if not split_dictation:
-            command.results = utilities.merge_strings(command.results)
-        # merge_async(self.async_action_pieces, command.async_actions)
+        # if not split_dictation:
+        #     command.results = utilities.merge_strings(command.results)
+        merge_async(self.async_action_lists, command.async_action_lists)
         pos = len(self.commands)
         self.commands.append(command)
         self.execute_command(pos, True)
-        print('commands', command.action_lists[0].actions)
         command.remove_repeats()
         if not command.action_lists:
             self.commands = self.commands[:-1]
@@ -39,7 +38,7 @@ class CommandHistory:
                 return
             if not self.execute_string_or_func(action):
                 if isinstance(action, int):
-                    self.execute_int(action, command_pos, action_list_pos, run_async)
+                    self.execute_int(action, command_pos, action_list_pos, i, run_async)
                 elif isinstance(action, dynamic.RepeatCommand):
                     for j in range(action.count):
                         for k in range(action.depth, 0, -1):
@@ -55,17 +54,32 @@ class CommandHistory:
             return True
         return False
 
-    def execute_int(self, num, command_pos, action_list_pos, run_async):
-        if max(command_pos, action_list_pos) == 0:
+    def execute_int(self, num, command_pos, action_list_pos, action_pos, run_async):
+        if max(command_pos, action_list_pos, action_pos) == 0:
             return
         for i in range(num):
-            if action_list_pos > 0:
-                self.execute_action_list(command_pos, action_list_pos - 1, run_async)
+            if action_pos > 0:
+                self.execute_action_list(command_pos, action_list_pos, run_async, action_pos)
             else:
-                self.execute_action_list(command_pos - 1, len(self.commands[command_pos - 1].action_lists) - 1, run_async)
+                if action_list_pos > 0:
+                    self.execute_action_list(command_pos, action_list_pos - 1, run_async)
+                else:
+                    self.execute_action_list(command_pos - 1, len(self.commands[command_pos - 1].action_lists) - 1, run_async)
 
-    def execute_async_list(self, pos, timing):
-        pass
+    def execute_async_list(self, command_pos, action_list_pos, timing, stop=-1):
+        assert min(command_pos, action_list_pos) >= 0
+        action_list = self.commands[command_pos].action_lists[action_list_pos]
+        for i, action in enumerate(action_list.actions):
+            if i == stop:
+                return
+            if not self.execute_string_or_func(action):
+                if isinstance(action, int):
+                    self.execute_int(action, command_pos, action_list_pos, i, run_async)
+                elif isinstance(action, dynamic.RepeatCommand):
+                    for j in range(action.count):
+                        for k in range(action.depth, 0, -1):
+                            self.execute_command(command_pos - k, run_async)
+                        self.execute_command(command_pos, run_async, action_list_pos, i)
 
 def merge_async(dict1, dict2):
     dict1['before'] += dict2['before']

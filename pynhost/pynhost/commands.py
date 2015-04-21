@@ -12,34 +12,26 @@ class Command:
         self.words = words
         self.remaining_words = words
         self.action_lists = []
-        self.async_action_lists = { # instances of ActionList
-            'before': [],
-            'after': [],
-        }
 
     def set_results(self, gram_handler):
         while self.remaining_words:
             action_list = ActionList(self)
             rule_match = self.get_rule_match(gram_handler, False)
             if rule_match is not None:
-                action_list.add_rule_match(rule_match)
-                self.action_lists.append(action_list)
+                action_list.add_rule_match(rule_match, False)
                 gram_handler.add_actions_to_recording_macros(action_list)
                 self.remaining_words = rule_match.remaining_words
             else:
                 rule_match = self.get_rule_match(gram_handler, True)
+                # async rule match
                 if rule_match is not None:
-                    action_list.add_rule_match(rule_match)
-                    if rule_match.rule.grammar.settings['timing'] in ('before', 'both'):
-                        self.async_action_lists['before'].append(action_list)
-                    if rule_match.rule.grammar.settings['timing'] in ('after', 'both'):
-                        self.async_action_lists['after'].append(action_list)
+                    action_list.add_rule_match(rule_match, True)
                     self.remaining_words = rule_match.remaining_words
                 else:
                     action_list.add_string(self.remaining_words[0])
-                    self.action_lists.append(action_list)
                     gram_handler.add_actions_to_recording_macros(action_list)
                     self.remaining_words = self.remaining_words[1:]
+            self.action_lists.append(action_list)
         
 
     def get_rule_match(self, gram_handler, async):
@@ -54,12 +46,7 @@ class Command:
     def remove_repeats(self):
         purged_lists = []
         for action_list in self.action_lists:
-            purged_actions = []
-            for action in action_list.actions:
-                if not isinstance(action, (int, dynamic.RepeatCommand)):
-                    purged_actions.append(action)
-            if purged_actions:
-                action_list.actions = purged_actions
+            if action_list.contains_non_repeat_actions():
                 purged_lists.append(action_list)
         self.action_lists = purged_lists
 
@@ -74,7 +61,8 @@ class ActionList:
             'after': [],
         }
 
-    def add_rule_match(self, rule_match):
+    def add_rule_match(self, rule_match, is_async):
+        handled_actions = []
         for action in rule_match.rule.actions:
             if isinstance(action, dynamic.Num):
                 action = action.evaluate(rule_match)
@@ -83,7 +71,15 @@ class ActionList:
                 action.count = action.count.evaluate(rule_match)
             elif isinstance(action, (types.FunctionType, types.MethodType)):
                 action = FunctionWrapper(action, rule_match.matched_words)
-            self.actions.append(action)
+            handled_actions.append(action)
+        if not is_async:
+            self.actions = handled_actions
+        else:
+            if rule_match.rule.grammar.settings['timing'] in ('before', 'both'):
+                self.async_action_lists['before'] = handled_actions
+            if rule_match.rule.grammar.settings['timing'] in ('after', 'both'):
+                self.async_action_lists['after'] = handled_actions
+            assert self.async_action_lists['before'] or self.async_action_lists['after']            
         self.rule_match = rule_match
 
     def add_string(self, text):
@@ -91,6 +87,18 @@ class ActionList:
             self.actions.append(' {}'.format(text))
         else:
             self.actions.append(text)
+
+    def get_actions(self, timing):
+        try:
+            return self.async_action_lists[timing]
+        except KeyError:
+            return self.actions
+
+    def contains_non_repeat_actions(self):
+        for action in self.actions:
+            if not isinstance(action, (int, dynamic.RepeatCommand)):
+                return True
+        return False      
 
     def __str__(self):
         return '<ActionList matching words {}>'.format(' '.join(self.matched_words))

@@ -18,7 +18,7 @@ class CommandHistory:
         # if not split_dictation:
         #     command.results = utilities.merge_strings(command.results)
         pos = len(self.commands)
-        self.commands.append(commadn)
+        self.commands.append(command)
         self.execute_command(pos, -1, -1)
         command.remove_repeats()
         if not command.action_lists:
@@ -54,6 +54,8 @@ class CommandHistory:
                     self.execute_int(action, command_pos, action_list_pos, i, timing)
                 elif isinstance(action, dynamic.RepeatCommand):
                     pass
+                elif isinstance(action, dynamic.ClearAsync):
+                    self.execute_clear_async(action_list, action.timing)
                     # for j in range(action.count):
                     #     for k in range(action.depth, 0, -1):
                     #         self.execute_command(command_pos - k, -1, -1, timing)
@@ -79,6 +81,14 @@ class CommandHistory:
                     self.execute_action_list(command_pos, action_list_pos - 1, -1)
                 else:
                     self.execute_action_list(command_pos - 1, len(self.commands[command_pos - 1].action_lists) - 1, -1)
+
+    def execute_clear_async(self, action_list, timing):
+        if timing in ('before', 'both'):
+            self.async_action_lists['before'] = []
+            action_list.async_action_lists['before'] = []
+        if timing in ('after', 'both'):
+            self.async_action_lists['after'] = []
+            action_list.async_action_lists['after'] = []
 
     def merge_async(self, action_list):
         for timing in self.async_action_lists:

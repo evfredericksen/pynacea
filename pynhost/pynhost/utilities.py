@@ -193,7 +193,7 @@ def transcribe_numbers(line):
 
 def convert_to_num(word):
     if word in constants.NUMBERS_MAP:
-            return constants.NUMBERS_MAP[word]
+        return constants.NUMBERS_MAP[word]
     try:
         num = float(word)
         if int(num) - num == 0:

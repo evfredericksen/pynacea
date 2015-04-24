@@ -51,7 +51,8 @@ class SharedDirectoryHandler:
             new_word = ''
             for i, char in enumerate(word):
                 if (char.islower() or i in [0, len(word) - 1] or
-                    char.lower() != word[i + 1]):
+                    char.lower() != word[i + 1] or
+                    not char.isalpha()):
                     new_word += char
             line_list.append(new_word)
         return ' '.join(line_list)

@@ -36,3 +36,7 @@ class RepeatCommand(DynamicAction):
     def __init__(self, depth=1, count=1):
         self.depth = depth
         self.count = count
+
+class ClearAsync(DynamicAction):
+    def __init__(self, timing='both'):
+        self.timing = timing

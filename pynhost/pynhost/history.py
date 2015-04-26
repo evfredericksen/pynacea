@@ -51,15 +51,9 @@ class CommandHistory:
                 return
             if not self.execute_string_or_func(action):
                 if isinstance(action, int):
-                    self.execute_int(action, command_pos, action_list_pos, i, timing)
-                elif isinstance(action, dynamic.RepeatCommand):
-                    pass
+                    self.repeat_previous_action_list(action, command_pos, action_list_pos, i, timing)
                 elif isinstance(action, dynamic.ClearAsync):
                     self.execute_clear_async(action_list, action.timing)
-                    # for j in range(action.count):
-                    #     for k in range(action.depth, 0, -1):
-                    #         self.execute_command(command_pos - k, -1, -1, timing)
-                    #     self.execute_command(command_pos, action_list_pos, i, timing)
 
     def execute_string_or_func(self, action):
         if isinstance(action, str):
@@ -70,7 +64,7 @@ class CommandHistory:
             return True
         return False
 
-    def execute_int(self, num, command_pos, action_list_pos, action_pos, timing):
+    def repeat_previous_action_list(self, num, command_pos, action_list_pos, action_pos, timing):
         if max(command_pos, action_list_pos, action_pos) == 0:
             return
         for i in range(num):

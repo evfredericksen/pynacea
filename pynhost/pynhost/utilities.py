@@ -222,3 +222,14 @@ def merge_strings(input_list):
             new_list.append(ele)
     return new_list
 
+def get_sorted_grammars(contexts, grammar_dict):
+    if len(contexts) == 1:
+        return grammar_dict['']
+    grammar_lists = []
+    for context in contexts:
+        try:
+            grammar_lists.extend(grammar_dict[context])
+        except KeyError:
+            pass
+    grammar_lists.sort()
+    return grammar_lists

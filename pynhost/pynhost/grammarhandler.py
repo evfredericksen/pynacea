@@ -13,7 +13,7 @@ class GrammarHandler:
         self.grammars = {}
         self.async_grammars = {}
 
-    def load_grammars(self, command_history):
+    def load_grammars(self):
         abs_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'grammars')
         for root, dirs, files in os.walk(abs_path):
             depth = len(root.split('/')) - len(abs_path.split('/')) 
@@ -24,16 +24,18 @@ class GrammarHandler:
                     path.append(filename[:-3])
                     rel = '.'.join(path)
                     module = __import__('pynhost.{}'.format(rel), fromlist=[abs_path])
-                    self.load_grammars_from_module(module, command_history)
+                    self.load_grammars_from_module(module)
+        for context in self.grammars:
+            self.grammars[context].sort()
 
-    def load_grammars_from_module(self, module, command_history):
+    def load_grammars_from_module(self, module):
         clsmembers = inspect.getmembers(sys.modules[module.__name__], inspect.isclass)
         for member in clsmembers:
             # screen for objects with obj.GrammarBase ancestor
             class_hierarchy = inspect.getmro(member[1])
             if len(class_hierarchy) > 2 and class_hierarchy[-2] == grammarbase.SharedGrammarBase:
                 grammar = member[1]()
-                grammar._initialize(command_history)
+                grammar._initialize()
                 if class_hierarchy[-3] == grammarbase.GrammarBase:
                     grammar_dict = self.grammars
                 elif class_hierarchy[-3] == grammarbase.AsyncGrammarBase:
@@ -51,13 +53,9 @@ class GrammarHandler:
         open_window_name = platformhandler.get_open_window_name().lower()
         if open_window_name:
             contexts.append(open_window_name)
-        for context in contexts:
-            try:
-                for grammar in grammar_dict[context]:
-                    if grammar._check_grammar():
-                        yield grammar
-            except KeyError:
-                pass
+        for grammar in utilities.get_sorted_grammars(contexts, grammar_dict):
+            if grammar._check_grammar():
+                yield grammar
 
 # local grammar match = match grammar context and global
 # global grammar match = match global

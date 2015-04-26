@@ -8,15 +8,17 @@ class SharedGrammarBase:
         self.settings = {
             'regex mode': False,
             'filtered words': [],
+            'priority': 0,
         }
         # no touchy
         self._rules = []
-        self._command_history = []
 
-    def _initialize(self, command_history):
+    def _initialize(self):
         self._set_rules()
-        self._command_history = command_history
         self.app_context = self.app_context.lower()
+
+    def __lt__(self, other):
+        return self.settings['priority'] < other.settings['priority']
 
     def _check_grammar(self):
         return True
@@ -25,7 +27,6 @@ class SharedGrammarBase:
         for rule_text, actions in self.mapping.items():
             rule = ruleparser.Rule(rule_text, actions, self, regex_mode=self.settings['regex mode'])
             self._rules.append(rule)
-
 
 class GrammarBase(SharedGrammarBase):
     def __init__(self):

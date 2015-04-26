@@ -21,10 +21,9 @@ def main():
         log_file, log_level = utilities.get_logging_config()
         if None not in (log_file, log_level):
             logging.basicConfig(filename=log_file, level=log_level)
-        command_history = []
         gram_handler = grammarhandler.GrammarHandler()
         print('Loading grammars...')
-        gram_handler.load_grammars(command_history)
+        gram_handler.load_grammars()
         # Dict for simulation of special modes
         mode_status = {'sleep mode': False, 'dictation mode': False, 'number mode': False}
         updated_status = mode_status

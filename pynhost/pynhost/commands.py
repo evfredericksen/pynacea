@@ -66,9 +66,6 @@ class ActionList:
         for action in rule_match.rule.actions:
             if isinstance(action, dynamic.Num):
                 action = action.evaluate(rule_match)
-            elif isinstance(action, dynamic.RepeatCommand) and isinstance(action.count, dynamic.Num):
-                action = copy.copy(action)
-                action.count = action.count.evaluate(rule_match)
             elif isinstance(action, (types.FunctionType, types.MethodType)):
                 action = FunctionWrapper(action, rule_match.matched_words)
             handled_actions.append(action)
@@ -96,7 +93,7 @@ class ActionList:
 
     def contains_non_repeat_actions(self):
         for action in self.actions:
-            if not isinstance(action, (int, dynamic.RepeatCommand)):
+            if not isinstance(action, int):
                 return True
         return False      
 

@@ -2,14 +2,13 @@
 
 import time
 import logging
-import copy
-import sys
 from pynhost import utilities
 from pynhost import grammarhandler
 from pynhost import commands
 from pynhost import configmenu
 from pynhost import engineio
 from pynhost import history
+from pynhost import constants
 
 def main():
     try:
@@ -49,7 +48,7 @@ def main():
                 current_command = commands.Command(line.split(' '))
                 current_command.set_results(gram_handler)
                 command_history.run_command(current_command, cl_arg_namespace.split_dictation)
-            time.sleep(.1)
+            time.sleep(constants.MAIN_LOOP_DELAY)
     except Exception as e:
         logging.exception(e)
         raise e

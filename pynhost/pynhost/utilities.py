@@ -1,4 +1,3 @@
-import subprocess
 import configparser
 import argparse
 import os
@@ -19,9 +18,6 @@ def get_buffer_lines(buffer_path):
                 lines.append(line.rstrip('\n'))
         os.remove(os.path.join(buffer_path, fname))
     return lines
-
-def get_mouse_location():
-    return xdotool.check_output('getmouselocation')
 
 def clear_directory(dir_name):
     while os.listdir(dir_name):

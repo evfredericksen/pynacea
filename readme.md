@@ -18,5 +18,6 @@ Read the documentation [here](https://pythonhosted.org/pynhost/).
 
 ##To Do
 
+- Native integration with Windows Speech Recognition
 - Support for Mac OS X host machines
 - Support for individual down and up keypresses

@@ -1,9 +1,4 @@
-import subprocess
-import re
-import sys
 import types
-import logging
-import copy
 from pynhost import matching, api, dynamic
 from pynhost.platforms import platformhandler
 

@@ -6,6 +6,8 @@ import re
 import sys
 import copy
 import pynhost
+import logging
+from logging.handlers import RotatingFileHandler
 from pynhost import constants
 try:
     from pynhost.grammars import _locals
@@ -94,7 +96,7 @@ def get_logging_config():
                     pass
         if log_level.lower() in constants.LOGGING_LEVELS:
             log_level = constants.LOGGING_LEVELS[log_level.lower()]
-        return log_file, int(log_level)
+            return log_file, int(log_level)
     except:
         return None, None
 
@@ -233,3 +235,22 @@ def get_sorted_grammars(contexts, grammar_dict):
             pass
     grammar_lists.sort()
     return grammar_lists
+
+def create_logging_handler(filename, level):   
+    log_formatter = logging.Formatter('%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s')
+    logFile = filename
+    my_handler = RotatingFileHandler(logFile, mode='a', maxBytes=5*1024*1024, 
+                                     backupCount=2, encoding=None, delay=0)
+    my_handler.setFormatter(log_formatter)
+    my_handler.setLevel(level)
+    app_log = logging.getLogger('root')
+    app_log.setLevel(level)
+    app_log.addHandler(my_handler)
+    return app_log
+
+def log_message(log_handler, level, message):
+    try:
+        handler_method = getattr(log_handler, level)
+        handler_method(message)
+    except AttributeError:
+        pass

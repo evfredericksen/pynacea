@@ -1,5 +1,3 @@
-import types
-import logging
 import collections
 import copy
 from pynhost import api

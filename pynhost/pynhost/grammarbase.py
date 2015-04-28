@@ -1,4 +1,3 @@
-import logging
 from pynhost import ruleparser, dynamic
 
 class SharedGrammarBase:
@@ -34,11 +33,9 @@ class GrammarBase(SharedGrammarBase):
         self._recording_macros = {}
 
     def _begin_recording_macro(self, rule_name):
-        logging.info("Started recording macro '{}' for grammar {}".format(rule_name, self))
         self._recording_macros[rule_name] = []
 
     def _finish_recording_macros(self):
-        logging.info("Finished recording macros for grammar {}".format(self))
         new_rules = []
         for rule_name, macro in self._recording_macros.items():
             rule_name = '{} [<num>]'.format(rule_name)

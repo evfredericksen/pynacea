@@ -1,6 +1,3 @@
-import logging
-from pynhost import api
-
 class DynamicAction:
     def __init__(self):
         pass

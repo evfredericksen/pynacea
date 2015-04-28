@@ -1,6 +1,4 @@
-import subprocess
-import sys
-from pynhost import utilities, keyinput
+from pynhost import keyinput
 from pynhost.platforms import platformhandler
 
 def send_string(string_to_send, delay=0):

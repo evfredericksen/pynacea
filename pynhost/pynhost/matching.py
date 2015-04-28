@@ -3,9 +3,8 @@ from pynhost import constants, utilities, ruleparser
 
 try:
     from pynhost.grammars import _locals
-    locals_available = True
 except ImportError:
-    locals_available = False
+    _locals = None
 
 class RuleMatch:
     def __init__(self, rule, matched, remaining, nums):
@@ -50,8 +49,7 @@ def replace_values(regex_match):
             pos += 1
         n = get_last_consec_digit(1, word) + 1
         if word[n:n + 3] == 'num':
-            if not (locals_available and hasattr(_locals, 'NUMBERS_MAP') and
-                value in _locals.NUMBERS_MAP):
+            if not (hasattr(_locals, 'NUMBERS_MAP') and value in _locals.NUMBERS_MAP):
                 add_or_append(value, matched)
             else:
                 add_or_append(_locals.NUMBERS_MAP[value], matched)
@@ -80,8 +78,7 @@ def get_numbers(regex_match):
     for word in sorted(numdict):
         if word[2:] == 'num' and numdict[word] is not None:
             num = numdict[word].rstrip()
-            if (locals_available and hasattr(_locals, 'NUMBERS_MAP') and
-                num in _locals.NUMBERS_MAP):
+            if hasattr(_locals, 'NUMBERS_MAP') and num in _locals.NUMBERS_MAP:
                 nums.append(_locals.NUMBERS_MAP[num])
             else:
                 nums.append(num)

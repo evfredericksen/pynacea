@@ -181,7 +181,7 @@ def check_negative(value):
 def get_number_string(line):
     num_words = []
     for word in line.split():
-        if word in _locals.NUMBERS_MAP:
+        if hasattr(_locals, 'NUMBERS_MAP') and word in _locals.NUMBERS_MAP:
             num_words.append(_locals.NUMBERS_MAP[word])
         else:
             try:

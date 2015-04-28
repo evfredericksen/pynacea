@@ -3,9 +3,8 @@ from pynhost import utilities
 from pynhost import dynamic, regex_range
 try:
     from pynhost.grammars import _locals
-    locals_available = True
 except ImportError:
-    locals_available = False
+    _locals = None
 
 OPENING_TOKEN_DICT = {
     '(': 'list',
@@ -52,7 +51,7 @@ def convert_to_regex_pattern(rule_string):
         if stack and stack[-1] == '<':
             tag += char
             if char == '>':
-                if re.match(r'<hom_.+>', tag) and not (locals_available and hasattr(_locals, 'HOMOPHONES') and
+                if re.match(r'<hom_.+>', tag) and not (hasattr(_locals, 'HOMOPHONES') and
                 tag[5:-1] in _locals.HOMOPHONES and _locals.HOMOPHONES[tag[5:-1]]):
                     regex_pattern += tag[5:-1] + ' '
                 else:
@@ -156,7 +155,7 @@ def set_num_range_pattern(start, stop, group_num):
     if not istart < istop:
         raise ValueError('start must be lower than stop in num range')
     pattern_list = ['?P<n{}num>'.format(group_num) + ' |'.join(regex_range.regex_for_range(istart, istop).split('|'))]
-    if not (locals_available and hasattr(_locals, 'NUMBERS_MAP')):
+    if not hasattr(_locals, 'NUMBERS_MAP'):
         return '({})'.format(pattern_list[0])
     for word in sorted(_locals.NUMBERS_MAP):
         if istart <= int(_locals.NUMBERS_MAP[word]) < istop:
@@ -171,7 +170,7 @@ def token_to_regex(token, group_num, rule_string):
     elif token == '<end>':
         return '$'
     elif token == '<num>':
-        if not (locals_available and hasattr(_locals, 'NUMBERS_MAP')):
+        if not hasattr(_locals, 'NUMBERS_MAP'):
             return r'(?P<n{}num>-?\d+(\.d+)? )'.format(group_num)
         return regex_string_from_list(sorted(_locals.NUMBERS_MAP), r'?P<n{}num>(-?\d+(\.\d+)?)'.format(group_num))
     # number range behaves similar to python. inclusive for start,

@@ -7,7 +7,10 @@ import sys
 import copy
 import pynhost
 from pynhost import constants
-from pynhost.grammars import _locals
+try:
+    from pynhost.grammars import _locals
+except ImportError:
+    _locals = None
 
 def get_buffer_lines(buffer_path):
     files = sorted([f for f in os.listdir(buffer_path) if not os.path.isdir(f) and re.match(r'o\d+$', f)])
@@ -121,6 +124,7 @@ def get_new_status(current_status, words):
         'BEGIN_SLEEP_MODE_PATTERNS': {'opposite': 'END_SLEEP_MODE_PATTERNS', 'name': 'sleep mode'},
         'BEGIN_DICTATION_MODE_PATTERNS': {'opposite': 'END_DICTATION_MODE_PATTERNS', 'name': 'dictation mode'},
         'BEGIN_NUMBER_MODE_PATTERNS': {'opposite': 'END_NUMBER_MODE_PATTERNS', 'name': 'number mode'},
+        'BEGIN_RULE_MODE_PATTERNS': {'opposite': 'END_RULE_MODE_PATTERNS', 'name': 'rule mode'},
     }
     for p in patterns:
         result1, result2 = False, False
@@ -172,11 +176,11 @@ def check_negative(value):
         raise e
     return fvalue
 
-def transcribe_numbers(line):
+def get_number_string(line):
     num_words = []
     for word in line.split():
-        if word in constants.NUMBERS_MAP:
-            num_words.append(constants.NUMBERS_MAP[word])
+        if word in _locals.NUMBERS_MAP:
+            num_words.append(_locals.NUMBERS_MAP[word])
         else:
             try:
                 num = float(word)
@@ -184,8 +188,8 @@ def transcribe_numbers(line):
                     num = int(num)
                 num_words.append(str(num))
             except (ValueError, TypeError, IndexError):
-                num_words.append(word)
-    transcribe_line(num_words, transcribe_mode=True)
+                pass
+    return ' '.join(num_words)
 
 def convert_to_num(word):
     if word in constants.NUMBERS_MAP:

@@ -14,7 +14,7 @@ def mouse_move(x=None, y=None, relative=True):
 def mouse_click(button='left', direction='both', number='1'):
     platformhandler.mouse_click(button, direction, number)
 
-def get_homonym(word):
+def get_homophone(word):
     '''
     Replicate <hom> functionality in functions
     '''

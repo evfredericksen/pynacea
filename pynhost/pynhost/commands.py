@@ -13,7 +13,7 @@ class Command:
         self.remaining_words = words
         self.action_lists = []
 
-    def set_results(self, gram_handler):
+    def set_results(self, gram_handler, rule_mode):
         while self.remaining_words:
             action_list = ActionList(self)
             rule_match = self.get_rule_match(gram_handler, False)
@@ -28,10 +28,12 @@ class Command:
                     action_list.add_rule_match(rule_match, True)
                     self.remaining_words = rule_match.remaining_words
                 else:
-                    action_list.add_string(self.remaining_words[0])
-                    gram_handler.add_actions_to_recording_macros(action_list)
+                    if not rule_mode:
+                        action_list.add_string(self.remaining_words[0])
+                        gram_handler.add_actions_to_recording_macros(action_list)
                     self.remaining_words = self.remaining_words[1:]
-            self.action_lists.append(action_list)
+            if action_list.actions:
+                self.action_lists.append(action_list)
         
 
     def get_rule_match(self, gram_handler, async):

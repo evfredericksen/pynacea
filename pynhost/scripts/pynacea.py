@@ -9,6 +9,7 @@ from pynhost import configmenu
 from pynhost import engineio
 from pynhost import history
 from pynhost import constants
+from pynhost import api
 
 def main():
     try:
@@ -24,7 +25,7 @@ def main():
         print('Loading grammars...')
         gram_handler.load_grammars()
         # Dict for simulation of special modes
-        mode_status = {'sleep mode': False, 'dictation mode': False, 'number mode': False}
+        mode_status = {'sleep mode': False, 'dictation mode': False, 'number mode': False, 'rule mode': False}
         updated_status = mode_status
         logging.info('Started listening at {}'.format(time.strftime("%Y-%m-%d %H:%M:%S")))
         command_history = history.CommandHistory()
@@ -38,15 +39,15 @@ def main():
                 if matched_pattern or updated_status['sleep mode']:
                     continue
                 if mode_status['dictation mode']:
-                    utilities.transcribe_line(line.split(), transcribe_mode=True)
+                    api.send_string(line)
                     continue
                 if mode_status['number mode']:
-                    utilities.transcribe_numbers(line)
+                    api.send_string(utilities.get_number_string(line))
                     continue
                 logging.info('Received input "{}" at {}'.format(line,
                     time.strftime("%Y-%m-%d %H:%M:%S")))
                 current_command = commands.Command(line.split(' '))
-                current_command.set_results(gram_handler)
+                current_command.set_results(gram_handler, mode_status['rule mode'])
                 command_history.run_command(current_command, cl_arg_namespace.split_dictation)
             time.sleep(constants.MAIN_LOOP_DELAY)
     except Exception as e:

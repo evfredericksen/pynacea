@@ -22,3 +22,10 @@ Type a string of characters. Special keypresses are surrounded by curly braces a
         def add(self, words):
             sum = int(words[0]) + int(words[2])
             api.send_string('Sum is:{enter}' + sum)
+
+mouse_move
+------------
+
+``mouse_move(x=None, y=None, relative=True)``
+
+Move the mouse to a given x, y cordinate. If relative is true, move the mouse relative to its currently location. Otherwise, move the mouse to an absolute position.

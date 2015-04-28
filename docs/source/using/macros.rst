@@ -17,13 +17,8 @@ Numbers Mode
 -------------
 
 Number mode will only type out numbers, ignoring all grammars and non-numeric input. It can be turned on by spoken input that matches a pattern in ``BEGIN_NUMBER_MODE_PATTERNS`` and turned off by patterns in ``END_NUMBER_MODE_PATTERNS``.
-
-Rule Mode
-----------
-
-Rule mode behaves similarly to normal mode. However, if any spoken input does not match a rule, the leftover text will not be sent as keypresses to the operating system. It can be turned on by spoken input that matches a pattern in ``BEGIN_RULE_MODE_PATTERNS`` and turned off by patterns in ``END_RULE_MODE_PATTERNS``.
  
 Debug Mode
 -------------
 
-Debug mode does *not* accept spoken input. Rather, it accepts typed input through the terminal. This can be useful for debugging grammar files, particularly in settings where verbal input is not possible. Debug mode is enabled by setting the ``-d`` flag when running Pynacea. Typed input runs four seconds after it is entered, to allow for the opportunity to switch programs if necessary. This length of time can be modified by passing a number to the ``--debug_delay`` command line argument.
+Debug mode does *not* accept spoken input. Rather, it accepts typed input through the terminal. This can be useful for debugging grammar files, particularly in settings where verbal input is not possible. Debug mode is enabled by setting the ``-d`` flag when running Pynacea. Typed input runs four seconds after it is entered, to allow for the opportunity to switch programs. This length of time can be modified by passing a number to the ``--debug_delay`` command line argument.

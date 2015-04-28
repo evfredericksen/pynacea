@@ -20,7 +20,7 @@ def get_data_files_dir():
 
 setup(
 	name='pynhost',
-	version='0.4.8',
+	version='0.5.0,
 	description='Linux Voice Recognition System',
 	url='https://github.com/evfredericksen/pynacea',
 	author='Evan Fredericksen',

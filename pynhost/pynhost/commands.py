@@ -31,9 +31,8 @@ class Command:
                         action_list.add_string(self.remaining_words[0])
                         gram_handler.add_actions_to_recording_macros(action_list)
                     self.remaining_words = self.remaining_words[1:]
-            if action_list.actions:
+            if action_list.actions or action_list.async_action_lists['before'] or action_list.async_action_lists['after']:
                 self.action_lists.append(action_list)
-        
 
     def get_rule_match(self, gram_handler, async):
         for grammar in gram_handler.get_matching_grammars(async):

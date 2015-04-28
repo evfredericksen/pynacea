@@ -1,5 +1,5 @@
 import types
-from pynhost import matching, api, dynamic
+from pynhost import matching, api, dynamic, utilities
 from pynhost.platforms import platformhandler
 
 class Command:
@@ -8,7 +8,7 @@ class Command:
         self.remaining_words = words
         self.action_lists = []
 
-    def set_results(self, gram_handler, rule_mode):
+    def set_results(self, gram_handler, rule_mode, log_handler):
         while self.remaining_words:
             action_list = ActionList(self)
             rule_match = self.get_rule_match(gram_handler, False)
@@ -16,12 +16,16 @@ class Command:
                 action_list.add_rule_match(rule_match, False)
                 gram_handler.add_actions_to_recording_macros(action_list)
                 self.remaining_words = rule_match.remaining_words
+                utilities.log_message(log_handler, 'info', 'Input matched rule {} '
+                    'in grammar {}'.format(rule_match.rule, rule_match.rule.grammar))
             else:
                 rule_match = self.get_rule_match(gram_handler, True)
                 # async rule match
                 if rule_match is not None:
                     action_list.add_rule_match(rule_match, True)
                     self.remaining_words = rule_match.remaining_words
+                    utilities.log_message(log_handler, 'info', 'Input matched rule {} '
+                    'in asynchronous grammar {}'.format(rule_match.rule, rule_match.rule.grammar))
                 else:
                     if not rule_mode:
                         action_list.add_string(self.remaining_words[0])

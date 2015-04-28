@@ -21,7 +21,7 @@ def main():
         log_file, log_level = utilities.get_logging_config()
         log_handler = None
         if None not in (log_file, log_level):
-            log_handler = utilities.create_logging_handler(log_file, log_level)
+            log_handler = utilities.create_logging_handler(log_file, log_level, cl_arg_namespace.verbal_feedback)
         gram_handler = grammarhandler.GrammarHandler()
         print('Loading grammars...')
         gram_handler.load_grammars()
@@ -47,8 +47,8 @@ def main():
                     continue
                 utilities.log_message(log_handler, 'info', 'Received input "{}"'.format(line))
                 current_command = commands.Command(line.split(' '))
-                current_command.set_results(gram_handler, mode_status['rule mode'])
-                command_history.run_command(current_command, cl_arg_namespace.split_dictation)
+                current_command.set_results(gram_handler, mode_status['rule mode'], log_handler)
+                command_history.run_command(current_command)
             time.sleep(constants.MAIN_LOOP_DELAY)
     except Exception as e:
         utilities.log_message(log_handler, 'exception', e)

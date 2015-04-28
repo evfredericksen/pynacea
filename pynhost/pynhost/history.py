@@ -12,9 +12,7 @@ class CommandHistory:
             'after': [],
         }
 
-    def run_command(self, command, split_dictation):
-        # if not split_dictation:
-        #     command.results = utilities.merge_strings(command.results)
+    def run_command(self, command):
         pos = len(self.commands)
         self.commands.append(command)
         self.execute_command(pos, -1, -1)

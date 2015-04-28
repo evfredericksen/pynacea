@@ -82,7 +82,7 @@ def get_cl_args():
     parser.add_argument("--logging_file", help="Log file path for Pynacea",
         default=None)
     parser.add_argument("--logging_level", help="Logging level for Pynacea")
-    parser.add_argument('-s', "--split_dictation", help="Apply asyncronous actions to individual words", action='store_true')
+    parser.add_argument('-v', "--verbal_feedback", help="Print logging messages to console", action='store_true')
     return parser.parse_args()
 
 def get_logging_config():
@@ -236,7 +236,7 @@ def get_sorted_grammars(contexts, grammar_dict):
     grammar_lists.sort()
     return grammar_lists
 
-def create_logging_handler(filename, level):   
+def create_logging_handler(filename, level, verbal_mode):   
     log_formatter = logging.Formatter('%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s')
     logFile = filename
     my_handler = RotatingFileHandler(logFile, mode='a', maxBytes=5*1024*1024, 
@@ -246,6 +246,8 @@ def create_logging_handler(filename, level):
     app_log = logging.getLogger('root')
     app_log.setLevel(level)
     app_log.addHandler(my_handler)
+    if verbal_mode:
+        app_log.addHandler(logging.StreamHandler(sys.stdout))
     return app_log
 
 def log_message(log_handler, level, message):

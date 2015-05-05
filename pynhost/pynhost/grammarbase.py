@@ -7,7 +7,6 @@ class SharedGrammarBase:
         self.settings = {
             'regex mode': False,
             'filtered words': [],
-            'priority': 0,
         }
         # no touchy
         self._rules = []
@@ -30,6 +29,7 @@ class SharedGrammarBase:
 class GrammarBase(SharedGrammarBase):
     def __init__(self):
         super().__init__()
+        self.settings['priority'] = 0
         self._recording_macros = {}
 
     def _begin_recording_macro(self, rule_name):
@@ -49,4 +49,5 @@ class GrammarBase(SharedGrammarBase):
 class AsyncGrammarBase(SharedGrammarBase):
     def __init__(self):
         super().__init__()
+        self.settings['priority'] = -1
         self.settings['timing'] = 'after' #options are after, before, both

@@ -15,6 +15,8 @@ class CommandHistory:
     def run_command(self, command):
         pos = len(self.commands)
         self.commands.append(command)
+        if pos == len(self.commands):
+            pos -= 1
         self.execute_command(pos, -1, -1)
         command.remove_repeats()
         if not command.action_lists:
@@ -90,4 +92,4 @@ class CommandHistory:
         last_action_list = action_list_pos == len(self.commands[command_pos].action_lists) - 1
         last_action = stop == -1
         if last_command and last_action_list and last_action:
-            action_list.async_action_lists = copy.deepcopy(self.async_action_lists)
+            action_list.async_action_lists = copy.copy(self.async_action_lists)

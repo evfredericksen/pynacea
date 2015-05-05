@@ -194,16 +194,17 @@ def get_number_string(line):
     return ' '.join(num_words)
 
 def convert_to_num(word):
-    if word in constants.NUMBERS_MAP:
-        return constants.NUMBERS_MAP[word]
     try:
-        num = float(word)
-        if int(num) - num == 0:
-            num = int(num)
-        return str(num)
-    except (ValueError, TypeError, IndexError):
-        return None
-
+        return _locals.NUMBERS_MAP[word]
+    except AttributeError:
+        try:
+            num = float(word)
+            if num.is_integer():
+                num = int(num)
+            return str(num)
+        except (ValueError, TypeError, IndexError):
+            return None
+        
 def list_to_rule_string(alist, homify=True):
     rule_list = []
     for word in alist:
@@ -225,14 +226,11 @@ def merge_strings(input_list):
     return new_list
 
 def get_sorted_grammars(contexts, grammar_dict):
-    if len(contexts) == 1:
-        return grammar_dict['']
     grammar_lists = []
-    for context in contexts:
-        try:
-            grammar_lists.extend(grammar_dict[context])
-        except KeyError:
-            pass
+    for current_context in contexts:
+        for saved_context in grammar_dict:
+            if saved_context in current_context:
+                grammar_lists.extend(grammar_dict[saved_context])
     grammar_lists.sort()
     return grammar_lists
 
@@ -256,3 +254,11 @@ def log_message(log_handler, level, message):
         handler_method(message)
     except AttributeError:
         pass
+
+def load_module(filename, root, abs_path):
+    depth = len(root.split('/')) - len(abs_path.split('/'))
+    index = -1 - depth
+    path = root.split(os.sep)[index:]
+    path.append(filename[:-3])
+    rel = '.'.join(path)
+    return __import__('pynhost.{}'.format(rel), fromlist=[abs_path])

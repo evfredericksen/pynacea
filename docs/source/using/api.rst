@@ -29,3 +29,10 @@ mouse_move
 ``mouse_move(x=None, y=None, relative=True)``
 
 Move the mouse to a given x, y cordinate. If relative is true, move the mouse relative to its currently location. Otherwise, move the mouse to an absolute position.
+
+mouse_click
+------------
+
+``mouse_click(button='left', direction='both', number='1')``
+
+Tell the operating system to click the mouse.

@@ -11,19 +11,13 @@ class GrammarHandler:
     def __init__(self):
         # grammar.app_context: [grammar instances with given app_content field]
         self.grammars = {}
-        self.async_grammars = {}
 
     def load_grammars(self):
         abs_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'grammars')
-        for root, dirs, files in os.walk(abs_path):
-            depth = len(root.split('/')) - len(abs_path.split('/')) 
+        for root, dirs, files in os.walk(abs_path): 
             for filename in files:
                 if filename.endswith('.py') and filename.replace('.', '').isalnum():
-                    index = -1 - depth
-                    path = root.split(os.sep)[index:]
-                    path.append(filename[:-3])
-                    rel = '.'.join(path)
-                    module = __import__('pynhost.{}'.format(rel), fromlist=[abs_path])
+                    module = utilities.load_module(filename, root, abs_path)
                     self.load_grammars_from_module(module)
         for context in self.grammars:
             self.grammars[context].sort()
@@ -36,24 +30,17 @@ class GrammarHandler:
             if len(class_hierarchy) > 2 and class_hierarchy[-2] == grammarbase.SharedGrammarBase:
                 grammar = member[1]()
                 grammar._initialize()
-                if class_hierarchy[-3] == grammarbase.GrammarBase:
-                    grammar_dict = self.grammars
-                elif class_hierarchy[-3] == grammarbase.AsyncGrammarBase:
-                    grammar_dict = self.async_grammars
                 try:
-                    grammar_dict[grammar.app_context].append(grammar)
+                    self.grammars[grammar.app_context].append(grammar)
                 except KeyError:
-                    grammar_dict[grammar.app_context] = [grammar]
+                    self.grammars[grammar.app_context] = [grammar]
 
-    def get_matching_grammars(self, async):
-        grammar_dict = self.grammars
-        if async:
-            grammar_dict = self.async_grammars
+    def get_matching_grammars(self):
         contexts = ['']
         open_window_name = platformhandler.get_open_window_name().lower()
         if open_window_name:
             contexts.append(open_window_name)
-        for grammar in utilities.get_sorted_grammars(contexts, grammar_dict):
+        for grammar in utilities.get_sorted_grammars(contexts, self.grammars):
             if grammar._check_grammar():
                 yield grammar
 
@@ -65,7 +52,8 @@ class GrammarHandler:
         contexts = self.get_contexts(action_list)
         for context in (c for c in contexts if c in self.grammars):
             for grammar in self.grammars[context]:
-                self.add_actions_to_grammar_recording_macros(grammar, action_list)
+                if isinstance(grammar, grammarbase.GrammarBase):
+                    self.add_actions_to_grammar_recording_macros(grammar, action_list)
 
     def add_actions_to_grammar_recording_macros(self, grammar, action_list):
         for name in grammar._recording_macros:

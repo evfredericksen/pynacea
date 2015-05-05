@@ -32,4 +32,5 @@ Using Pynacea
    using/actions
    using/modes
    using/api
+   using/macros
    using/async

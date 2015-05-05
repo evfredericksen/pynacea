@@ -1,5 +1,5 @@
 import types
-from pynhost import matching, api, dynamic, utilities
+from pynhost import matching, api, dynamic, utilities, grammarbase
 from pynhost.platforms import platformhandler
 
 class Command:
@@ -11,31 +11,32 @@ class Command:
     def set_results(self, gram_handler, rule_mode, log_handler):
         while self.remaining_words:
             action_list = ActionList(self)
-            rule_match = self.get_rule_match(gram_handler, False)
+            rule_match = self.get_rule_match(gram_handler)
             if rule_match is not None:
-                action_list.add_rule_match(rule_match, False)
-                gram_handler.add_actions_to_recording_macros(action_list)
-                self.remaining_words = rule_match.remaining_words
-                utilities.log_message(log_handler, 'info', 'Input matched rule {} '
-                    'in grammar {}'.format(rule_match.rule, rule_match.rule.grammar))
-            else:
-                rule_match = self.get_rule_match(gram_handler, True)
-                # async rule match
-                if rule_match is not None:
-                    action_list.add_rule_match(rule_match, True)
+                if isinstance(rule_match.rule.grammar, grammarbase.GrammarBase):
+                    action_list.add_rule_match(rule_match, False)
+                    gram_handler.add_actions_to_recording_macros(action_list)
                     self.remaining_words = rule_match.remaining_words
                     utilities.log_message(log_handler, 'info', 'Input matched rule {} '
-                    'in asynchronous grammar {}'.format(rule_match.rule, rule_match.rule.grammar))
+                        'in grammar {}'.format(rule_match.rule, rule_match.rule.grammar))
                 else:
-                    if not rule_mode:
-                        action_list.add_string(self.remaining_words[0])
-                        gram_handler.add_actions_to_recording_macros(action_list)
-                    self.remaining_words = self.remaining_words[1:]
+                    # async rule match
+                    if rule_match is not None:
+                        action_list.add_rule_match(rule_match, True)
+                        self.remaining_words = rule_match.remaining_words
+                        utilities.log_message(log_handler, 'info', 'Input matched rule {} '
+                        'in asynchronous grammar {}'.format(rule_match.rule, rule_match.rule.grammar))
+            else:
+                if not rule_mode:
+                    action_list.add_string(self.remaining_words[0])
+                    gram_handler.add_actions_to_recording_macros(action_list)
+                self.remaining_words = self.remaining_words[1:]
             if action_list.actions or action_list.async_action_lists['before'] or action_list.async_action_lists['after']:
+                # action_list.actions = utilities.merge_strings(action_list.actions)
                 self.action_lists.append(action_list)
 
-    def get_rule_match(self, gram_handler, async):
-        for grammar in gram_handler.get_matching_grammars(async):
+    def get_rule_match(self, gram_handler):
+        for grammar in gram_handler.get_matching_grammars():
             for rule in grammar._rules:
                 rule_match = matching.get_rule_match(rule,
                              self.remaining_words,

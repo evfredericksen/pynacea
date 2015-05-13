@@ -5,7 +5,7 @@ import logging
 from pynhost import utilities
 from pynhost import grammarhandler
 from pynhost import commands
-from pynhost import configmenu
+from pynhost import config
 from pynhost import engineio
 from pynhost import history
 from pynhost import constants
@@ -14,14 +14,8 @@ from pynhost import api
 def main():
     try:
         cl_arg_namespace = utilities.get_cl_args()
-        if cl_arg_namespace.config:
-            configmenu.launch_config_menu()
-            return
+        log_handler = utilities.create_logging_handler(cl_arg_namespace.verbal_feedback)
         engine_handler = engineio.get_engine_handler(cl_arg_namespace)
-        log_file, log_level = utilities.get_logging_config()
-        log_handler = None
-        if None not in (log_file, log_level):
-            log_handler = utilities.create_logging_handler(log_file, log_level, cl_arg_namespace.verbal_feedback)
         gram_handler = grammarhandler.GrammarHandler()
         print('Loading grammars...')
         gram_handler.load_grammars()

@@ -3,7 +3,7 @@ import os
 import sys
 import time
 from pynhost.platforms import platformhandler
-from pynhost import utilities
+from pynhost import utilities, config
 
 class SphinxHandler:
     def __init__(self):
@@ -13,13 +13,13 @@ class SphinxHandler:
     def get_lines(self):
         full_command = ['pocketsphinx_continuous']
         commands = {
-            '-hmm': 'hmm_directory',
-            '-lm': 'lm_filename',
-            '-dict': 'dictionary',
+            '-hmm': 'sphinx hmm_directory',
+            '-lm': 'sphinx lm_filename',
+            '-dict': 'sphinx dictionary',
         }
         for cmd, config_name in commands.items():
-            setting = utilities.get_config_setting('sphinx', config_name)
-            if setting is not '_':
+            setting = config.settings[config_name]
+            if setting is not None:
                 full_command.extend([cmd, setting])
         null = open(os.devnull)
         with subprocess.Popen(full_command, stdout=subprocess.PIPE, stderr=null,
@@ -57,6 +57,29 @@ class SharedDirectoryHandler:
             line_list.append(new_word)
         return ' '.join(line_list)
 
+class Sapi5Handler:
+    def __init__(self,):
+        pass
+
+    def get_lines(self):
+        lines = utilities.get_buffer_lines(self.shared_dir)
+        for line in lines:
+            if self.filter_on:
+                line = self.filter_duplicate_letters(line)
+            yield line
+
+    def filter_duplicate_letters(self, line):
+        line_list = []
+        for word in line.split():
+            new_word = ''
+            for i, char in enumerate(word):
+                if (char.islower() or i in [0, len(word) - 1] or
+                    char.lower() != word[i + 1] or
+                    not char.isalpha()):
+                    new_word += char
+            line_list.append(new_word)
+        return ' '.join(line_list)
+
 class DebugHandler:
     def __init__(self, delay):
         self.delay = delay
@@ -73,7 +96,8 @@ def get_engine_handler(cl_arg_namespace):
         return DebugHandler(cl_arg_namespace.debug_delay)
     handler_dict = {
         'sphinx': SphinxHandler,
-        'shared_dir': SharedDirectoryHandler,
+        'directory': SharedDirectoryHandler,
+        'sapi5': Sapi5Handler,
     }
-    handler = handler_dict[utilities.get_config_setting('local', 'input_format')]()
-    return handler
+    handler = config.settings['input source']
+    return handler_dict[handler]()

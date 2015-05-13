@@ -4,20 +4,6 @@ import os
 here = os.path.abspath(os.path.dirname(__file__))
 import sys
 
-def get_windows_df_path():
-	p = os.getenv('APPDATA')
-	if p is None:
-		p = os.path.join('c\\', 'pynacea')
-	return p
-
-df = {
-	'linux': os.path.join(os.sep, 'usr', 'local', 'etc', 'pynacea'),
-	'win32': get_windows_df_path(),
-}
-
-def get_data_files_dir():
-	return df[sys.platform]
-
 setup(
 	name='pynhost',
 	version='0.5.0',
@@ -42,7 +28,6 @@ setup(
 		'pynhost': 'pynhost',
 	},
 	install_requires=[],
-	data_files=[(df[sys.platform], ['pynhost.ini'])],
 	scripts = ['scripts/pynacea.py'],
 	include_package_data = True,
 	long_description = '''\

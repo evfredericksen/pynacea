@@ -8,7 +8,7 @@ import copy
 import pynhost
 import logging
 from logging.handlers import RotatingFileHandler
-from pynhost import constants
+from pynhost import constants, config
 try:
     from pynhost.grammars import _locals
 except ImportError:
@@ -43,61 +43,27 @@ def get_shared_directory():
         os.mkdirs(buffer_dir)
     return buffer_dir
 
-def get_config_file():
-    app_data_dir = os.getenv('APPDATA')
-    paths = {
-        'win32': [
-            os.path.join('c\\', 'pynacea', constants.CONFIG_FILE_NAME),
-        ],
-        'linux': (
-            os.path.join(os.path.sep, 'usr', 'local', 'etc', constants.CONFIG_FILE_NAME),
-        )
-    }
-    if app_data_dir is not None:
-        paths['win32'].insert(0, os.path.join(app_data_dir, constants.CONFIG_FILE_NAME))
-    for p in paths[sys.platform]:
-        if os.path.isfile(p):
-            return p
-    raise RuntimeError('could not locate config file')
-
-def get_config_setting(title, setting):
-    config = configparser.ConfigParser()
-    config.read(get_config_file())
-    return(config[title][setting])
-    
-def save_config_setting(title, setting, value):
-    config = configparser.ConfigParser()
-    config.read(get_config_file())
-    config[title][setting] = value
-    with open(get_config_file(), 'w') as configfile:
-        config.write(configfile)
-
 def get_cl_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', "--config", help="Configuration Menu", action='store_true')
     parser.add_argument('-d', "--debug", help="Enable text input for grammar debugging",
         action='store_true')
     parser.add_argument("--debug_delay", help="Delay (seconds) in debug mode between text being entered and run",
         type=check_negative, default=4)
-    parser.add_argument("--logging_file", help="Log file path for Pynacea",
-        default=None)
-    parser.add_argument("--logging_level", help="Logging level for Pynacea")
     parser.add_argument('-v', "--verbal_feedback", help="Print logging messages to console", action='store_true')
+    parser.add_argument('-p', '--permissive_mode', 'Ignore errors when executing Grammar actions', action='store_true')
     return parser.parse_args()
 
 def get_logging_config():
     try:
-        log_file = get_config_setting('logging', 'logging_file')
-        log_level = get_config_setting('logging', 'logging_level')
-        if log_file.lower() == 'default':
-            log_file = constants.DEFAULT_LOGGING_FILE
-            if not os.path.isfile(constants.DEFAULT_LOGGING_FILE):
-                with open(constants.DEFAULT_LOGGING_FILE, 'w') as f:
-                    pass
-        if log_level.lower() in constants.LOGGING_LEVELS:
+        if (config.settings['logging filename'] == constants.DEFAULT_LOGGING_FILE and
+            not os.path.isfile(config.settings['logging filename'])):
+            with open(config.settings['logging filename'], 'w') as f:
+                pass
+        log_level = config.settings['logging level']
+        if isinstance(log_level, str) and log_level.lower() in constants.LOGGING_LEVELS:
             log_level = constants.LOGGING_LEVELS[log_level.lower()]
-            return log_file, int(log_level)
-    except:
+        return config.settings['logging filename'], int(log_level)
+    except KeyError:
         return None, None
 
 def get_tags(pieces, tag_name, matches=None):
@@ -234,15 +200,16 @@ def get_sorted_grammars(contexts, grammar_dict):
     grammar_lists.sort()
     return grammar_lists
 
-def create_logging_handler(filename, level, verbal_mode):   
+def create_logging_handler(verbal_mode):
+    log_file, log_level = get_logging_config()
+    print(log_file, log_level)
     log_formatter = logging.Formatter('%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s')
-    logFile = filename
-    my_handler = RotatingFileHandler(logFile, mode='a', maxBytes=5*1024*1024, 
+    my_handler = RotatingFileHandler(log_file, mode='a', maxBytes=5*1024*1024, 
                                      backupCount=2, encoding=None, delay=0)
     my_handler.setFormatter(log_formatter)
-    my_handler.setLevel(level)
+    my_handler.setLevel(log_level)
     app_log = logging.getLogger('root')
-    app_log.setLevel(level)
+    app_log.setLevel(log_level)
     app_log.addHandler(my_handler)
     if verbal_mode:
         app_log.addHandler(logging.StreamHandler(sys.stdout))

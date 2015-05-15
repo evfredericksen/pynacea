@@ -36,13 +36,6 @@ def clear_directory(dir_name):
             except FileNotFoundError:
                 pass
 
-def get_shared_directory():
-    package_dir = os.path.dirname((os.path.abspath(pynhost.__file__)))
-    buffer_dir = os.path.join(package_dir, 'pynportal')
-    if not os.path.isdir(buffer_dir):
-        os.mkdirs(buffer_dir)
-    return buffer_dir
-
 def get_cl_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', "--debug", help="Enable text input for grammar debugging",
@@ -50,19 +43,21 @@ def get_cl_args():
     parser.add_argument("--debug_delay", help="Delay (seconds) in debug mode between text being entered and run",
         type=check_negative, default=4)
     parser.add_argument('-v', "--verbal_feedback", help="Print logging messages to console", action='store_true')
-    parser.add_argument('-p', '--permissive_mode', 'Ignore errors when executing Grammar actions', action='store_true')
+    parser.add_argument('-p', '--permissive_mode', help='Ignore errors when executing Grammar actions', action='store_true')
     return parser.parse_args()
 
 def get_logging_config():
     try:
-        if (config.settings['logging filename'] == constants.DEFAULT_LOGGING_FILE and
-            not os.path.isfile(config.settings['logging filename'])):
-            with open(config.settings['logging filename'], 'w') as f:
+        log_file = os.path.join(config.settings['logging directory'], 'pynacea.log')
+        if not os.path.exists(config.settings['logging directory']):
+            os.makedirs(config.settings['logging directory'])
+        if not os.path.exists(log_file):
+            with open(log_file, 'w') as f:
                 pass
         log_level = config.settings['logging level']
         if isinstance(log_level, str) and log_level.lower() in constants.LOGGING_LEVELS:
             log_level = constants.LOGGING_LEVELS[log_level.lower()]
-        return config.settings['logging filename'], int(log_level)
+        return log_file, int(log_level)
     except KeyError:
         return None, None
 
@@ -132,7 +127,7 @@ def reinsert_filtered_words(words, filtered_positions):
             words.append(filtered_positions[i])
         else:
             words.insert(index, filtered_positions[i])
-    return words 
+    return words
 
 def check_negative(value):
     e = argparse.ArgumentTypeError('{} is an invalid non-negative float value'.format(value))
@@ -170,7 +165,7 @@ def convert_to_num(word):
             return str(num)
         except (ValueError, TypeError, IndexError):
             return None
-        
+
 def list_to_rule_string(alist, homify=True):
     rule_list = []
     for word in alist:
@@ -202,9 +197,8 @@ def get_sorted_grammars(contexts, grammar_dict):
 
 def create_logging_handler(verbal_mode):
     log_file, log_level = get_logging_config()
-    print(log_file, log_level)
     log_formatter = logging.Formatter('%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s')
-    my_handler = RotatingFileHandler(log_file, mode='a', maxBytes=5*1024*1024, 
+    my_handler = RotatingFileHandler(log_file, mode='a', maxBytes=5*1024*1024,
                                      backupCount=2, encoding=None, delay=0)
     my_handler.setFormatter(log_formatter)
     my_handler.setLevel(log_level)

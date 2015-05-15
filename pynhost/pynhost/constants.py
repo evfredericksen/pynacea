@@ -2,7 +2,9 @@ import os
 import logging
 import pynhost
 
-DEFAULT_LOGGING_FILE = os.path.join(os.path.dirname(pynhost.__file__), 'logs', 'pynacea.log')
+DEFAULT_LOGGING_DIRECTORY = os.path.join(os.path.dirname(pynhost.__file__), 'logs')
+
+DEFAULT_INPUT_SOURCE = os.path.join(os.path.dirname((os.path.abspath(pynhost.__file__))), 'pynportal')
 
 LOGGING_LEVELS = {
     'off': logging.NOTSET,

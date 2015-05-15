@@ -2,18 +2,10 @@
 Collection of Windows-specific I/O functions
 '''
 
-import subprocess
-import os
-import shutil
-import re
-import sys
 import msvcrt
-import copy
 import time
 import win32gui
 import win32api, win32con
-import pynhost
-from pynhost import constants
 from pynhost.platforms import winconstants
 
 def flush_io_buffer():
@@ -47,7 +39,7 @@ def press_key(key_input):
     win32api.keybd_event(char_int, 0, 0, 0)
     win32api.keybd_event(char_int, 0, win32con.KEYEVENTF_KEYUP, 0)
     if press_shift:
-        win32api.keybd_event(winconstants.WINDOWS_KEYCODES['shift'], 0, win32con.KEYEVENTF_KEYUP, 0)            
+        win32api.keybd_event(winconstants.WINDOWS_KEYCODES['shift'], 0, win32con.KEYEVENTF_KEYUP, 0)
 
 def press_key_combination(keys):
     for key_stroke in keys:

@@ -77,7 +77,7 @@ class ActionList:
                 self.async_action_lists['before'] = handled_actions
             if rule_match.rule.grammar.settings['timing'] in ('after', 'both'):
                 self.async_action_lists['after'] = handled_actions
-            assert self.async_action_lists['before'] or self.async_action_lists['after']            
+            assert self.async_action_lists['before'] or self.async_action_lists['after']
         self.rule_match = rule_match
 
     def add_string(self, text):
@@ -96,7 +96,7 @@ class ActionList:
         for action in self.actions:
             if not isinstance(action, int):
                 return True
-        return False      
+        return False
 
     def __str__(self):
         return '<ActionList matching words {}>'.format(' '.join(self.matched_words))

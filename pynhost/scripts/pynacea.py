@@ -41,8 +41,14 @@ def main():
                     continue
                 utilities.log_message(log_handler, 'info', 'Received input "{}"'.format(line))
                 current_command = commands.Command(line.split(' '))
-                current_command.set_results(gram_handler, mode_status['rule mode'], log_handler)
-                command_history.run_command(current_command)
+                try:
+                    current_command.set_results(gram_handler, mode_status['rule mode'], log_handler)
+                    command_history.run_command(current_command)
+                except Exception as e:
+                    if cl_arg_namespace.permissive_mode:
+                        utilities.log_message(log_handler, 'exception', e)
+                    else:
+                        raise e
             time.sleep(constants.MAIN_LOOP_DELAY)
     except Exception as e:
         utilities.log_message(log_handler, 'exception', e)

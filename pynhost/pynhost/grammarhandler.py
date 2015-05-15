@@ -25,7 +25,7 @@ class GrammarHandler:
     def load_grammars_from_module(self, module):
         clsmembers = inspect.getmembers(sys.modules[module.__name__], inspect.isclass)
         for member in clsmembers:
-            # screen for objects with obj.GrammarBase ancestor
+            # screen for objects with grammarbase.SharedGrammarBase ancestor
             class_hierarchy = inspect.getmro(member[1])
             if len(class_hierarchy) > 2 and class_hierarchy[-2] == grammarbase.SharedGrammarBase:
                 grammar = member[1]()

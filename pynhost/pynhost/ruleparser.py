@@ -92,7 +92,7 @@ def convert_to_regex_pattern(rule_string):
             if word and rule_string[i + 1] not in '|>)]' and rule_string[i - 1] not in '(<[|]>)':
                 regex_pattern += '{} '.format(word)
                 word = ''
-        elif char in '.+?*':
+        elif char in '.+?*-':
             word += '\\{}'.format(char)
         else:
             word += char

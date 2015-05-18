@@ -2,7 +2,6 @@ import subprocess
 import os
 import sys
 import time
-from pynhost.engines import sapi5
 from pynhost.platforms import platformhandler
 from pynhost import utilities, config
 

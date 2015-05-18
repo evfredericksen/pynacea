@@ -1,4 +1,4 @@
-from pynhost import ruleparser, dynamic
+from pynhost import ruleparser, dynamic, utilities
 
 class SharedGrammarBase:
     def __init__(self):
@@ -7,19 +7,19 @@ class SharedGrammarBase:
         self.settings = {
             'regex mode': False,
             'filtered words': [],
+            'priority': 0,
         }
+        self.context_filters = {}
         # no touchy
         self._rules = []
-
-    def _initialize(self):
-        self._set_rules()
-        self.app_context = self.app_context.lower()
 
     def __lt__(self, other):
         return self.settings['priority'] < other.settings['priority']
 
-    def _check_grammar(self):
-        return True
+    def _change_global_context(self, context, value):
+        self._handler.process_contexts[context] = value        
+        # recalculate active grammars
+        self._handler.set_active_grammars()
 
     def _set_rules(self):
         for rule_text, actions in self.mapping.items():
@@ -29,7 +29,6 @@ class SharedGrammarBase:
 class GrammarBase(SharedGrammarBase):
     def __init__(self):
         super().__init__()
-        self.settings['priority'] = 0
         self._recording_macros = {}
 
     def _begin_recording_macro(self, rule_name):

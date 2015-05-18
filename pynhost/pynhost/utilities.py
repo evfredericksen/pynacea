@@ -186,15 +186,6 @@ def merge_strings(input_list):
             new_list.append(ele)
     return new_list
 
-def get_sorted_grammars(contexts, grammar_dict):
-    grammar_lists = []
-    for current_context in contexts:
-        for saved_context in grammar_dict:
-            if saved_context in current_context:
-                grammar_lists.extend(grammar_dict[saved_context])
-    grammar_lists.sort()
-    return grammar_lists
-
 def create_logging_handler(verbal_mode):
     log_file, log_level = get_logging_config()
     log_formatter = logging.Formatter('%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s')
@@ -223,3 +214,17 @@ def load_module(filename, root, abs_path):
     path.append(filename[:-3])
     rel = '.'.join(path)
     return __import__('pynhost.{}'.format(rel), fromlist=[abs_path])
+
+def dict_subset(dict1, dict2):
+    for k in dict1:
+        if k in dict2 and dict1[k] != dict2[k]:
+            return False
+    return True
+
+def filter_grammar_list(grammar_list, filter_dict):
+    active_list = []
+    for grammar in grammar_list:
+        if dict_subset(grammar.context_filters, filter_dict):
+            active_list.append(grammar)
+    return active_list
+

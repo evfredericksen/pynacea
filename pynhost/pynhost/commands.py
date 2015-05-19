@@ -17,8 +17,8 @@ class Command:
                     action_list.add_rule_match(rule_match, False)
                     gram_handler.add_actions_to_recording_macros(action_list)
                     self.remaining_words = rule_match.remaining_words
-                    utilities.log_message(log_handler, 'info', 'Input matched rule {} '
-                        'in grammar {}'.format(rule_match.rule, rule_match.rule.grammar))
+                    utilities.log_message(log_handler, 'info', 'Input "{}" matched rule {} '
+                        'in grammar {}'.format(' '.join(rule_match.matched_words), rule_match.rule, rule_match.rule.grammar))
                 else:
                     # async rule match
                     if rule_match is not None:

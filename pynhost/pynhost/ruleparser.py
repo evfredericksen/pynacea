@@ -28,10 +28,11 @@ class Rule:
             actions = [actions]
         self.actions = actions
         self.raw_text = raw_text
+        self.groups = {}
         if regex_mode:
             self.compiled_regex = re.compile(raw_text)
         else:
-            self.compiled_regex = re.compile(convert_to_regex_pattern(raw_text))
+            self.compiled_regex = re.compile(self.convert_to_regex_pattern(raw_text))
         self.grammar = grammar
 
     def __str__(self):
@@ -40,66 +41,66 @@ class Rule:
     def __repr__(self):
         return '<Rule: {}>'.format(self.raw_text)
 
-def convert_to_regex_pattern(rule_string):
-    regex_pattern = ''
-    tag = ''
-    word = ''
-    stack = []
-    rule_string = ' '.join(rule_string.strip().split())
-    group_num = 0
-    for i, char in enumerate(rule_string):
-        if stack and stack[-1] == '<':
-            tag += char
-            if char == '>':
-                if re.match(r'<hom_.+>', tag) and not (hasattr(_locals, 'HOMOPHONES') and
-                tag[5:-1] in _locals.HOMOPHONES and _locals.HOMOPHONES[tag[5:-1]]):
-                    regex_pattern += tag[5:-1] + ' '
-                else:
-                    if tag == '<num>' or re.match(r'<hom_.+>', tag):
-                        group_num += 1
-                    if re.match(REP_PATTERN, tag):
-                        regex_pattern = surround_previous_word(regex_pattern)
-                    regex_pattern += token_to_regex(tag, group_num, rule_string)
-                tag = ''
-                word = ''
-                stack.pop()
-            continue
-        if char in '([<':
-            if word:
-                regex_pattern += '{} '.format(word)
-            word = ''
-            stack.append(char)
-            if char == '<':
-                tag = '<'
+    def convert_to_regex_pattern(self, rule_string):
+        regex_pattern = ''
+        tag = ''
+        word = ''
+        stack = []
+        rule_string = ' '.join(rule_string.strip().split())
+        group_num = 0
+        for i, char in enumerate(rule_string):
+            if stack and stack[-1] == '<':
+                tag += char
+                if char == '>':
+                    if re.match(r'<hom_.+>', tag) and not (hasattr(_locals, 'HOMOPHONES') and
+                    tag[5:-1] in _locals.HOMOPHONES and _locals.HOMOPHONES[tag[5:-1]]):
+                        regex_pattern += tag[5:-1] + ' '
+                    else:
+                        if tag == '<num>' or re.match(r'<hom_.+>', tag):
+                            group_num += 1
+                        if re.match(REP_PATTERN, tag):
+                            regex_pattern = surround_previous_word(regex_pattern)
+                        regex_pattern += token_to_regex(tag, group_num, rule_string, self.groups)
+                    tag = ''
+                    word = ''
+                    stack.pop()
                 continue
-            regex_pattern += '('
-            tag = char
-        elif char in ')]':
-            stack.pop()
-            if word:
-                word += ' '
-            if char == ']':
-                char = ')?'
-            regex_pattern += word + char
-            word = ''
-        elif char == '|':
-            if word:
-                regex_pattern += '{} |'.format(word)
+            if char in '([<':
+                if word:
+                    regex_pattern += '{} '.format(word)
                 word = ''
+                stack.append(char)
+                if char == '<':
+                    tag = '<'
+                    continue
+                regex_pattern += '('
+                tag = char
+            elif char in ')]':
+                stack.pop()
+                if word:
+                    word += ' '
+                if char == ']':
+                    char = ')?'
+                regex_pattern += word + char
+                word = ''
+            elif char == '|':
+                if word:
+                    regex_pattern += '{} |'.format(word)
+                    word = ''
+                else:
+                    regex_pattern += '|'
+            elif char == ' ':
+                if word and rule_string[i + 1] not in '|>)]' and rule_string[i - 1] not in '(<[|]>)':
+                    regex_pattern += '{} '.format(word)
+                    word = ''
+            elif char in '.+?*-':
+                word += '\\{}'.format(char)
             else:
-                regex_pattern += '|'
-        elif char == ' ':
-            if word and rule_string[i + 1] not in '|>)]' and rule_string[i - 1] not in '(<[|]>)':
-                regex_pattern += '{} '.format(word)
-                word = ''
-        elif char in '.+?*-':
-            word += '\\{}'.format(char)
-        else:
-            word += char
-    if word:
-         regex_pattern += '{} '.format(word)
-    assert not stack
-    return regex_pattern
+                word += char
+        if word:
+             regex_pattern += '{} '.format(word)
+        assert not stack
+        return regex_pattern
 
 def regex_string_from_list(input_list, token):
     if not input_list:
@@ -154,7 +155,7 @@ def set_num_range_pattern(start, stop, group_num):
     istart, istop = int(start), int(stop)
     if not istart < istop:
         raise ValueError('start must be lower than stop in num range')
-    pattern_list = ['?P<n{}num>'.format(group_num) + ' |'.join(regex_range.regex_for_range(istart, istop).split('|'))]
+    pattern_list = ['?P<n{}>'.format(group_num) + ' |'.join(regex_range.regex_for_range(istart, istop).split('|'))]
     if not hasattr(_locals, 'NUMBERS_MAP'):
         return '({})'.format(pattern_list[0])
     for word in sorted(_locals.NUMBERS_MAP):
@@ -164,15 +165,16 @@ def set_num_range_pattern(start, stop, group_num):
     return '({})'.format(' |'.join(pattern_list))
 
 
-def token_to_regex(token, group_num, rule_string):
+def token_to_regex(token, group_num, rule_string, groups):
     if token == '<start>':
         return '^'
     elif token == '<end>':
         return '$'
     elif token == '<num>':
+        groups['n{}'.format(group_num)] = ''
         if not hasattr(_locals, 'NUMBERS_MAP'):
-            return r'(?P<n{}num>-?\d+(\.d+)? )'.format(group_num)
-        return regex_string_from_list(sorted(_locals.NUMBERS_MAP), r'?P<n{}num>(-?\d+(\.\d+)?)'.format(group_num))
+            return r'(?P<n{}>-?\d+(\.d+)? )'.format(group_num)
+        return regex_string_from_list(sorted(_locals.NUMBERS_MAP), r'?P<n{}>(-?\d+(\.\d+)?)'.format(group_num))
     # number range behaves similar to python. inclusive for start,
     # exclusive for stop. start defaults to 0 if no value given
     elif re.match(SINGLE_NUM_RANGE_PATTERN, token):
@@ -188,7 +190,8 @@ def token_to_regex(token, group_num, rule_string):
         return '{' + '{},{}'.format(split_tag[0], split_tag[1]) + '}'
     elif re.match(r'<hom_.+>', token):
         token = token[5:-1]
-        return regex_string_from_list(sorted(_locals.HOMOPHONES[token]), '?P<n{0}hom_{1}>{1}'.format(group_num, token))
+        groups['h{}'.format(group_num)] = token
+        return regex_string_from_list(sorted(_locals.HOMOPHONES[token]), '?P<n{0}>{1}'.format(group_num, token))
     elif token == '<any>':
         return r'([^()<>|[\] ]+ )'
     raise ValueError("invalid token '{}' for rule string '{}'".format(token, rule_string))

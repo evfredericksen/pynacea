@@ -12,10 +12,6 @@ class RuleMatch:
         self.matched_words = matched
         self.remaining_words = remaining
         self.nums = nums
-        self.groups = {
-            'homs': [],
-            'nums': [],
-        }
 
 def get_rule_match(rule, words, filter_list=None):
     if filter_list is None:
@@ -26,6 +22,7 @@ def get_rule_match(rule, words, filter_list=None):
     if regex_match is not None:
         raw_results = regex_match.group()
         matched = replace_values(regex_match)
+        matched2 = replace_values2(regex_match, rule.groups)
         nums = get_numbers(regex_match)
         if len(raw_results) > len(' '.join(words)):
             remaining_words = []
@@ -34,6 +31,18 @@ def get_rule_match(rule, words, filter_list=None):
         remaining_words = utilities.reinsert_filtered_words(
             remaining_words, filtered_positions)
         return RuleMatch(rule, matched, remaining_words, nums)
+
+def replace_values2(regex_match, groups):
+    print(regex_match.groupdict(), groups)
+    print(regex_match.span('n2'))
+    span_dict = {}
+    for k, v in regex_match.groupdict().items():
+        if v is None:
+            continue
+        span_dict[k] = regex_match.span(k)
+    print(span_dict)
+    for char in regex_match.group()[:-1]:
+        print('char', char)
 
 def replace_values(regex_match):
     pos = 0

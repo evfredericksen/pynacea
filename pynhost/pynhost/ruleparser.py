@@ -190,7 +190,7 @@ def token_to_regex(token, group_num, rule_string, groups):
         return '{' + '{},{}'.format(split_tag[0], split_tag[1]) + '}'
     elif re.match(r'<hom_.+>', token):
         token = token[5:-1]
-        groups['h{}'.format(group_num)] = token
+        groups['n{}'.format(group_num)] = token
         return regex_string_from_list(sorted(_locals.HOMOPHONES[token]), '?P<n{0}>{1}'.format(group_num, token))
     elif token == '<any>':
         return r'([^()<>|[\] ]+ )'

@@ -21,9 +21,9 @@ def get_rule_match(rule, words, filter_list=None):
     regex_match = rule.compiled_regex.match(' '.join(words) + ' ')
     if regex_match is not None:
         raw_results = regex_match.group()
-        matched = replace_values(regex_match)
-        matched2 = replace_values2(regex_match, rule.groups)
-        nums = get_numbers(regex_match)
+        group_dict = regex_match.groupdict()
+        matched = replace_values(regex_match, group_dict, rule.groups)
+        nums = get_numbers(regex_match, group_dict, rule.groups)
         if len(raw_results) > len(' '.join(words)):
             remaining_words = []
         else:
@@ -32,95 +32,42 @@ def get_rule_match(rule, words, filter_list=None):
             remaining_words, filtered_positions)
         return RuleMatch(rule, matched, remaining_words, nums)
 
-def replace_values2(regex_match, groups):
-    print(regex_match.groupdict(), groups)
-    print(regex_match.span('n2'))
-    span_dict = {}
-    for k, v in regex_match.groupdict().items():
-        if v is None:
-            continue
-        span_dict[k] = regex_match.span(k)
-    print(span_dict)
-    for char in regex_match.group()[:-1]:
-        print('char', char)
-
-def replace_values(regex_match):
-    pos = 0
-    matched = []
+def replace_values(regex_match, group_dict, new_word_dict):
     raw_text = regex_match.group()[:-1]
-    for word, value in get_sorted_group_dict(regex_match).items():
-        value = value.rstrip()
-        span = regex_match.span(word)
-        while pos < span[0]:
-            if raw_text[pos] == ' ':
-                matched.append('')
-            else:
-                if not matched:
-                    matched.append(raw_text[pos])
-                else:
-                    matched[-1] += raw_text[pos]
-            pos += 1
-        n = get_last_consec_digit(1, word) + 1
-        if word[n:n + 3] == 'num':
-            if not (hasattr(_locals, 'NUMBERS_MAP') and value in _locals.NUMBERS_MAP):
-                add_or_append(value, matched)
-            else:
-                add_or_append(_locals.NUMBERS_MAP[value], matched)
-        else: # homophones
-            # handle n followed by 2+ digits
-            if word[n:n + 4] == 'hom_':
-                add_or_append(word[n + 4:], matched)
-        pos = span[1]
-        if pos + 1 < len(raw_text):
-            matched.append('')
-    if not matched:
+    span_dict = make_span_dict(regex_match, group_dict)
+    if not span_dict:
         return raw_text.split()
-    if pos < len(raw_text):
-        matched.append('')
-    while pos < len(raw_text):
-        if raw_text[pos] == ' ':
-            matched.append('')
-        else:
-            matched[-1] += raw_text[pos]
-        pos += 1
-    return [ele.strip() for ele in matched if ele]
+    start = 0
+    word_str = ''
+    for group_name, span in sorted(span_dict.items()):
+        word_str += raw_text[start: span[0]]
+        start = span[1]
+        word_str += get_replace_word(group_dict, new_word_dict, 'n{}'.format(group_name))
+    word_str += raw_text[start: len(raw_text) + 1]
+    return word_str.split()
 
-def get_numbers(regex_match):
+def get_replace_word(group_dict, new_word_dict, key):
+    if new_word_dict[key]:
+        if group_dict[key][-1] == ' ':
+            return new_word_dict[key] + ' '
+        return new_word_dict[key]
+    # otherwise we have a number
+    return utilities.get_number_string(group_dict[key])
+        
+def get_numbers(regex_match, group_dict, new_word_dict):
     nums = []
-    numdict = regex_match.groupdict()
-    for word in sorted(numdict):
-        if word[2:] == 'num' and numdict[word] is not None:
-            num = numdict[word].rstrip()
-            if hasattr(_locals, 'NUMBERS_MAP') and num in _locals.NUMBERS_MAP:
-                nums.append(_locals.NUMBERS_MAP[num])
-            else:
-                nums.append(num)
+    span_dict = make_span_dict(regex_match, group_dict) 
+    for word in sorted(span_dict):
+        key = 'n{}'.format(word)
+        if not new_word_dict[key]:
+            nums.append(utilities.get_number_string(group_dict[key]))
+    print('sdf', nums)
     return nums
 
-def add_or_append(value, alist):
-    if not alist or alist[-1]:
-        alist.append(value)
-    else:
-        alist[-1] = value
-
-def get_sorted_group_dict(regex_match):
-    nums = []
-    keys = []
-    d = regex_match.groupdict()
-    for k, v in d.items():
-        if v is not None:
-            keys.append(k)
-            pos = get_last_consec_digit(1, k) + 1
-            nums.append(int(k[1:pos]))
-    sorted_dict = collections.OrderedDict()
-    if keys:
-        sorted_keys = [list(x) for x in zip(*sorted(zip(nums, keys), key=lambda pair: pair[0]))][1]
-        for k in sorted_keys:
-            sorted_dict[k] = d[k]
-    return sorted_dict
-
-def get_last_consec_digit(start, input_str):
-    assert input_str[start].isdigit()
-    while start < len(input_str) and input_str[start].isdigit():
-        start += 1
-    return start - 1
+def make_span_dict(regex_match, group_dict):
+    span_dict = {}
+    for k, v in group_dict.items():
+        if v is None:
+            continue
+        span_dict[int(k[1:])] = regex_match.span(k)
+    return span_dict

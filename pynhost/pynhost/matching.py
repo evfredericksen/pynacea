@@ -61,7 +61,6 @@ def get_numbers(regex_match, group_dict, new_word_dict):
         key = 'n{}'.format(word)
         if not new_word_dict[key]:
             nums.append(utilities.get_number_string(group_dict[key]))
-    print('sdf', nums)
     return nums
 
 def make_span_dict(regex_match, group_dict):

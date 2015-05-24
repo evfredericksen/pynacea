@@ -80,29 +80,6 @@ def split_into_words(list_of_strings):
             words.extend(string.split(' '))
     return words
 
-def get_new_status(current_status, words):
-    new_status = copy.copy(current_status)
-    matched_pattern = False
-    patterns = {
-        'BEGIN_SLEEP_MODE_PATTERNS': {'opposite': 'END_SLEEP_MODE_PATTERNS', 'name': 'sleep mode'},
-        'BEGIN_DICTATION_MODE_PATTERNS': {'opposite': 'END_DICTATION_MODE_PATTERNS', 'name': 'dictation mode'},
-        'BEGIN_NUMBER_MODE_PATTERNS': {'opposite': 'END_NUMBER_MODE_PATTERNS', 'name': 'number mode'},
-        'BEGIN_RULE_MODE_PATTERNS': {'opposite': 'END_RULE_MODE_PATTERNS', 'name': 'rule mode'},
-    }
-    for p in patterns:
-        result1, result2 = False, False
-        if hasattr(_locals, p):
-            result1 = string_in_list_of_patterns(words, getattr(_locals, p))
-        if hasattr(_locals, patterns[p]['opposite']):
-            result2 = string_in_list_of_patterns(words, getattr(_locals, patterns[p]['opposite']))
-        if True in (result1, result2):
-            matched_pattern = True
-        if result1 and not result2:
-            new_status[patterns[p]['name']] = True
-        elif not result1 and result2:
-            new_status[patterns[p]['name']] = False
-    return new_status, matched_pattern
-
 def string_in_list_of_patterns(test_string, list_of_patterns):
     for pattern in list_of_patterns:
         if re.match(pattern, test_string, re.IGNORECASE):

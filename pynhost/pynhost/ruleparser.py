@@ -6,9 +6,11 @@ try:
 except ImportError:
     _locals = None
 
-REP_PATTERN = r'<\d+(-\d?)?>'
-SINGLE_NUM_RANGE_PATTERN = r'<num_-?\d+>'
-DOUBLE_NUM_RANGE_PATTERN = r'<num_-?\d+_-?\d+>'
+REP_PATTERN = re.compile(r'<\d+(-\d?)?>')
+HOM_PATTERN = re.compile(r'<hom_.+>')
+SINGLE_NUM_RANGE_PATTERN = re.compile(r'<num_-?\d+>')
+DOUBLE_NUM_RANGE_PATTERN = re.compile(r'<num_-?\d+_-?\d+>')
+
 
 class Rule:
     def __init__(self, raw_text, actions=None, grammar=None, regex_mode=False):
@@ -40,15 +42,15 @@ class Rule:
             if stack and stack[-1] == '<':
                 tag += char
                 if char == '>':
-                    if re.match(r'<hom_.+>', tag) and not (hasattr(_locals, 'HOMOPHONES') and
+                    if HOM_PATTERN.match(tag) and not (hasattr(_locals, 'HOMOPHONES') and
                     tag[5:-1] in _locals.HOMOPHONES and _locals.HOMOPHONES[tag[5:-1]]):
                         regex_pattern += tag[5:-1] + ' '
                     else:
                         if (tag == '<num>' or re.match(r'<hom_.+>', tag) or
-                            re.match(SINGLE_NUM_RANGE_PATTERN, tag) or
-                            re.match(DOUBLE_NUM_RANGE_PATTERN, tag)):
+                            SINGLE_NUM_RANGE_PATTERN.match(tag) or
+                            DOUBLE_NUM_RANGE_PATTERN.match(tag)):
                             group_num += 1
-                        if re.match(REP_PATTERN, tag):
+                        if REP_PATTERN.match(tag):
                             regex_pattern = surround_previous_word(regex_pattern)
                         regex_pattern += token_to_regex(tag, group_num, rule_string, self.groups)
                     tag = ''
@@ -162,12 +164,12 @@ def token_to_regex(token, group_num, rule_string, groups):
         return '$'
     elif token == '<any>':
         return r'([^()<>|[\] ]+ )'
-    elif re.match(REP_PATTERN, token): # ex: <0-3>, <4->
+    elif REP_PATTERN.match(token): # ex: <0-3>, <4->
         split_tag = token.replace('<', '').replace('>', '').split('-')
         if len(split_tag) == 1:
             return '{' + split_tag[0] + '}'
         return '{' + '{},{}'.format(split_tag[0], split_tag[1]) + '}'
-    elif re.match(r'<hom_.+>', token):
+    elif HOM_PATTERN.match(token):
         token = token[5:-1]
         groups['n{}'.format(group_num)] = token
         return regex_string_from_list(sorted(_locals.HOMOPHONES[token]), '?P<n{0}>{1}'.format(group_num, token))
@@ -179,10 +181,10 @@ def token_to_regex(token, group_num, rule_string, groups):
             return regex_string_from_list(sorted(_locals.NUMBERS_MAP), r'?P<n{}>(-?\d+(\.\d+)?)'.format(group_num))
         # number range behaves similar to python. inclusive for start,
         # exclusive for stop. start defaults to 0 if no value given
-        elif re.match(SINGLE_NUM_RANGE_PATTERN, token):
+        elif SINGLE_NUM_RANGE_PATTERN.match(token):
             num = token.split('_')[1][:-1]
             return set_num_range_pattern('0', num, group_num)
-        elif re.match(DOUBLE_NUM_RANGE_PATTERN, token):
+        elif DOUBLE_NUM_RANGE_PATTERN.match(token):
             low, high = token.split('_')[1], token.split('_')[2][:-1]
             return set_num_range_pattern(low, high, group_num)
         raise ValueError("invalid token '{}' for rule string '{}'".format(token, rule_string))

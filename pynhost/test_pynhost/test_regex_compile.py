@@ -66,7 +66,7 @@ class TestRegexConvert(unittest.TestCase):
     def test_compile11(self):
         input_str = '<hom_line>'
         r = ruleparser.Rule('')
-        self.assertEqual(r.convert_to_regex_pattern(input_str), '(?P<h1>line |dine |why n |wine )')
+        self.assertEqual(r.convert_to_regex_pattern(input_str), '(?P<n1>line |dine |why n |wine )')
 
     def test_compile12(self):
         r = ruleparser.Rule('')
@@ -135,7 +135,7 @@ class TestRegexConvert(unittest.TestCase):
     def test_compile26(self):
         input_str = '(<hom_line> |<hom_perl>)'
         r = ruleparser.Rule('')
-        self.assertEqual(r.convert_to_regex_pattern(input_str), r'((?P<h1>line |dine |why n |wine )|(?P<h2>perl |pearl |whirl ))')
+        self.assertEqual(r.convert_to_regex_pattern(input_str), r'((?P<n1>line |dine |why n |wine )|(?P<n2>perl |pearl |whirl ))')
 
     def test_compile27(self):
         input_str = 'range <num>[through <num>]'

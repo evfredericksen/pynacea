@@ -48,11 +48,14 @@ def replace_values(regex_match, group_dict, new_word_dict):
 
 def get_replace_word(group_dict, new_word_dict, key):
     if new_word_dict[key]:
-        if group_dict[key][-1] == ' ':
-            return new_word_dict[key] + ' '
-        return new_word_dict[key]
+        word = new_word_dict[key]
     # otherwise we have a number
-    return utilities.get_number_string(group_dict[key])
+    else:
+        word = utilities.get_number_string(group_dict[key])
+    if group_dict[key][-1] == ' ':
+        word += ' '
+    return word
+
         
 def get_numbers(regex_match, group_dict, new_word_dict):
     nums = []

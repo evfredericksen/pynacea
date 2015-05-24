@@ -170,19 +170,8 @@ def token_to_regex(token, group_num, rule_string, groups):
         return '^'
     elif token == '<end>':
         return '$'
-    elif token == '<num>':
-        groups['n{}'.format(group_num)] = ''
-        if not hasattr(_locals, 'NUMBERS_MAP'):
-            return r'(?P<n{}>-?\d+(\.d+)? )'.format(group_num)
-        return regex_string_from_list(sorted(_locals.NUMBERS_MAP), r'?P<n{}>(-?\d+(\.\d+)?)'.format(group_num))
-    # number range behaves similar to python. inclusive for start,
-    # exclusive for stop. start defaults to 0 if no value given
-    elif re.match(SINGLE_NUM_RANGE_PATTERN, token):
-        num = token.split('_')[1][:-1]
-        return set_num_range_pattern('0', num, group_num)
-    elif re.match(DOUBlE_NUM_RANGE_PATTERN, token):
-        low, high = token.split('_')[1], token.split('_')[2][:-1]
-        return set_num_range_pattern(low, high, group_num)
+    elif token == '<any>':
+        return r'([^()<>|[\] ]+ )'
     elif re.match(REP_PATTERN, token): # ex: <0-3>, <4->
         split_tag = token.replace('<', '').replace('>', '').split('-')
         if len(split_tag) == 1:
@@ -192,6 +181,18 @@ def token_to_regex(token, group_num, rule_string, groups):
         token = token[5:-1]
         groups['n{}'.format(group_num)] = token
         return regex_string_from_list(sorted(_locals.HOMOPHONES[token]), '?P<n{0}>{1}'.format(group_num, token))
-    elif token == '<any>':
-        return r'([^()<>|[\] ]+ )'
-    raise ValueError("invalid token '{}' for rule string '{}'".format(token, rule_string))
+    else:
+        groups['n{}'.format(group_num)] = ''
+        if token == '<num>':
+            if not hasattr(_locals, 'NUMBERS_MAP'):
+                return r'(?P<n{}>-?\d+(\.d+)? )'.format(group_num)
+            return regex_string_from_list(sorted(_locals.NUMBERS_MAP), r'?P<n{}>(-?\d+(\.\d+)?)'.format(group_num))
+        # number range behaves similar to python. inclusive for start,
+        # exclusive for stop. start defaults to 0 if no value given
+        elif re.match(SINGLE_NUM_RANGE_PATTERN, token):
+            num = token.split('_')[1][:-1]
+            return set_num_range_pattern('0', num, group_num)
+        elif re.match(DOUBlE_NUM_RANGE_PATTERN, token):
+            low, high = token.split('_')[1], token.split('_')[2][:-1]
+            return set_num_range_pattern(low, high, group_num)
+        raise ValueError("invalid token '{}' for rule string '{}'".format(token, rule_string))

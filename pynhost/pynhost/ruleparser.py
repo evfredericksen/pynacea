@@ -6,21 +6,9 @@ try:
 except ImportError:
     _locals = None
 
-OPENING_TOKEN_DICT = {
-    '(': 'list',
-    '[': 'optional',
-    '<': 'special',
-}
-
-CLOSING_TOKEN_DICT = {
-    ')': 'list',
-    ']': 'optional',
-    '>': 'special',
-}
-
 REP_PATTERN = r'<\d+(-\d?)?>'
 SINGLE_NUM_RANGE_PATTERN = r'<num_-?\d+>'
-DOUBlE_NUM_RANGE_PATTERN = r'<num_-?\d+_-?\d+>'
+DOUBLE_NUM_RANGE_PATTERN = r'<num_-?\d+_-?\d+>'
 
 class Rule:
     def __init__(self, raw_text, actions=None, grammar=None, regex_mode=False):
@@ -56,7 +44,9 @@ class Rule:
                     tag[5:-1] in _locals.HOMOPHONES and _locals.HOMOPHONES[tag[5:-1]]):
                         regex_pattern += tag[5:-1] + ' '
                     else:
-                        if tag == '<num>' or re.match(r'<hom_.+>', tag):
+                        if (tag == '<num>' or re.match(r'<hom_.+>', tag) or
+                            re.match(SINGLE_NUM_RANGE_PATTERN, tag) or
+                            re.match(DOUBLE_NUM_RANGE_PATTERN, tag)):
                             group_num += 1
                         if re.match(REP_PATTERN, tag):
                             regex_pattern = surround_previous_word(regex_pattern)
@@ -192,7 +182,7 @@ def token_to_regex(token, group_num, rule_string, groups):
         elif re.match(SINGLE_NUM_RANGE_PATTERN, token):
             num = token.split('_')[1][:-1]
             return set_num_range_pattern('0', num, group_num)
-        elif re.match(DOUBlE_NUM_RANGE_PATTERN, token):
+        elif re.match(DOUBLE_NUM_RANGE_PATTERN, token):
             low, high = token.split('_')[1], token.split('_')[2][:-1]
             return set_num_range_pattern(low, high, group_num)
         raise ValueError("invalid token '{}' for rule string '{}'".format(token, rule_string))

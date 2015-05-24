@@ -29,6 +29,6 @@ class Num(DynamicAction):
         self.change *= n
         return self
         
-class ClearAsync(DynamicAction):
+class ClearTriggered(DynamicAction):
     def __init__(self, timing='both'):
         self.timing = timing

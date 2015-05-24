@@ -20,17 +20,17 @@ class Command:
                     utilities.log_message(log_handler, 'info', 'Input "{}" matched rule {} '
                         'in grammar {}'.format(' '.join(rule_match.matched_words), rule_match.rule, rule_match.rule.grammar))
                 else:
-                    # async rule match
+                    # triggered rule match
                     if rule_match is not None:
                         action_list.add_rule_match(rule_match, True)
                         self.remaining_words = rule_match.remaining_words
                         utilities.log_message(log_handler, 'info', 'Input matched rule {} '
-                        'in asynchronous grammar {}'.format(rule_match.rule, rule_match.rule.grammar))
+                        'in triggered grammar {}'.format(rule_match.rule, rule_match.rule.grammar))
             else:
                 action_list.add_string(self.remaining_words[0])
                 gram_handler.add_actions_to_recording_macros(action_list)
                 self.remaining_words = self.remaining_words[1:]
-            if action_list.actions or action_list.async_action_lists['before'] or action_list.async_action_lists['after']:
+            if action_list.actions or action_list.triggered_action_lists['before'] or action_list.triggered_action_lists['after']:
                 # action_list.actions = utilities.merge_strings(action_list.actions)
                 self.action_lists.append(action_list)
 
@@ -56,12 +56,12 @@ class ActionList:
         self.actions = []
         self.matched_words = []
         self.rule_match = None
-        self.async_action_lists = { # instances of ActionList
+        self.triggered_action_lists = { # instances of ActionList
             'before': [],
             'after': [],
         }
 
-    def add_rule_match(self, rule_match, is_async):
+    def add_rule_match(self, rule_match, is_triggered):
         handled_actions = []
         for action in rule_match.rule.actions:
             if isinstance(action, dynamic.Num):
@@ -69,14 +69,14 @@ class ActionList:
             elif isinstance(action, (types.FunctionType, types.MethodType)):
                 action = FunctionWrapper(action, rule_match.matched_words)
             handled_actions.append(action)
-        if not is_async:
+        if not is_triggered:
             self.actions = handled_actions
         else:
             if rule_match.rule.grammar.settings['timing'] in ('before', 'both'):
-                self.async_action_lists['before'] = handled_actions
+                self.triggered_action_lists['before'] = handled_actions
             if rule_match.rule.grammar.settings['timing'] in ('after', 'both'):
-                self.async_action_lists['after'] = handled_actions
-            assert self.async_action_lists['before'] or self.async_action_lists['after']
+                self.triggered_action_lists['after'] = handled_actions
+            assert self.triggered_action_lists['before'] or self.triggered_action_lists['after']
         self.rule_match = rule_match
 
     def add_string(self, text):
@@ -87,7 +87,7 @@ class ActionList:
 
     def get_actions(self, timing):
         try:
-            return self.async_action_lists[timing]
+            return self.triggered_action_lists[timing]
         except KeyError:
             return self.actions
 

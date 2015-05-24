@@ -1,6 +1,6 @@
 import re
-from pynhost import utilities
-from pynhost import dynamic, regex_range
+from pynhost import dynamic, regex_range, utilities
+
 try:
     from pynhost.grammars import _locals
 except ImportError:
@@ -46,7 +46,7 @@ class Rule:
                     tag[5:-1] in _locals.HOMOPHONES and _locals.HOMOPHONES[tag[5:-1]]):
                         regex_pattern += tag[5:-1] + ' '
                     else:
-                        if (tag == '<num>' or re.match(r'<hom_.+>', tag) or
+                        if (tag == '<num>' or HOM_PATTERN.match(tag) or
                             SINGLE_NUM_RANGE_PATTERN.match(tag) or
                             DOUBLE_NUM_RANGE_PATTERN.match(tag)):
                             group_num += 1

@@ -45,7 +45,7 @@ class GrammarBase(SharedGrammarBase):
         self._rules = new_rules
         self._recording_macros = {}
 
-class AsyncGrammarBase(SharedGrammarBase):
+class TriggeredGrammarBase(SharedGrammarBase):
     def __init__(self):
         super().__init__()
         self.settings['priority'] = -1

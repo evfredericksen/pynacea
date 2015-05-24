@@ -7,7 +7,7 @@ from pynhost import dynamic, commands, constants
 class CommandHistory:
     def __init__(self):
         self.commands = collections.deque(maxlen=constants.MAX_HISTORY_LENGTH)
-        self.async_action_lists = {
+        self.triggered_action_lists = {
             'before': [],
             'after': [],
         }
@@ -33,9 +33,9 @@ class CommandHistory:
         assert min(command_pos, action_list_pos) >= 0
         action_list = self.commands[command_pos].action_lists[action_list_pos]
         if not action_list.actions:
-            self.merge_async(action_list)
+            self.merge_triggered(action_list)
             return
-        self.add_async_to_action_list(action_list, command_pos, action_list_pos, stop)
+        self.add_triggered_to_action_list(action_list, command_pos, action_list_pos, stop)
         for timing in ('before', None, 'after'):
             if timing in ('before', 'after') and not action_list.contains_non_repeat_actions():
                 continue
@@ -50,8 +50,8 @@ class CommandHistory:
             if not self.execute_string_or_func(action):
                 if isinstance(action, int):
                     self.repeat_previous_action_list(action, command_pos, action_list_pos, i, timing)
-                elif isinstance(action, dynamic.ClearAsync):
-                    self.execute_clear_async(action_list, action.timing)
+                elif isinstance(action, dynamic.ClearTriggered):
+                    self.execute_clear_triggered(action_list, action.timing)
 
     def execute_string_or_func(self, action):
         if isinstance(action, str):
@@ -74,22 +74,22 @@ class CommandHistory:
                 else:
                     self.execute_action_list(command_pos - 1, len(self.commands[command_pos - 1].action_lists) - 1, -1)
 
-    def execute_clear_async(self, action_list, timing):
+    def execute_clear_triggered(self, action_list, timing):
         if timing in ('before', 'both'):
-            self.async_action_lists['before'] = []
-            action_list.async_action_lists['before'] = []
+            self.triggered_action_lists['before'] = []
+            action_list.triggered_action_lists['before'] = []
         if timing in ('after', 'both'):
-            self.async_action_lists['after'] = []
-            action_list.async_action_lists['after'] = []
+            self.triggered_action_lists['after'] = []
+            action_list.triggered_action_lists['after'] = []
 
-    def merge_async(self, action_list):
-        for timing in self.async_action_lists:
-            if action_list not in self.async_action_lists[timing]:
-                self.async_action_lists[timing] += action_list.async_action_lists[timing]
+    def merge_triggered(self, action_list):
+        for timing in self.triggered_action_lists:
+            if action_list not in self.triggered_action_lists[timing]:
+                self.triggered_action_lists[timing] += action_list.triggered_action_lists[timing]
 
-    def add_async_to_action_list(self, action_list, command_pos, action_list_pos, stop):
+    def add_triggered_to_action_list(self, action_list, command_pos, action_list_pos, stop):
         last_command = command_pos == len(self.commands) - 1
         last_action_list = action_list_pos == len(self.commands[command_pos].action_lists) - 1
         last_action = stop == -1
         if last_command and last_action_list and last_action:
-            action_list.async_action_lists = copy.copy(self.async_action_lists)
+            action_list.triggered_action_lists = copy.copy(self.triggered_action_lists)

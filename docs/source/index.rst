@@ -30,7 +30,7 @@ Using Pynacea
    using/basic
    using/grammars
    using/actions
-   using/modes
+   using/cl
    using/api
    using/macros
    using/async

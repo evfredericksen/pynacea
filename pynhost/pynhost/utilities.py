@@ -42,7 +42,7 @@ def get_cl_args():
         action='store_true')
     parser.add_argument("--debug_delay", help="Delay (seconds) in debug mode between text being entered and run",
         type=check_negative, default=4)
-    parser.add_argument('-v', "--verbal_feedback", help="Print logging messages to console", action='store_true')
+    parser.add_argument('-v', "--verbose", help="Print logging messages to console", action='store_true')
     parser.add_argument('-p', '--permissive_mode', help='Ignore errors when executing Grammar actions', action='store_true')
     return parser.parse_args()
 

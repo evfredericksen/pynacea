@@ -12,7 +12,7 @@ from pynhost import constants
 def main():
     try:
         cl_arg_namespace = utilities.get_cl_args()
-        log_handler = utilities.create_logging_handler(cl_arg_namespace.verbal_feedback)
+        log_handler = utilities.create_logging_handler(cl_arg_namespace.verbose)
         engine_handler = engineio.get_engine_handler(cl_arg_namespace)
         gram_handler = grammarhandler.GrammarHandler()
         print('Loading grammars...')

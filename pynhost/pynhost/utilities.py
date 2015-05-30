@@ -19,7 +19,7 @@ def get_cl_args():
     parser.add_argument('-d', "--debug", help="Enable text input for grammar debugging",
         action='store_true')
     parser.add_argument("--debug_delay", help="Delay (seconds) in debug mode between text being entered and run",
-        type=check_negative, default=4)
+        type=check_negative, default=constants.DEFAULT_DEBUG_DELAY)
     parser.add_argument('-v', "--verbose", help="Print logging messages to console", action='store_true')
     parser.add_argument('-p', '--permissive_mode', help='Ignore errors when executing Grammar actions', action='store_true')
     return parser.parse_args()

@@ -12,8 +12,12 @@ from pynhost import constants
 def main():
     try:
         cl_arg_namespace = utilities.get_cl_args()
-        log_handler = utilities.create_logging_handler(cl_arg_namespace.verbose)
-        engine_handler = engineio.get_engine_handler(cl_arg_namespace)
+        log_handler = utilities.create_logging_handler(cl_arg_namespace.verbose,
+            config.settings['logging directory'])
+        if cl_arg_namespace.debug:
+            engine = engineio.DebugHandler(cl_arg_namespace.debug_delay)
+        else:
+            engine = config.settings['engine']
         gram_handler = grammarhandler.GrammarHandler()
         print('Loading grammars...')
         gram_handler.load_grammars()
@@ -22,7 +26,7 @@ def main():
         print('Ready!')
         # main loop
         while True:
-            for line in engine_handler.get_lines():
+            for line in engine.get_lines():
                 utilities.log_message(log_handler, 'info', 'Received input "{}"'.format(line))
                 current_command = commands.Command(line.split(' '))
                 try:

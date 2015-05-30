@@ -14,28 +14,6 @@ try:
 except ImportError:
     _locals = None
 
-def get_buffer_lines(buffer_path):
-    files = sorted([f for f in os.listdir(buffer_path) if not os.path.isdir(f) and re.match(r'o\d+$', f)])
-    lines = []
-    for fname in files:
-        with open(os.path.join(buffer_path, fname)) as fobj:
-            for line in fobj:
-                lines.append(line.rstrip('\n'))
-        os.remove(os.path.join(buffer_path, fname))
-    return lines
-
-def clear_directory(dir_name):
-    while os.listdir(dir_name):
-        for file_path in os.listdir(dir_name):
-            full_path = os.path.join(dir_name, file_path)
-            try:
-                if os.path.isfile(full_path):
-                    os.unlink(full_path)
-                else:
-                    shutil.rmtree(full_path)
-            except FileNotFoundError:
-                pass
-
 def get_cl_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', "--debug", help="Enable text input for grammar debugging",
@@ -46,11 +24,11 @@ def get_cl_args():
     parser.add_argument('-p', '--permissive_mode', help='Ignore errors when executing Grammar actions', action='store_true')
     return parser.parse_args()
 
-def get_logging_config():
+def get_logging_config(logging_dir):
     try:
-        log_file = os.path.join(config.settings['logging directory'], 'pynacea.log')
-        if not os.path.exists(config.settings['logging directory']):
-            os.makedirs(config.settings['logging directory'])
+        log_file = os.path.join(logging_dir, 'pynacea.log')
+        if not os.path.exists(logging_dir):
+            os.makedirs(logging_dir)
         if not os.path.exists(log_file):
             with open(log_file, 'w') as f:
                 pass
@@ -163,8 +141,8 @@ def merge_strings(input_list):
             new_list.append(ele)
     return new_list
 
-def create_logging_handler(verbal_mode):
-    log_file, log_level = get_logging_config()
+def create_logging_handler(verbal_mode, logging_dir):
+    log_file, log_level = get_logging_config(logging_dir)
     log_formatter = logging.Formatter('%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s')
     my_handler = RotatingFileHandler(log_file, mode='a', maxBytes=5*1024*1024,
                                      backupCount=2, encoding=None, delay=0)
@@ -204,4 +182,3 @@ def filter_grammar_list(grammar_list, filter_dict):
         if dict_subset(grammar.context_filters, filter_dict):
             active_list.append(grammar)
     return active_list
-

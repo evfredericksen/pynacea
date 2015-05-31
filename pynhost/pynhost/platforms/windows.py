@@ -36,6 +36,7 @@ def press_key(key_input):
     if press_shift:
         win32api.keybd_event(winconstants.WINDOWS_KEYCODES['shift'], 0, 0, 0)
     char_int = winconstants.WINDOWS_KEYCODES[key_input]
+    print('EVENT', char_int)
     win32api.keybd_event(char_int, 0, 0, 0)
     win32api.keybd_event(char_int, 0, win32con.KEYEVENTF_KEYUP, 0)
     if press_shift:

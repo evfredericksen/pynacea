@@ -62,7 +62,8 @@ WINDOWS_KEYCODES = {
     'escape': win32con.VK_ESCAPE,
     'enter': win32con.VK_RETURN,
     'return': win32con.VK_RETURN,
-
+    '\n': win32con.VK_RETURN,
+    '\r\n': win32con.VK_RETURN,
     'mute': win32con.VK_VOLUME_MUTE
 }
 

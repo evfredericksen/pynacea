@@ -7,7 +7,18 @@ import socket
 from pynhost import constants
 from pynhost.platforms import platformhandler
 
-class SphinxEngine:
+class BaseEngine:
+    def __init__(self):
+        pass
+
+    def get_lines(self):
+        '''This should always be overridden'''
+        assert False
+
+    def cleanup(self):
+        pass
+
+class SphinxEngine(BaseEngine):
     def __init__(self):
         self.loaded = False
         print('Loading PocketSphinx Speech Engine...')
@@ -83,12 +94,11 @@ class SharedDirectoryEngine:
                 except FileNotFoundError:
                     pass
 
-class DebugEngine:
+class DebugEngine(BaseEngine):
     def __init__(self, delay=constants.DEFAULT_DEBUG_DELAY):
         self.delay = delay
 
     def get_lines(self):
-        platformhandler.flush_io_buffer()
         lines = [input('\n> ')]
         time.sleep(self.delay)
         return lines
@@ -99,25 +109,22 @@ class SubprocessEngine:
         self.filter = filter
 
     def get_lines(self):
+        for line in self.p.stdout:
+            line = line.decode('utf8').rstrip('\r\n')
+            if line:
+                yield line
+
+class SocketEngine(BaseEngine):
+    def __init__(self, host=socket.gethostname(), port=constants.DEFAULT_PORT_NUMBER):
+        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.s.connect((host, port))
+
+    def get_lines(self):
+        time.sleep(.1)
         line = ''
         while not line:
-            line = self.p.stdout.readline().decode('utf8').rstrip('\r\n')
-            platformhandler.flush_io_buffer()
-            if self.filter is not None:
-                line = self.filter(line)
+            line = self.s.recv(1024).decode('utf8').rstrip(('\r\n'))
         return [line]
 
-class SocketEngine:
-    def __init__(self):
-        try:
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)         # Create a socket object
-            host = socket.gethostname() # Get local machine name
-            port = 8913               # Reserve a port for your service.
-
-            s.connect(('localhost', port))
-            message = 'This is the message.  It will be repeated.'
-            print(sys.stderr, 'sending "%s"' % message)
-            s.sendall(message.encode('utf8'))
-            print(s.recv(1024))
-        finally:
-            s.close()
+    def cleanup(self):
+        self.s.close()

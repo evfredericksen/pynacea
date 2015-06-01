@@ -19,21 +19,23 @@ class BaseEngine:
         pass
 
 class SphinxEngine(BaseEngine):
-    def __init__(self):
+    def __init__(self, hmm_directory=None, lm_filename=None, dictionary=None):
+        self.hmm_directory = hmm_directory
+        self.lm_filename = lm_filename
+        self.dictionary = dictionary
         self.loaded = False
         print('Loading PocketSphinx Speech Engine...')
 
     def get_lines(self):
         full_command = ['pocketsphinx_continuous']
         commands = {
-            '-hmm': 'sphinx hmm_directory',
-            '-lm': 'sphinx lm_filename',
-            '-dict': 'sphinx dictionary',
+            '-hmm': self.hmm_directory,
+            '-lm': self.lm_filename,
+            '-dict': self.dictionary,
         }
         for cmd, config_name in commands.items():
-            setting = config.settings[config_name]
-            if setting is not None:
-                full_command.extend([cmd, setting])
+            if config_name is not None:
+                full_command.extend([cmd, config_name])
         null = open(os.devnull)
         with subprocess.Popen(full_command, stdout=subprocess.PIPE, stderr=null,
                               bufsize=1, universal_newlines=True) as p:
@@ -45,7 +47,7 @@ class SphinxEngine(BaseEngine):
                 if len(split_line) > 1 and split_line[0][0].isdigit():
                     yield ' '.join(split_line[1:])
 
-class SharedDirectoryEngine:
+class SharedDirectoryEngine(BaseEngine):
     def __init__(self, shared_dir, filter_on=True):
         self.shared_dir = shared_dir
         self.filter_on = filter_on
@@ -103,16 +105,15 @@ class DebugEngine(BaseEngine):
         time.sleep(self.delay)
         return lines
 
-class SubprocessEngine:
+class SubprocessEngine(BaseEngine):
     def __init__(self, process_cmd, filter=None):
         self.p = subprocess.Popen(process_cmd, stdout=subprocess.PIPE)
         self.filter = filter
 
     def get_lines(self):
         for line in self.p.stdout:
-            line = line.decode('utf8').rstrip('\r\n')
             if line:
-                yield line
+                yield line.decode('utf8')
 
 class SocketEngine(BaseEngine):
     def __init__(self, host=socket.gethostname(), port=constants.DEFAULT_PORT_NUMBER):
@@ -120,10 +121,9 @@ class SocketEngine(BaseEngine):
         self.s.connect((host, port))
 
     def get_lines(self):
-        time.sleep(.1)
         line = ''
         while not line:
-            line = self.s.recv(1024).decode('utf8').rstrip(('\r\n'))
+            line = self.s.recv(8192).decode('utf8')
         return [line]
 
     def cleanup(self):

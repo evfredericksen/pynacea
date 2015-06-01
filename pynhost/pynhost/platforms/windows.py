@@ -18,6 +18,8 @@ def get_open_window_name():
 
 def transcribe_line(key_inputs, delay):
     for i, key_input in enumerate(key_inputs):
+        if i != 0:
+            time.sleep(delay)
         if isinstance(key_input, str):
             press_key(key_input)
         else:
@@ -36,7 +38,6 @@ def press_key(key_input):
     if press_shift:
         win32api.keybd_event(winconstants.WINDOWS_KEYCODES['shift'], 0, 0, 0)
     char_int = winconstants.WINDOWS_KEYCODES[key_input]
-    print('EVENT', char_int)
     win32api.keybd_event(char_int, 0, 0, 0)
     win32api.keybd_event(char_int, 0, win32con.KEYEVENTF_KEYUP, 0)
     if press_shift:
@@ -50,10 +51,10 @@ def press_key_combination(keys):
         win32api.keybd_event(winconstants.WINDOWS_KEYCODES[key_stroke], 0, win32con.KEYEVENTF_KEYUP, 0)
 
 def get_mouse_location():
-    return xdotool.check_output('getmouselocation')
+    raise NotImplementedError
 
 def mouse_click():
-    pass
+    raise NotImplementedError
 
 def mouse_move(x=None, y=None):
-    pass
+    raise NotImplementedError

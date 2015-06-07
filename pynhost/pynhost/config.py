@@ -6,6 +6,8 @@ settings = {
 
     #'engine': engineio.SharedDirectoryEngine(constants.DEFAULT_INPUT_SOURCE),
     #'engine': engineio.DebugEngine(),
-    'engine': engineio.SocketEngine(),
+    # 'engine': engineio.SocketEngine(),
     #'engine': engineio.SubprocessEngine(['enter', 'subprocess', 'name', 'here']),
+    'engine': engineio.HTTPEngine('localhost', 8888),
+
 }

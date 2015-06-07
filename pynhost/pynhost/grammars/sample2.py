@@ -42,7 +42,7 @@ class SampleGrammar(grammarbase.GrammarBase):
             # or any homonym of perl as defined in the
             # pynhost.grammars._homophones.HOMOPHONES dictionary
 
-            'red rum': ['All work and no play...{enter}', 15]
+            'red rum': ['All work and no play...\n', 15]
             # An integer will repeat the previous action n number of times
         }
         self.language = 'python'
@@ -59,17 +59,16 @@ class SampleGrammar(grammarbase.GrammarBase):
         api.mouse_click(button=button, direction=direction)
 
     def new_function(self, words):
-        print('TRACE')
         # create a camelcase function name from the words parameter
-        # func_name = words[2].lower() + ''.join([w.title() for w in words[3:]])
-        # if self.language == 'python':
-        #     api.send_string('def ' + func_name + '():{left}{left}')
-        #     # press left twice when we're done to put the cursor between the
-        #     # parentheses. Keypresses are enclosed in curly braces and can be
-        #     # combined with the plus sign e.g. {ctrl+alt+delete}
-        # elif self.language == 'perl':
-        #     api.send_string('sub ' + func_name + '() {{}}')
-        #     # A second consecutive curly brace 'escapes' the preceding brace
+        func_name = words[2].lower() + ''.join([w.title() for w in words[3:]])
+        if self.language == 'python':
+            api.send_string('def ' + func_name + '():{left}{left}')
+            # press left twice when we're done to put the cursor between the
+            # parentheses. Keypresses are enclosed in curly braces and can be
+            # combined with the plus sign e.g. {ctrl+alt+delete}
+        elif self.language == 'perl':
+            api.send_string('sub ' + func_name + '() {{}}')
+            # A second consecutive curly brace 'escapes' the preceding brace
 
     def change_language(self, words):
         self.language = words[1]

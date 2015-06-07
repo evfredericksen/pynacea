@@ -4,6 +4,11 @@ from base64 import b64encode
 from hashlib import sha1
 import email
 
+class MyServer(socketserver.TCPServer):
+    def __init__(self, info, handler):
+        super().__init__(info, handler)
+        self.messages = []
+
 class WebSocketsHandler(socketserver.StreamRequestHandler):
     magic = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11'
     debug = False
@@ -11,7 +16,7 @@ class WebSocketsHandler(socketserver.StreamRequestHandler):
     def __init__(self, request, client_address, server):
         self.handshake_done = False
         super().__init__(request, client_address, server)
-        self.messages = []
+        self.server.messages = []
 
     def setup(self):
         socketserver.StreamRequestHandler.setup(self)
@@ -53,4 +58,5 @@ class WebSocketsHandler(socketserver.StreamRequestHandler):
         self.handshake_done = self.request.send(response.encode('UTF-8'))
 
     def on_message(self, message):
-        self.messages.append(message)
+        if message.encode('utf8') != b'\x03\xc3\xa9':
+            self.server.messages.append(message)

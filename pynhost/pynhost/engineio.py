@@ -5,6 +5,8 @@ import time
 import re
 import socket
 import socketserver
+import threading
+import copy
 from pynhost import constants, objutils
 from pynhost.platforms import platformhandler
 
@@ -145,7 +147,7 @@ class HTTPEngine(BaseEngine):
         return lines
 
     def run_server(self):
-        self.server = socketserver.TCPServer((self.host, self.port), objutils.WebSocketsHandler)
+        self.server = objutils.MyServer((self.host, self.port), objutils.WebSocketsHandler)
         self.server.serve_forever()
 
     def cleanup(self):

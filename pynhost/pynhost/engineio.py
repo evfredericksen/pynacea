@@ -4,7 +4,8 @@ import sys
 import time
 import re
 import socket
-from pynhost import constants
+import socketserver
+from pynhost import constants, objutils
 from pynhost.platforms import platformhandler
 
 class BaseEngine:
@@ -117,7 +118,7 @@ class SubprocessEngine(BaseEngine):
 
 class SocketEngine(BaseEngine):
     def __init__(self, host=socket.gethostname(), port=constants.DEFAULT_PORT_NUMBER):
-        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.s.connect((host, port))
 
     def get_lines(self):
@@ -128,3 +129,24 @@ class SocketEngine(BaseEngine):
 
     def cleanup(self):
         self.s.close()
+
+class HTTPEngine(BaseEngine):
+    def __init__(self, host=socket.gethostname(), port=constants.DEFAULT_PORT_NUMBER):
+        self.host = host
+        self.port = port
+        self.t = threading.Thread(target=self.run_server)
+        self.t.daemon = True
+        self.t.start()
+
+    def get_lines(self):
+        lines = copy.copy(self.server.messages)
+        # avoid possible threading wierdness
+        self.server.messages = self.server.messages[len(lines):]
+        return lines
+
+    def run_server(self):
+        self.server = socketserver.TCPServer((self.host, self.port), objutils.WebSocketsHandler)
+        self.server.serve_forever()
+
+    def cleanup(self):
+        self.server.shutdown()

@@ -14,6 +14,7 @@ except:
 class GrammarHandler:
     def __init__(self):
         # grammar.app_context: [grammar instances with given app_content field]
+        self.global_grammars = []
         self.grammars = {}
         self.active_grammars = {}
         try:
@@ -23,7 +24,7 @@ class GrammarHandler:
 
     def load_grammars(self):
         abs_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'grammars')
-        for root, dirs, files in os.walk(abs_path): 
+        for root, dirs, files in os.walk(abs_path):
             for filename in files:
                 if filename.endswith('.py') and filename.replace('.', '').isalnum():
                     module = utilities.load_module(filename, root, abs_path)
@@ -38,33 +39,38 @@ class GrammarHandler:
             class_hierarchy = inspect.getmro(member[1])
             if len(class_hierarchy) > 2 and class_hierarchy[-2] == grammarbase.SharedGrammarBase:
                 grammar = self.initialize_grammar(member[1])
-                try:
-                    self.grammars[grammar.app_context].append(grammar)
-                except KeyError:
-                    self.grammars[grammar.app_context] = [grammar]
+                app_pattern = grammar.app_context
+                if grammar.app_context != '':
+                    app_pattern = re.compile(grammar.app_context)
+                    try:
+                        self.grammars[app_pattern].append(grammar)
+                    except KeyError:
+                        self.grammars[app_pattern] = [grammar]
+                else:
+                    self.global_grammars.append(grammar)
         self.set_active_grammars()
 
     def set_active_grammars(self):
         try:
-            global_grammars = utilities.filter_grammar_list(self.grammars[''], self.process_contexts)
+            self.global_grammars = utilities.filter_grammar_list(self.global_grammars, self.process_contexts)
         except KeyError:
-            global_grammars = []
+            self.global_grammars = []
         self.active_grammars = {}
-        self.active_grammars[''] = global_grammars
-        for app_name, grammar_list in self.grammars.items():
-            if app_name == '':
-                continue
+        for app_pattern, grammar_list in self.grammars.items():
             active_list = utilities.filter_grammar_list(grammar_list, self.process_contexts)
-            self.active_grammars[app_name] = active_list + global_grammars 
-            self.active_grammars[app_name].sort()
-            self.active_grammars[app_name].reverse()
+            self.active_grammars[app_pattern] = active_list + self.global_grammars
+            self.active_grammars[app_pattern].sort()
+            self.active_grammars[app_pattern].reverse()
 
     def get_matching_grammars(self):
         open_window_name = platformhandler.get_open_window_name().lower()
-        for saved_context in self.active_grammars:
-            if saved_context and saved_context in open_window_name:
-                return self.active_grammars[saved_context]
-        return self.active_grammars['']
+        grammars = []
+        for app_pattern in self.active_grammars:
+            if app_pattern.search(open_window_name):
+                grammars.extend(self.active_grammars[app_pattern])
+        grammars.sort()
+        grammars.reverse()
+        return grammars if grammars else self.global_grammars
 
 # local grammar match = match grammar context and global
 # global grammar match = match global

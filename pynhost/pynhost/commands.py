@@ -9,9 +9,12 @@ class Command:
         self.action_lists = []
 
     def set_results(self, gram_handler, log_handler):
+        import time
         while self.remaining_words:
             action_list = ActionList(self)
+            start = time.clock()
             rule_match = self.get_rule_match(gram_handler)
+            print(time.clock() - start)
             if rule_match is not None:
                 if isinstance(rule_match.rule.grammar, grammarbase.GrammarBase):
                     action_list.add_rule_match(rule_match, False)

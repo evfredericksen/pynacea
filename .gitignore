@@ -11,5 +11,3 @@ docs/site
 pynhost/pynhost/__pycache__
 pynhost/pynhost/logs/*
 docs/build
-!pynhost/pynhost/grammars/sublime text
-!pynhost/pynhost/grammars/sublime text/subl.py

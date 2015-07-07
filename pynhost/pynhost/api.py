@@ -10,3 +10,9 @@ def mouse_move(x=None, y=None, relative=True):
 
 def mouse_click(button='left', direction='both', number='1'):
     platformhandler.mouse_click(button, direction, number)
+
+def activate_window(title):
+	'''
+	title is a string or list of strings
+	'''
+	platformhandler.activate_window(title)

@@ -37,7 +37,7 @@ def mouse_click(button='left', direction='both', number='1'):
         'wheel up': '4',
         'wheel down': '5',
     }
-    button = button_map[button]
+    button = button_map[button] 
     if direction == 'both': command = 'click'
     elif direction == 'down': command = 'mousedown'
     elif direction == 'up': command = 'mouseup'
@@ -53,8 +53,37 @@ def mouse_move(x, y, relative):
         return
     if x is None: x = 0
     if y is None: y = 0
-    subprocess.call(['xdotool', 'mousemove_relative', str(x), str(y)])
+    subprocess.call(['xdotool', 'mousemove_relative', '--', str(x), str(y)])
 
-def get_open_window_name():
+def get_active_window_name():
     proc = subprocess.check_output(['xdotool', 'getactivewindow', 'getwindowname'])
     return proc.decode('utf8').rstrip('\n')
+
+def get_open_window_names():
+    '''
+    Return a dict with open program names and their corresponding decimal ids
+    '''
+    raw_names = subprocess.check_output(['wmctrl', '-l']).decode('utf8').split('\n')
+    split_names = [name.split() for name in raw_names if name]
+    name_dict = {}
+    for name in split_names:
+        if not int(name[1]):
+            name_dict[' '.join(name[3:]).lower()] = name[0]
+    return name_dict
+
+def activate_window(title):
+    name_dict = get_open_window_names()
+    matches = []
+    for open_window_name in name_dict:
+        for name in title:
+            if name not in open_window_name:
+                break
+        else:
+            matches.append(open_window_name)
+    if matches:
+        matches.sort(key=len)
+        pid = str(int(name_dict[matches[0]], 16))
+        subprocess.call(['xdotool', 'windowfocus', pid])
+        subprocess.call(['xdotool', 'windowactivate', pid])
+
+

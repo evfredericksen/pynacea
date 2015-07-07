@@ -109,12 +109,13 @@ class DebugEngine(BaseEngine):
         return lines
 
 class SubprocessEngine(BaseEngine):
-    def __init__(self, process_cmd, filter=None):
+    def __init__(self, process_cmd, filter_func=None):
         self.p = subprocess.Popen(process_cmd, stdout=subprocess.PIPE)
-        self.filter = filter
+        self.filter_func = filter_func
 
     def get_lines(self):
         for line in self.p.stdout:
+            line = self.filter_func(line) if line is not None else line
             if line:
                 yield line.decode('utf8')
 

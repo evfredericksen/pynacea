@@ -63,10 +63,10 @@ class GrammarHandler:
             self.active_grammars[app_pattern].reverse()
 
     def get_matching_grammars(self):
-        open_window_name = platformhandler.get_open_window_name().lower()
+        active_window_name = platformhandler.get_active_window_name().lower()
         grammars = []
         for app_pattern in self.active_grammars:
-            if app_pattern.search(open_window_name):
+            if app_pattern.search(active_window_name):
                 grammars.extend(self.active_grammars[app_pattern])
         grammars.sort()
         grammars.reverse()
@@ -96,7 +96,7 @@ class GrammarHandler:
     def get_contexts(self, action_list):
         contexts = ['']
         if action_list.rule_match is None:
-            context = platformhandler.get_open_window_name().lower()
+            context = platformhandler.get_active_window_name().lower()
             if context:
                 contexts.append(context)
         elif action_list.rule_match.rule.grammar.app_context:

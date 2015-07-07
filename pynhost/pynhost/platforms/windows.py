@@ -12,7 +12,7 @@ def flush_io_buffer():
     while msvcrt.kbhit():
         print(msvcrt.getch().decode('utf8'), end='')
 
-def get_open_window_name():
+def get_active_window_name():
     pid = win32gui.GetForegroundWindow()
     return win32gui.GetWindowText(pid)
 
@@ -49,6 +49,9 @@ def press_key_combination(keys):
     time.sleep(.01)
     for key_stroke in keys:
         win32api.keybd_event(winconstants.WINDOWS_KEYCODES[key_stroke], 0, win32con.KEYEVENTF_KEYUP, 0)
+
+def activate_window(title):
+    raise NotImplementedError
 
 def get_mouse_location():
     raise NotImplementedError

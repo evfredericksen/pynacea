@@ -23,12 +23,9 @@ class GrammarHandler:
             self.process_contexts = {}
 
     def load_grammars(self):
-        abs_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'grammars')
-        for root, dirs, files in os.walk(abs_path):
-            for filename in files:
-                if filename.endswith('.py') and filename.replace('.', '').isalnum():
-                    module = utilities.load_module(filename, root, abs_path)
-                    self.load_grammars_from_module(module)
+        grammar_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'grammars')
+        for mod in utilities.get_modules_in_dir(grammar_dir):
+            self.load_grammars_from_module(mod)
         for context in self.grammars:
             self.grammars[context].sort()
 

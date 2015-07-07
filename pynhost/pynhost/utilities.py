@@ -162,13 +162,11 @@ def log_message(log_handler, level, message):
     except AttributeError:
         pass
 
-def load_module(filename, root, abs_path):
-    depth = len(root.split('/')) - len(abs_path.split('/'))
-    index = -1 - depth
-    path = root.split(os.sep)[index:]
-    path.append(filename[:-3])
-    rel = '.'.join(path)
-    return __import__('pynhost.{}'.format(rel), fromlist=[abs_path])
+def get_modules_in_dir(dir_name):
+    for root, dirs, files in os.walk(dir_name):
+        root = root[len(dir_name):].replace(os.sep, '.')
+        for py in [f[:-3] for f in files if f.endswith('.py') and f != '__init__.py']:
+            yield __import__('.'.join(['pynhost.grammars' + root, py]), fromlist=[py])
 
 def dict_subset(dict1, dict2):
     for k in dict1:

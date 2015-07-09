@@ -1,14 +1,6 @@
 import sys
-try:
-	from pynhost.platforms import windows
-except ImportError:
-	if sys.platform == 'win32':
-		raise ImportError('Error importing platforms.windows module. Check your pywin32 installation and try again.')
-	windows = None
-try:
-	from pynhost.platforms import linux
-except ImportError:
-	linux = None
+from pynhost.platforms import windows
+from pynhost.platforms import linux
 
 platform_dict = {
 	'win32': windows,

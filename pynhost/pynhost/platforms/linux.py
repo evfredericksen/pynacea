@@ -10,7 +10,7 @@ from pynhost.platforms import linuxconstants
 def flush_io_buffer():
     termios.tcflush(sys.stdin, termios.TCIFLUSH)
 
-def transcribe_line(key_inputs, delay):
+def transcribe_line(key_inputs, delay, direction):
     delay = delay/1000 # seconds to milliseconds
     for key_input in key_inputs:
         if isinstance(key_input, str):
@@ -29,7 +29,7 @@ def press_key_combination(key_list, delay):
 def get_mouse_location():
     return subprocess.check_output(['xdotool', 'getmouselocation'])
 
-def mouse_click(button='left', direction='both', number='1'):
+def mouse_click(button, direction, number):
     button_map = {
         'left': '1',
         'middle': '2',
@@ -37,12 +37,12 @@ def mouse_click(button='left', direction='both', number='1'):
         'wheel up': '4',
         'wheel down': '5',
     }
-    button = button_map[button] 
+    button = button_map[button]
     if direction == 'both': command = 'click'
     elif direction == 'down': command = 'mousedown'
     elif direction == 'up': command = 'mouseup'
     else: return
-    subprocess.call(['xdotool', command, '--repeat', number, button])
+    subprocess.call(['xdotool', command, '--repeat', str(number), button])
 
 def mouse_move(x, y, relative):
     if not relative:
@@ -85,5 +85,3 @@ def activate_window(title):
         pid = str(int(name_dict[matches[0]], 16))
         subprocess.call(['xdotool', 'windowfocus', pid])
         subprocess.call(['xdotool', 'windowactivate', pid])
-
-

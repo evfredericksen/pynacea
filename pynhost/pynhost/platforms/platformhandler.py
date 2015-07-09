@@ -2,6 +2,8 @@ import sys
 try:
 	from pynhost.platforms import windows
 except ImportError:
+	if sys.platform == 'win32':
+		raise ImportError('Error importing platforms.windows module. Check your pywin32 installation and try again.')
 	windows = None
 try:
 	from pynhost.platforms import linux
@@ -19,8 +21,8 @@ def flush_io_buffer():
 def get_active_window_name():
 	return platform_dict[sys.platform].get_active_window_name()
 
-def transcribe_line(key_inputs, delay=0):
-    platform_dict[sys.platform].transcribe_line(key_inputs, delay)
+def transcribe_line(key_inputs, delay, direction):
+    platform_dict[sys.platform].transcribe_line(key_inputs, delay, direction)
 
 def mouse_click(button, direction, number):
 	platform_dict[sys.platform].mouse_click(button, direction, number)

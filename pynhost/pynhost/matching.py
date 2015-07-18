@@ -1,6 +1,5 @@
 import collections
 from pynhost import constants, utilities, ruleparser
-
 try:
     from pynhost.grammars import _locals
 except ImportError:
@@ -56,10 +55,10 @@ def get_replace_word(group_dict, new_word_dict, key):
         word += ' '
     return word
 
-        
+
 def get_numbers(regex_match, group_dict, new_word_dict):
     nums = []
-    span_dict = make_span_dict(regex_match, group_dict) 
+    span_dict = make_span_dict(regex_match, group_dict)
     for word in sorted(span_dict):
         key = 'n{}'.format(word)
         if not new_word_dict[key]:

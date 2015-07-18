@@ -26,7 +26,3 @@ NUMBERS_MAP = {
     'sets': '6',
     'mine': '9',
 }
-
-GLOBAL_CONTEXTS = {
-    
-}

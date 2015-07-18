@@ -1,6 +1,6 @@
-from pynhost import ruleparser, dynamic, utilities
+from pynhost import ruleparser, dynamic
 
-class SharedGrammarBase:
+class GrammarBase:
     def __init__(self):
         self.mapping = {}
         self.app_context = ''
@@ -20,16 +20,6 @@ class SharedGrammarBase:
         # recalculate active grammars
         self._handler.set_active_grammars()
 
-    def _set_rules(self):
-        for rule_text, actions in self.mapping.items():
-            rule = ruleparser.Rule(rule_text, actions, self)
-            self._rules.append(rule)
-
-class GrammarBase(SharedGrammarBase):
-    def __init__(self):
-        super().__init__()
-        self._recording_macros = {}
-
     def _begin_recording_macro(self, rule_name):
         self._recording_macros[rule_name] = []
 
@@ -39,13 +29,12 @@ class GrammarBase(SharedGrammarBase):
             rule_name = '{} [<num>]'.format(rule_name)
             new_rules.append(ruleparser.Rule(rule_name, macro[:-1] + [dynamic.Num(-1).add(-1)], self))
         for rule in self._rules:
-            if rule.compiled_regex.pattern not in [r.compiled_regex.pattern for r in new_rules]:
+            if rule.raw_text not in [r.raw_text for r in new_rules]:
                 new_rules.append(rule)
         self._rules = new_rules
         self._recording_macros = {}
 
-class TriggeredGrammarBase(SharedGrammarBase):
-    def __init__(self):
-        super().__init__()
-        self.settings['priority'] = -1
-        self.settings['timing'] = 'after' #options are after, before, both
+    def _set_rules(self):
+        for rule_text, actions in self.mapping.items():
+            rule = ruleparser.Rule(rule_text, actions, self)
+            self._rules.append(rule)

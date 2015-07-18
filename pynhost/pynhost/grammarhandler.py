@@ -2,8 +2,6 @@ import os
 import re
 import inspect
 import sys
-import types
-import subprocess
 from pynhost import grammarbase, utilities, commands
 from pynhost.platforms import platformhandler
 try:
@@ -34,9 +32,9 @@ class GrammarHandler:
     def load_grammars_from_module(self, module):
         clsmembers = inspect.getmembers(sys.modules[module.__name__], inspect.isclass)
         for member in clsmembers:
-            # screen for objects with grammarbase.SharedGrammarBase ancestor
+            # screen for objects with grammarbase.GrammarBase ancestor
             class_hierarchy = inspect.getmro(member[1])
-            if len(class_hierarchy) > 2 and class_hierarchy[-2] == grammarbase.SharedGrammarBase:
+            if len(class_hierarchy) > 2 and class_hierarchy[-2] == grammarbase.GrammarBase:
                 grammar = self.initialize_grammar(member[1])
                 app_pattern = grammar.app_context
                 if grammar.app_context != '':
@@ -78,16 +76,15 @@ class GrammarHandler:
         contexts = self.get_contexts(action_list)
         for context in (c for c in contexts if c in self.grammars):
             for grammar in self.grammars[context]:
-                if isinstance(grammar, grammarbase.GrammarBase):
-                    self.add_actions_to_grammar_recording_macros(grammar, action_list)
+                self.add_actions_to_grammar_recording_macros(grammar, action_list)
 
     def add_actions_to_grammar_recording_macros(self, grammar, action_list):
         for name in grammar._recording_macros:
             for action in action_list.actions:
                 if isinstance(action, str):
                     grammar._recording_macros[name].append(action)
-                elif isinstance(action, (types.FunctionType, types.MethodType)):
-                    grammar._recording_macros[name].append(commands.FunctionWrapper(action, action_list.matched_words))
+                elif callable(action):
+                    grammar._recording_macros[name].append(commands.CallableWrapper(action, action_list.matched_words))
                 else:
                     grammar._recording_macros[name].append(action)
 

@@ -15,6 +15,7 @@ class GrammarHandler:
     def __init__(self):
         # grammar.app_context: [grammar instances with given app_content field]
         self.global_grammars = []
+        self.active_global_grammars = []
         self.grammars = {}
         self.active_grammars = {}
         try:
@@ -26,6 +27,7 @@ class GrammarHandler:
         grammar_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'grammars')
         for mod in utilities.get_modules_in_dir(grammar_dir):
             self.load_grammars_from_module(mod)
+        self.set_active_grammars()
         for context in self.grammars:
             self.grammars[context].sort()
 
@@ -45,17 +47,16 @@ class GrammarHandler:
                         self.grammars[app_pattern] = [grammar]
                 else:
                     self.global_grammars.append(grammar)
-        self.set_active_grammars()
 
     def set_active_grammars(self):
         try:
-            self.global_grammars = utilities.filter_grammar_list(self.global_grammars, self.process_contexts)
+            self.active_global_grammars = utilities.filter_grammar_list(self.global_grammars, self.process_contexts)
         except KeyError:
-            self.global_grammars = []
+            self.active_global_grammars = []
         self.active_grammars = {}
         for app_pattern, grammar_list in self.grammars.items():
             active_list = utilities.filter_grammar_list(grammar_list, self.process_contexts)
-            self.active_grammars[app_pattern] = active_list + self.global_grammars
+            self.active_grammars[app_pattern] = active_list + self.active_global_grammars
             self.active_grammars[app_pattern].sort()
             self.active_grammars[app_pattern].reverse()
 

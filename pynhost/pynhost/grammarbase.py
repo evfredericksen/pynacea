@@ -5,7 +5,6 @@ class SharedGrammarBase:
         self.mapping = {}
         self.app_context = ''
         self.settings = {
-            'regex mode': False,
             'filtered words': [],
             'priority': 0,
         }
@@ -17,13 +16,13 @@ class SharedGrammarBase:
         return self.settings['priority'] < other.settings['priority']
 
     def _change_global_context(self, context, value):
-        self._handler.process_contexts[context] = value        
+        self._handler.process_contexts[context] = value
         # recalculate active grammars
         self._handler.set_active_grammars()
 
     def _set_rules(self):
         for rule_text, actions in self.mapping.items():
-            rule = ruleparser.Rule(rule_text, actions, self, regex_mode=self.settings['regex mode'])
+            rule = ruleparser.Rule(rule_text, actions, self)
             self._rules.append(rule)
 
 class GrammarBase(SharedGrammarBase):
@@ -40,7 +39,7 @@ class GrammarBase(SharedGrammarBase):
             rule_name = '{} [<num>]'.format(rule_name)
             new_rules.append(ruleparser.Rule(rule_name, macro[:-1] + [dynamic.Num(-1).add(-1)], self))
         for rule in self._rules:
-            if rule.raw_text not in [r.raw_text for r in new_rules]:
+            if rule.compiled_regex.pattern not in [r.compiled_regex.pattern for r in new_rules]:
                 new_rules.append(rule)
         self._rules = new_rules
         self._recording_macros = {}

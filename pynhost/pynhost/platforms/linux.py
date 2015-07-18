@@ -85,3 +85,14 @@ def activate_window(title):
         pid = str(int(name_dict[matches[0]], 16))
         subprocess.call(['xdotool', 'windowfocus', pid])
         subprocess.call(['xdotool', 'windowactivate', pid])
+
+def get_clipboard_contents():
+    try:
+        return subprocess.check_output(['xclip', '-selection', 'c', '-o']).decode('utf8')
+    # empty clipboard
+    except subprocess.CalledProcessError:
+        return ''
+
+def set_clipboard_contents(text):
+    p = subprocess.Popen(['xclip', '-selection', 'c'], stdin=subprocess.PIPE)
+    p.communicate(input=bytes(text, 'utf-8'))

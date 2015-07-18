@@ -123,6 +123,24 @@ def mouse_move(x=None, y=None, relative=False):
     if y is None: y = 0
     ct.windll.user32.SetCursorPos(startx + x, starty + y)
 
+def get_clipboard_contents():
+    ct.windll.user32.OpenClipboard(None)
+    pcontents = ct.windll.user32.GetClipboardData(1)
+    text = ct.c_char_p(pcontents).value
+    ct.windll.user32.CloseClipboard()
+    return text
+
+def set_clipboard_contents(text):
+    text = text.encode('ascii')
+    ct.windll.user32.OpenClipboard(None)
+    ecb = ct.windll.user32.EmptyClipboard()
+    hCd = ct.windll.kernel32.GlobalAlloc(winconstants.GMEM_DDESHARE, len(text) + 1)
+    pchData = ct.windll.kernel32.GlobalLock(hCd)
+    ct.cdll.msvcrt.strcpy(ct.c_char_p(pchData), text)
+    ct.windll.kernel32.GlobalUnlock(hCd)
+    ct.windll.user32.SetClipboardData(1, hCd)
+    ct.windll.user32.CloseClipboard()
+
 def get_mouse_event_nums(button, direction):
     if button == 'left' and direction == 'down': return [2]
     if button == 'left' and direction == 'up': return [4]

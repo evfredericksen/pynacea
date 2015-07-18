@@ -13,25 +13,25 @@ DOUBLE_NUM_RANGE_PATTERN = re.compile(r'<num_-?\d+_-?\d+>')
 
 
 class Rule:
-    def __init__(self, raw_text, actions=None, grammar=None, regex_mode=False):
+    def __init__(self, pattern, actions=None, grammar=None):
         if not isinstance(actions, list):
             actions = [actions]
         self.actions = actions
-        self.raw_text = raw_text
         self.groups = {}
-        if regex_mode:
-            self.compiled_regex = re.compile(raw_text)
+        if isinstance(pattern, str):
+            self.compiled_regex = re.compile(self.convert_to_regex_pattern(pattern, grammar))
         else:
-            self.compiled_regex = re.compile(self.convert_to_regex_pattern(raw_text))
+            self.compiled_regex = pattern
         self.grammar = grammar
 
     def __str__(self):
-        return '<Rule: {}>'.format(self.raw_text)
+        return '<Rule: {}>'.format(self.compiled_regex.pattern)
 
     def __repr__(self):
-        return '<Rule: {}>'.format(self.raw_text)
+        return '<Rule: {}>'.format(self.compiled_regex.pattern)
 
-    def convert_to_regex_pattern(self, rule_string):
+    #TODO: this is hideous. Necessary evil or no?
+    def convert_to_regex_pattern(self, rule_string, grammar):
         regex_pattern = ''
         tag = ''
         word = ''
@@ -91,7 +91,11 @@ class Rule:
                 word += char
         if word:
              regex_pattern += '{} '.format(word)
-        assert not stack
+        if stack:
+            raise ValueError('Error balancing delimiters for string "{}" in '
+                             'grammar {}. Check that your rule pattern has '
+                             'balanced delimiters or use an already compiled '
+                             'regular expression pattern instead'.format(rule_string, grammar))
         return regex_pattern
 
 def regex_string_from_list(input_list, token):

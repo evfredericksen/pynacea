@@ -1,5 +1,8 @@
 import sys
-from pynhost.platforms import windows
+try:
+	from pynhost.platforms import windows
+except ImportError:
+	windows = None
 from pynhost.platforms import linux
 
 platform_dict = {
@@ -27,3 +30,9 @@ def activate_window(title):
         title = [title]
     title = [name.lower() for name in title]
     platform_dict[sys.platform].activate_window(title)
+
+def get_clipboard_contents():
+    return platform_dict[sys.platform].get_clipboard_contents()
+
+def set_clipboard_contents(text):
+    platform_dict[sys.platform].set_clipboard_contents(text)

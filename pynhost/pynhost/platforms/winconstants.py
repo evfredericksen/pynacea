@@ -4,6 +4,7 @@ class POINT(ct.Structure):
     _fields_ = [("x", ct.c_ulong), ("y", ct.c_ulong)]
 
 PUL = ct.POINTER(ct.c_ulong)
+GMEM_DDESHARE = 0x2000
 
 class KEYBOARD_INPUT(ct.Structure):
     _fields_ = [("wVk", ct.c_ushort),

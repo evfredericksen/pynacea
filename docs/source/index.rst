@@ -26,10 +26,11 @@ Using Pynacea
 --------------
 .. toctree::
    :maxdepth: 1
-   
+
    using/basic
    using/grammars
    using/actions
+   using/engines
    using/cl
    using/api
    using/macros

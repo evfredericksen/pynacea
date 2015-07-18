@@ -1,4 +1,8 @@
 HOMOPHONES = {
+    'line': ['wine', 'dine', 'why n'],
+    'perl': ['pearl', 'whirl'],
+    'boat': ['boats'],
+    'rib': ['red', 'webb', 'ridden', 'rid'],
 }
 
 NUMBERS_MAP = {
@@ -21,4 +25,8 @@ NUMBERS_MAP = {
     "i've": '5',
     'sets': '6',
     'mine': '9',
+}
+
+GLOBAL_CONTEXTS = {
+    
 }

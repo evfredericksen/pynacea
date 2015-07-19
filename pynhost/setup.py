@@ -6,7 +6,7 @@ import sys
 
 setup(
 	name='pynhost',
-	version='0.5.0',
+	version='0.6.0',
 	description='Linux Voice Recognition System',
 	url='https://github.com/evfredericksen/pynacea',
 	author='Evan Fredericksen',

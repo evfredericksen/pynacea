@@ -28,7 +28,7 @@ class Num(DynamicAction):
     def multiply(self, n):
         self.change *= n
         return self
-        
-class ClearTriggered(DynamicAction):
-    def __init__(self, timing='both'):
-        self.timing = timing
+
+class RepeatCommand(DynamicAction):
+    def __init__(self, count=1):
+        self.count = count

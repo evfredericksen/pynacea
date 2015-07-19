@@ -12,16 +12,23 @@ class Command:
             rule_match = self.get_rule_match(gram_handler)
             if rule_match is not None:
                 action_list.add_rule_match(rule_match)
-                gram_handler.add_actions_to_recording_macros(action_list)
+                if action_list.contains_non_repeat_actions():
+                    action_list.actions = gram_handler.triggered['match']['before'] + \
+                    action_list.actions + gram_handler.triggered['match']['after']
                 self.remaining_words = rule_match.remaining_words
                 utilities.log_message(log_handler, 'info', 'Input "{}" matched rule {} '
                     'in grammar {}'.format(' '.join(rule_match.matched_words), rule_match.rule, rule_match.rule.grammar))
             else:
-                action_list.add_string(self.remaining_words[0])
-                gram_handler.add_actions_to_recording_macros(action_list)
+                action_list.add_string(self.remaining_words[0], gram_handler)
                 self.remaining_words = self.remaining_words[1:]
+            gram_handler.add_actions_to_recording_macros(action_list)
             if action_list.actions:
                 self.action_lists.append(action_list)
+        # add command level triggers
+        non_repeats = [l for l in self.action_lists if l.contains_non_repeat_actions()]
+        if non_repeats:
+            non_repeats[0].actions = gram_handler.triggered['command']['before'] + non_repeats[0].actions
+            non_repeats[-1].actions.extend(gram_handler.triggered['command']['after'])
 
     def get_rule_match(self, gram_handler):
         for grammar in gram_handler.get_matching_grammars():
@@ -47,24 +54,22 @@ class ActionList:
         self.rule_match = None
 
     def add_rule_match(self, rule_match):
-        self.actions = []
-        for action in rule_match.rule.actions:
-            if isinstance(action, dynamic.Num):
-                action = action.evaluate(rule_match)
-            elif callable(action):
-                action = CallableWrapper(action, rule_match.matched_words)
-            self.actions.append(action)
+        self.actions = new_action_list(rule_match.rule.actions, rule_match,)
         self.rule_match = rule_match
 
-    def add_string(self, text):
+    def add_string(self, text, gram_handler):
         if self.command.action_lists and self.command.action_lists[-1].rule_match is None:
-            self.actions.append(' {}'.format(text))
-        else:
-            self.actions.append(text)
+            self.actions.append(' ')
+        self.actions.extend(new_action_list(gram_handler.triggered['word']['before']))
+        self.actions.append(text)
+        self.actions.extend(new_action_list(gram_handler.triggered['word']['after']))
 
     def contains_non_repeat_actions(self):
+        '''
+        Because repeating repeat actions can get ugly real fast
+        '''
         for action in self.actions:
-            if not isinstance(action, int):
+            if not isinstance(action, (int, dynamic.RepeatCommand)):
                 return True
         return False
 
@@ -77,4 +82,15 @@ class ActionList:
 class CallableWrapper:
     def __init__(self, func, words):
         self.func = func
-        self.words = words
+        self.words = words if words else ()
+
+def new_action_list(raw_actions, rule_match=None):
+    words = rule_match.matched_words if rule_match else ()
+    new_actions = []
+    for action in raw_actions:
+        if isinstance(action, dynamic.Num):
+            action = action.evaluate(rule_match)
+        elif callable(action):
+            action = CallableWrapper(action, words)
+        new_actions.append(action)
+    return new_actions

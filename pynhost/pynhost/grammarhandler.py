@@ -14,8 +14,23 @@ class GrammarHandler:
         # grammar.app_context: [grammar instances with given app_content field]
         self.global_grammars = []
         self.active_global_grammars = []
-        self.grammars = {}
-        self.active_grammars = {}
+        self.local_grammars = {}
+        self.active_local_grammars = {}
+        self.all_grammars = []
+        self.triggered = {
+            'word': {
+                'before': [],
+                'after': [],
+            },
+            'match': {
+                'before': [],
+                'after': [],
+            },
+            'command': {
+                'before': [],
+                'after': [],
+            }
+        }
         try:
             self.process_contexts = _locals.GLOBAL_CONTEXTS
         except AttributeError:
@@ -23,11 +38,11 @@ class GrammarHandler:
 
     def load_grammars(self):
         grammar_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'grammars')
-        for mod in utilities.get_modules_in_dir(grammar_dir):
-            self.load_grammars_from_module(mod)
+        for module in utilities.get_modules_in_dir(grammar_dir):
+            self.load_grammars_from_module(module)
         self.set_active_grammars()
-        for context in self.grammars:
-            self.grammars[context].sort()
+        for context in self.local_grammars:
+            self.local_grammars[context].sort()
 
     def load_grammars_from_module(self, module):
         clsmembers = inspect.getmembers(sys.modules[module.__name__], inspect.isclass)
@@ -40,9 +55,9 @@ class GrammarHandler:
                 if grammar.app_context != '':
                     app_pattern = re.compile(grammar.app_context)
                     try:
-                        self.grammars[app_pattern].append(grammar)
+                        self.local_grammars[app_pattern].append(grammar)
                     except KeyError:
-                        self.grammars[app_pattern] = [grammar]
+                        self.local_grammars[app_pattern] = [grammar]
                 else:
                     self.global_grammars.append(grammar)
 
@@ -51,19 +66,19 @@ class GrammarHandler:
             self.active_global_grammars = utilities.filter_grammar_list(self.global_grammars, self.process_contexts)
         except KeyError:
             self.active_global_grammars = []
-        self.active_grammars = {}
-        for app_pattern, grammar_list in self.grammars.items():
+        self.active_local_grammars = {}
+        for app_pattern, grammar_list in self.local_grammars.items():
             active_list = utilities.filter_grammar_list(grammar_list, self.process_contexts)
-            self.active_grammars[app_pattern] = active_list + self.active_global_grammars
-            self.active_grammars[app_pattern].sort()
-            self.active_grammars[app_pattern].reverse()
+            self.active_local_grammars[app_pattern] = active_list + self.active_global_grammars
+            self.active_local_grammars[app_pattern].sort()
+            self.active_local_grammars[app_pattern].reverse()
 
     def get_matching_grammars(self):
         active_window_name = platformhandler.get_active_window_name().lower()
         grammars = []
-        for app_pattern in self.active_grammars:
+        for app_pattern in self.active_local_grammars:
             if app_pattern.search(active_window_name):
-                grammars.extend(self.active_grammars[app_pattern])
+                grammars.extend(self.active_local_grammars[app_pattern])
         grammars.sort()
         grammars.reverse()
         return grammars if grammars else self.global_grammars
@@ -74,8 +89,8 @@ class GrammarHandler:
 
     def add_actions_to_recording_macros(self, action_list):
         contexts = self.get_contexts(action_list)
-        for context in (c for c in contexts if c in self.grammars):
-            for grammar in self.grammars[context]:
+        for context in (c for c in contexts if c in self.local_grammars):
+            for grammar in self.local_grammars[context]:
                 self.add_actions_to_grammar_recording_macros(grammar, action_list)
 
     def add_actions_to_grammar_recording_macros(self, grammar, action_list):

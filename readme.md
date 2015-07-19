@@ -11,8 +11,9 @@ stability and flexibility in that it does not require access to APIs from any
 proprietary voice recognition software, and can in fact run alongside any voice
 recognition program.
 
-Pynacea has built-in support for PocketSphinx, and relies on a virtual machine
-for other speech to text engines.
+Pynacea can communicate with a speech-to-text engine through the Pynguest script
+contained in this repository. It also can run off of streams of text via sockets,
+a subprocess' stdout, or HTTP requests via Flask (if installed).
 
 Read the documentation [here](https://pythonhosted.org/pynhost/).
 
@@ -20,4 +21,3 @@ Read the documentation [here](https://pythonhosted.org/pynhost/).
 
 - Native integration with Windows Speech Recognition
 - Support for Mac OS X host machines
-- Support for individual down and up keypresses

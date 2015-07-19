@@ -11,24 +11,8 @@ can be used by cloning the
 `GitHub repository <https://github.com/evfredericksen/pynacea>`_,
 opening the ``pynhost`` directory, and running ``setup.py``.
 
-The installation process now diverges based on whether you are using
-PocketSphinx or another speech recognition engine running through a virtual
-machine.
-
-PocketSphinx
--------------
-Make sure that you have PocketSphinx up and running on your system.
-`Here <http://cmusphinx.sourceforge.net/wiki/tutorialpocketsphinx#installation>`_
-is a how-to if you haven't already done so.
-
-Run ``pynacea.py -c`` and navigate to ``Change Engine Settings``. Here you can
-provide paths if you plan on using Hidden Markov Models, a Language Model,
-and/or a Dictionary (strongly recommended).
-
-
-Virtual Machine
------------------
-On your virtual machine:
+If you are using a virtual machine to run your speech-to-text engine, you
+will need to take the following steps:
 
 * Set up a voice recognition environment. I use Oracle VirtualBox, 32-bit
   Windows 7, Dragon Naturally Speaking 13 Premium (although Home Edition should

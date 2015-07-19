@@ -41,19 +41,18 @@ def main():
 			print('Directory {} successfully saved!'.format(shared_dir))
 	else:
 		g = PynGuestGui(shared_dir)
-		
+
 def get_shared_directory():
 	config = configparser.ConfigParser()
 	config.read(CONFIG_PATH)
 	return(config['settings']['shared_dir'])
-	
+
 def save_directory(value):
 	config = configparser.ConfigParser()
 	config.read(CONFIG_PATH)
 	config['settings']['shared_dir'] = value
 	with open(CONFIG_PATH, 'w') as configfile:
-		config.write(configfile) 
-		
+		config.write(configfile)
 		
 def get_pynportal_drive():
 	try:
@@ -88,7 +87,7 @@ def get_drives():
 		)
 		drive_names[letter] = volumeNameBuffer.value
 	return drive_names
-	
+
 def get_drive_letters():
     import ctypes
     drives = []
@@ -117,7 +116,7 @@ class PynGuestGui:
 		self.text_box.pack()
 		self.root.after(20, self.send_input)
 		self.root.mainloop()
-		
+
 	def send_input(self):
 		self.root.after(20, self.send_input)
 		self.content = self.text_box.get('1.0', tkinter.END).strip()
@@ -137,7 +136,7 @@ class PynGuestGui:
 				'again'.format(self.buffer_dir))
 			self.text_box.delete('1.0', tkinter.END)
 			self.content = ''
-		
+
 	def get_next_filename(self):
 		try:
 			nums = [int(f[1:]) for f in os.listdir(self.buffer_dir) if not os.path.isdir(f) and re.match(r'o\d+$', f)]
@@ -150,13 +149,13 @@ class PynGuestGui:
 		else:
 			name = 'o1'
 		return os.path.join(self.buffer_dir, name)
-	
+
 	def enter_key(self, *args):
 		self.entry_time = time.clock()
-		
+
 	def error(self, error_type, text):
 		self.root.quit()
 		raise error_type(text)
-	
+
 if __name__ == '__main__':
 	main()

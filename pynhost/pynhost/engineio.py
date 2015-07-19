@@ -122,16 +122,20 @@ class SubprocessEngine(BaseEngine):
 class SocketEngine(BaseEngine):
     def __init__(self, host=socket.gethostname(), port=constants.DEFAULT_PORT_NUMBER):
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.s.connect((host, port))
+        self.server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.server.bind((host, port))
+        self.server.listen(10)
 
     def get_lines(self):
-        line = ''
-        while not line:
-            line = self.s.recv(8192).decode('utf8')
+        conn, addr = self.server.accept()
+        try:
+            line = conn.recv(16384).decode('utf8')
+        finally:
+            conn.close()
         return [line]
 
     def cleanup(self):
-        self.s.close()
+        self.server.close()
 
 class HTTPEngine(BaseEngine):
     def __init__(self, host=socket.gethostname(), port=constants.DEFAULT_PORT_NUMBER):

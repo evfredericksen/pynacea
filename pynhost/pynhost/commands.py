@@ -79,10 +79,24 @@ class ActionList:
     def __repr__(self):
         return str(self)
 
-class CallableWrapper:
-    def __init__(self, func, words):
-        self.func = func
-        self.words = words if words else ()
+def new_action_list(raw_actions, rule_match=None):
+    words = rule_match.matched_words if rule_match else ()
+    new_actions = []
+    for action in raw_actions:
+        if isinstance(action, dynamic.Num):
+            action = action.evaluate(rule_match)
+        elif isinstance (action, (list, tuple)):
+            func = action[0]
+        for action in self.actions:
+            if not isinstance(action, (int, dynamic.RepeatCommand)):
+                return True
+        return False
+
+    def __str__(self):
+        return '<ActionList matching words {}>'.format(' '.join(self.matched_words))
+
+    def __repr__(self):
+        return str(self)
 
 def new_action_list(raw_actions, rule_match=None):
     words = rule_match.matched_words if rule_match else ()
@@ -90,7 +104,14 @@ def new_action_list(raw_actions, rule_match=None):
     for action in raw_actions:
         if isinstance(action, dynamic.Num):
             action = action.evaluate(rule_match)
+        elif isinstance (action, (list, tuple)):
+            func = action[0]
+            args = action[1] if len(action) > 1 else []
+            kwargs = action[2] if len(action) > 2 else {}
+            if len(action) > 3 and action[3]:
+                args.insert(0, words)
+            action = (func, args, kwargs)
         elif callable(action):
-            action = CallableWrapper(action, words)
+            action = (action, [words], {})
         new_actions.append(action)
     return new_actions

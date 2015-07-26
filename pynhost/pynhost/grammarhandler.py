@@ -16,7 +16,6 @@ class GrammarHandler:
         self.active_global_grammars = []
         self.local_grammars = {}
         self.active_local_grammars = {}
-        self.all_grammars = []
         self.triggered = {
             'word': {
                 'before': [],
@@ -80,37 +79,29 @@ class GrammarHandler:
             if app_pattern.search(active_window_name):
                 grammars.extend(self.active_local_grammars[app_pattern])
         grammars.sort(reverse=True)
-        return grammars if grammars else self.active_global_grammars
+        return grammars or self.active_global_grammars
 
 # local grammar match = match grammar context and global
 # global grammar match = match global
 # no match: match open process grammars and global
 
     def add_actions_to_recording_macros(self, action_list):
-        contexts = self.get_contexts(action_list)
-        for context in (c for c in contexts if c in self.local_grammars):
-            for grammar in self.local_grammars[context]:
-                self.add_actions_to_grammar_recording_macros(grammar, action_list)
+        context = self.get_context(action_list)
+        if context:
+            grammars = []
+            for app_pattern in self.active_local_grammars:
+                if app_pattern.search(context):
+                    grammars.extend(self.active_local_grammars[app_pattern])
+        else:
+            grammars = self.active_global_grammars
+        for grammar in grammars:
+            for name in grammar._recording_macros:
+                grammar._recording_macros[name].extend(action_list.actions)
 
-    def add_actions_to_grammar_recording_macros(self, grammar, action_list):
-        for name in grammar._recording_macros:
-            for action in action_list.actions:
-                if isinstance(action, str):
-                    grammar._recording_macros[name].append(action)
-                elif callable(action):
-                    grammar._recording_macros[name].append(commands.CallableWrapper(action, action_list.matched_words))
-                else:
-                    grammar._recording_macros[name].append(action)
-
-    def get_contexts(self, action_list):
-        contexts = ['']
+    def get_context(self, action_list):
         if action_list.rule_match is None:
-            context = platformhandler.get_active_window_name().lower()
-            if context:
-                contexts.append(context)
-        elif action_list.rule_match.rule.grammar.app_context:
-            contexts.append(action_list.rule_match.rule.grammar.app_context)
-        return contexts
+            return platformhandler.get_active_window_name().lower()
+        return action_list.rule_match.rule.grammar.app_context
 
     def initialize_grammar(self, grammar_class):
         grammar = grammar_class()

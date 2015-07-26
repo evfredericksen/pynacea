@@ -11,6 +11,7 @@ class GrammarBase:
         self.context_filters = {}
         # no touchy
         self._rules = []
+        self._recording_macros = {}
 
     def __lt__(self, other):
         return self.settings['priority'] < other.settings['priority']
@@ -29,7 +30,7 @@ class GrammarBase:
             rule_name = '{} [<num>]'.format(rule_name)
             new_rules.append(ruleparser.Rule(rule_name, macro[:-1] + [dynamic.Num(-1).add(-1)], self))
         for rule in self._rules:
-            if rule.raw_text not in [r.raw_text for r in new_rules]:
+            if rule.pattern_text not in [r.pattern_text for r in new_rules]:
                 new_rules.append(rule)
         self._rules = new_rules
         self._recording_macros = {}

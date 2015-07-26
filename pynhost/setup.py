@@ -1,13 +1,9 @@
-from setuptools import setup, find_packages
-from codecs import open
-import os
-here = os.path.abspath(os.path.dirname(__file__))
-import sys
+from setuptools import setup
 
 setup(
 	name='pynhost',
-	version='0.6.0',
-	description='Linux Voice Recognition System',
+	version='0.6.1',
+	description='Voice Recognition Desktop Control Framework',
 	url='https://github.com/evfredericksen/pynacea',
 	author='Evan Fredericksen',
 	author_email='evfredericksen@gmail.com',

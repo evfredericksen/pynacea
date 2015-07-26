@@ -36,7 +36,7 @@ class CommandHistory:
                     self.repeat_previous_action_list(action, command_pos, action_list_pos, i)
                 elif isinstance(action, dynamic.RepeatCommand):
                     count = action.count.evaluate(action_list.rule_match) if \
-                    isinstance(action.count, dynamic.Num) else count 
+                    isinstance(action.count, dynamic.Num) else count
                     for i in range(count):
                         self.execute_command(command_pos - 1, -1, -1)
 
@@ -44,8 +44,8 @@ class CommandHistory:
         if isinstance(action, str):
             api.send_string(action)
             return True
-        elif isinstance(action, commands.CallableWrapper):
-            action.func(action.words)
+        elif isinstance(action, tuple):
+            action[0](*action[1], **action[2])
             return True
         return False
 

@@ -67,11 +67,11 @@ class GrammarHandler:
         except KeyError:
             self.active_global_grammars = []
         self.active_local_grammars = {}
+        self.active_global_grammars.sort(reverse=True)
         for app_pattern, grammar_list in self.local_grammars.items():
             active_list = utilities.filter_grammar_list(grammar_list, self.process_contexts)
             self.active_local_grammars[app_pattern] = active_list + self.active_global_grammars
-            self.active_local_grammars[app_pattern].sort()
-            self.active_local_grammars[app_pattern].reverse()
+            self.active_local_grammars[app_pattern].sort(reverse=True)
 
     def get_matching_grammars(self):
         active_window_name = platformhandler.get_active_window_name().lower()
@@ -79,9 +79,8 @@ class GrammarHandler:
         for app_pattern in self.active_local_grammars:
             if app_pattern.search(active_window_name):
                 grammars.extend(self.active_local_grammars[app_pattern])
-        grammars.sort()
-        grammars.reverse()
-        return grammars if grammars else self.global_grammars
+        grammars.sort(reverse=True)
+        return grammars if grammars else self.active_global_grammars
 
 # local grammar match = match grammar context and global
 # global grammar match = match global

@@ -19,13 +19,15 @@ class Rule:
         self.actions = actions
         self.groups = {}
         if isinstance(pattern, str):
+            self.pattern_text = pattern
             self.compiled_regex = re.compile(self.convert_to_regex_pattern(pattern, grammar))
         else:
+            self.pattern_text = pattern.pattern
             self.compiled_regex = pattern
         self.grammar = grammar
 
     def __str__(self):
-        return '<Rule: {}>'.format(self.compiled_regex.pattern)
+        return '<Rule: {}>'.format(self.pattern_text)
 
     def __repr__(self):
         return '<Rule: {}>'.format(self.compiled_regex.pattern)

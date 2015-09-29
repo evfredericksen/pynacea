@@ -21,13 +21,13 @@ Getting Started
    :maxdepth: 1
 
    installation
+   basic
 
 Using Pynacea
 --------------
 .. toctree::
    :maxdepth: 1
 
-   using/basic
    using/grammars
    using/actions
    using/engines

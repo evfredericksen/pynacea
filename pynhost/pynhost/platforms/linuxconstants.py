@@ -17,4 +17,7 @@ XDOTOOL_KEYMAP = {
     'page_up': 'Page_Up',
     'pagedown': 'Page_Down',
     'page_down': 'Page_Down',
+    '\\': 'backslash',
+    '[': 'bracketleft',
+    ']': 'bracketright',
 }
